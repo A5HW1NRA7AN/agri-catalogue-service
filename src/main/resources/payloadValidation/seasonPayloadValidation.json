@@ -2,39 +2,39 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
-        "Season Id": {
+        "seasonId": {
             "type": "string",
             "prefix": "season-",
             "key": "Primary",
-            "keyLength": 5,
+            "keyLength": 12,
             "description": "season prefix"
         },
-        "Season": {
+        "season": {
             "type": "string",
             "description": "name of the season (Kiremt, Tseday, Bega, Belg)"
         },
-        "Start Month": {
+        "startMonth": {
             "type": "string",
             "description": "gregorian month the season starts in"
         },
-        "Start Day": {
+        "startDay": {
             "type": "integer",
             "description": "day of the start month the season begins on"
         },
-        "End Month": {
+        "endMonth": {
             "type": "string",
             "description": "gregorian month the season ends in"
         },
-        "End Day": {
+        "endDay": {
             "type": "integer",
             "description": "day of the end month the season ends on"
         }
     },
     "required": [
-        "Season",
-        "Start Month",
-        "Start Day",
-        "End Month",
-        "End Day"
+        "season",
+        "startMonth",
+        "startDay",
+        "endMonth",
+        "endDay"
     ]
 }

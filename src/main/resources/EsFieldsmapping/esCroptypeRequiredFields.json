@@ -1,26 +1,26 @@
 {
-    "Crop Type Id": {
+    "cropTypeId": {
         "type": "keyword"
     },
-    "Crop Category Id": {
+    "cropCategoryId": {
         "type": "keyword"
     },
-    "Crop Category Name": {
+    "cropCategoryName": {
         "type": "keyword"
     },
-    "Name": {
+    "name": {
         "type": "keyword"
     },
-    "Scientific Name": {
+    "scientificName": {
         "type": "keyword"
     },
-    "Centre": {
+    "centre": {
         "type": "keyword"
     },
-    "Varieties Count": {
+    "varietiesCount": {
         "type": "integer"
     },
-    "Description": {
+    "description": {
         "type": "text"
     }
 }

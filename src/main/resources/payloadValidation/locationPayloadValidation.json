@@ -2,24 +2,24 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
-        "Location Id": {
+        "locationId": {
             "type": "string",
             "prefix": "location-",
             "key": "Primary",
             "keyLength": 12,
             "description": "location prefix"
         },
-        "Region": {
+        "region": {
             "type": "string",
             "description": "region the market place belongs to"
         },
-        "Market Place": {
+        "marketPlace": {
             "type": "string",
             "description": "name of the market place"
         }
     },
     "required": [
-        "Region",
-        "Market Place"
+        "region",
+        "marketPlace"
     ]
 }

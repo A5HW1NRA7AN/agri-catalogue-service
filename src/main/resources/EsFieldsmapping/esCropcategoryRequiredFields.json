@@ -1,14 +1,14 @@
 {
-    "Crop Category Id": {
+    "cropCategoryId": {
         "type": "keyword"
     },
-    "Name": {
+    "name": {
         "type": "keyword"
     },
-    "Image Url": {
+    "imageUrl": {
         "type": "keyword"
     },
-    "Description": {
+    "description": {
         "type": "keyword"
     }
 }

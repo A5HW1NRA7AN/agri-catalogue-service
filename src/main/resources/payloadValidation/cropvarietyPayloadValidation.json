@@ -2,49 +2,49 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
-        "Crop Variety Id": {
+        "cropVarietyId": {
             "type": "string",
             "prefix": "cropvariety-",
             "key": "Primary",
             "keyLength": 12,
             "description": "crop variety prefix"
         },
-        "Crop Category Id": {
+        "cropCategoryId": {
             "type": "string",
             "description": "id of the crop category this variety belongs to"
         },
-        "Crop Type Id": {
+        "cropTypeId": {
             "type": "string",
             "description": "id of the crop type this variety belongs to"
         },
-        "Crop Category Name": {
+        "cropCategoryName": {
             "type": "string",
             "description": "name of the crop category this variety belongs to"
         },
-        "Crop Type Name": {
+        "cropTypeName": {
             "type": "string",
             "description": "name of the crop type this variety belongs to"
         },
-        "Name": {
+        "name": {
             "type": "string",
             "description": "name of the crop variety"
         },
-        "Centre": {
+        "centre": {
             "type": "string",
             "description": "research centre that released the crop variety"
         },
-        "Year": {
+        "year": {
             "type": "string",
             "description": "release year of the crop variety (kept as string; source data contains values like 1999/00)"
         },
-        "Url": {
+        "imageUrl": {
             "type": "string",
-            "description": "detail page url of the crop variety"
+            "description": "image url of the crop variety"
         }
     },
     "required": [
-        "Crop Category Name",
-        "Crop Type Name",
-        "Name"
+        "cropCategoryName",
+        "cropTypeName",
+        "name"
     ]
 }

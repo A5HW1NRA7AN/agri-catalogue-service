@@ -1,5 +1,5 @@
 {
-    "Extensionequipment Id": {
+    "extensionequipmentId": {
         "type": "keyword"
     }
 }

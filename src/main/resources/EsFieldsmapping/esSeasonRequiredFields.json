@@ -1,20 +1,20 @@
 {
-    "Season Id": {
+    "seasonId": {
         "type": "keyword"
     },
-    "Season": {
+    "season": {
         "type": "keyword"
     },
-    "Start Month": {
+    "startMonth": {
         "type": "keyword"
     },
-    "Start Day": {
+    "startDay": {
         "type": "integer"
     },
-    "End Month": {
+    "endMonth": {
         "type": "keyword"
     },
-    "End Day": {
+    "endDay": {
         "type": "integer"
     }
 }

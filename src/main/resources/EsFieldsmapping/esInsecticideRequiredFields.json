@@ -1,5 +1,5 @@
 {
-    "Insecticide Id": {
+    "insecticideId": {
         "type": "keyword"
     }
 }

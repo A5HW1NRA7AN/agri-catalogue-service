@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "34199cd5-2c4b-4ac0-abfe-3bae87ddaba0",
+    "_postman_id": "086247b3-1f7d-4fa9-a533-eb6d8ad4b7a8",
     "name": "Agri Catalogue Service",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "54270722",
-    "_collection_link": "https://go.postman.co/collection/54270722-34199cd5-2c4b-4ac0-abfe-3bae87ddaba0?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/54270722-086247b3-1f7d-4fa9-a533-eb6d8ad4b7a8?source=collection_link"
   },
   "item": [
     {
@@ -42,7 +42,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"Name\": \"sample string\",\n  \"Code\": \"sample string\"\n}"
+              "raw": "{\n  \"name\": \"Cereals\",\n  \"imageUrl\": \"https://example.com/images/cereals.png\",\n  \"description\": \"Cereal crops such as teff, wheat, maize and barley\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/cropcategory/v1/create",
@@ -90,7 +95,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{}",
+              "raw": "{\n  \"filterCriteriaMap\": {\n    \"name\": \"Cereal\"\n  },\n  \"pageNumber\": 0,\n  \"pageSize\": 10,\n  \"orderBy\": \"name\",\n  \"orderDirection\": \"asc\",\n  \"facets\": [\n    \"name\"\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -290,7 +295,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{}"
+              "raw": "{\n  \"cropCategoryId\": \"cropcategory-12345\",\n  \"cropCategoryName\": \"Cereals\",\n  \"name\": \"Teff\",\n  \"scientificName\": \"Eragrostis tef\",\n  \"centre\": \"Debre Zeit Agricultural Research Center\",\n  \"varietiesCount\": 42,\n  \"imageUrl\": \"https://example.com/images/teff.png\",\n  \"description\": \"Teff is a staple cereal crop grown mainly in the Ethiopian highlands\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/croptype/v1/create",
@@ -338,7 +348,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{}",
+              "raw": "{\n  \"filterCriteriaMap\": {\n    \"cropCategoryName\": \"Cereal\"\n  },\n  \"pageNumber\": 0,\n  \"pageSize\": 10,\n  \"orderBy\": \"name\",\n  \"orderDirection\": \"asc\",\n  \"facets\": [\n    \"cropCategoryName\",\n    \"centre\"\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -538,7 +548,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"Name\": \"sample string\",\n  \"Code\": \"sample string\",\n  \"Crop\": \"sample string\"\n}"
+              "raw": "{\n  \"cropCategoryId\": \"cropcategory-12345\",\n  \"cropTypeId\": \"croptype-123456789012\",\n  \"cropCategoryName\": \"Cereals\",\n  \"cropTypeName\": \"Teff\",\n  \"name\": \"Quncho (DZ-Cr-387 RIL355)\",\n  \"centre\": \"Debre Zeit Agricultural Research Center\",\n  \"year\": \"2006\",\n  \"imageUrl\": \"https://example.com/varieties/quncho\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/cropvariety/v1/create",
@@ -586,7 +601,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{}",
+              "raw": "{\n  \"filterCriteriaMap\": {\n    \"cropTypeName\": \"Teff\",\n    \"year\": \"2006\"\n  },\n  \"pageNumber\": 0,\n  \"pageSize\": 10,\n  \"orderBy\": \"name\",\n  \"orderDirection\": \"asc\",\n  \"facets\": [\n    \"centre\",\n    \"year\"\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1530,7 +1545,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"Farmer ID\": \"sample string\",\n  \"Farmer\": \"sample string\",\n  \"Livestock Type\": \"sample string\",\n  \"Number\": 0\n}"
+              "raw": "{\n  \"livestock\": \"Cattle\",\n  \"locationType\": \"Low Land\",\n  \"breed\": \"Boran\",\n  \"gender\": \"Female\",\n  \"productionType\": \"Milk\",\n  \"bodyCondition\": \"Moderate Weight\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/livestock/v1/create",
@@ -1578,7 +1598,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{}",
+              "raw": "{\n  \"filterCriteriaMap\": {\n    \"livestock\": \"Cattle\",\n    \"breed\": \"Boran\"\n  },\n  \"pageNumber\": 0,\n  \"pageSize\": 10,\n  \"orderBy\": \"breed\",\n  \"orderDirection\": \"asc\",\n  \"facets\": [\n    \"livestock\",\n    \"breed\"\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1778,7 +1798,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"Farmer ID\": \"sample string\",\n  \"Farmer\": \"sample string\",\n  \"Land ID\": \"sample string\",\n  \"Area In Hectare\": 0,\n  \"Ownership Type\": \"sample string\"\n}"
+              "raw": "{\n  \"region\": \"Oromia\",\n  \"marketPlace\": \"Adama Market\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/location/v1/create",
@@ -1826,7 +1851,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{}",
+              "raw": "{\n  \"filterCriteriaMap\": {\n    \"region\": \"Oromia\"\n  },\n  \"pageNumber\": 0,\n  \"pageSize\": 10,\n  \"orderBy\": \"marketPlace\",\n  \"orderDirection\": \"asc\",\n  \"facets\": [\n    \"region\"\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2274,7 +2299,12 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"Name\": \"sample string\",\n  \"Start GC\": \"2023-01-01\",\n  \"End GC\": \"2023-12-31\",\n  \"Start Month\": 1,\n  \"Start Day\": 1,\n  \"End Month\": 12,\n  \"End Day\": 31\n}"
+              "raw": "{\n  \"season\": \"Kiremt\",\n  \"startMonth\": \"June\",\n  \"startDay\": 1,\n  \"endMonth\": \"September\",\n  \"endDay\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "{{baseUrl}}/season/v1/create",
@@ -2322,7 +2352,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{}",
+              "raw": "{\n  \"filterCriteriaMap\": {\n    \"season\": \"Kiremt\"\n  },\n  \"pageNumber\": 0,\n  \"pageSize\": 10,\n  \"orderBy\": \"season\",\n  \"orderDirection\": \"asc\",\n  \"facets\": [\n    \"season\"\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3011,11 +3041,11 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8080"
+      "value": "http://35.78.108.187:30080"
     },
     {
       "key": "api_key",
-      "value": ""
+      "value": "testapi-123"
     }
   ]
 }

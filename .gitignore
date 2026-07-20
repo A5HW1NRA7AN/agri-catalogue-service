@@ -114,3 +114,8 @@ catalogue-data/
 
 #===== ide files ====
 CLAUDE.md
+agri-catalogue-service.postman_collection-dev.json
+
+
+#===== pem files ====
+*.pem

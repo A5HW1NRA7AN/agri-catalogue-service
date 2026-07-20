@@ -155,7 +155,7 @@ class CreateRegistry:
             "$schema": "http://json-schema.org/draft-07/schema#",
             "type": "object",
             "properties": {
-                f"{self.regular} Id": {
+                f"{self.camel}Id": {
                     "type": "string",
                     "prefix": f"{self.lower}-",
                     "key": "Primary",
@@ -176,7 +176,7 @@ class CreateRegistry:
             log_skipped(f"{rel_path(output_path)} already exists.")
             return
         es_required_fields = {
-            f"{self.regular} Id": {"type": "keyword"}
+            f"{self.camel}Id": {"type": "keyword"}
         }
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w") as f:

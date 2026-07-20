@@ -2,49 +2,50 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
-        "Crop Type Id": {
+        "cropTypeId": {
             "type": "string",
             "prefix": "croptype-",
             "key": "Primary",
             "keyLength": 12,
             "description": "crop type prefix"
         },
-        "Crop Category Id": {
+        "cropCategoryId": {
             "type": "string",
             "description": "id of the crop category this crop type belongs to"
         },
-        "Crop Category Name": {
+        "cropCategoryName": {
             "type": "string",
             "description": "name of the crop category this crop type belongs to"
         },
-        "Name": {
+        "name": {
             "type": "string",
             "description": "name of the crop type"
         },
-        "Scientific Name": {
+        "scientificName": {
             "type": "string",
             "description": "scientific name of the crop type"
         },
-        "Centre": {
+        "centre": {
             "type": "string",
             "description": "research centre of the crop type"
         },
-        "Varieties Count": {
+        "varietiesCount": {
             "type": "integer",
             "description": "number of released varieties of the crop type"
         },
-        "Image Url": {
+        "imageUrl": {
             "type": "string",
             "description": "image url of the crop type"
         },
-        "Description": {
+        "description": {
             "type": "string",
             "description": "description of the crop type"
         }
     },
     "required": [
-        "Crop Category Name",
-        "Name",
-        "Varieties Count"
+        "cropCategoryName",
+        "name",
+        "scientificName",
+        "varietiesCount"
     ]
 }

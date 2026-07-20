@@ -2,29 +2,28 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
-        "Crop Category Id": {
+        "cropCategoryId": {
             "type": "string",
             "prefix": "cropcategory-",
             "key": "Primary",
             "keyLength": 5,
             "description": "crop category prefix"
         },
-        "Name": {
+        "name": {
             "type": "string",
             "description": "name of the crop category"
         },
-        "Image Url": {
+        "imageUrl": {
             "type": "string",
             "description": "image url of the crop category"
         },
-        "Description": {
+        "description": {
             "type": "string",
             "description": "description of the crop category"
         }
-
     },
     "required": [
-        "Name",
-        "Image Url"
+        "name",
+        "imageUrl"
     ]
 }

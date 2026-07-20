@@ -1,23 +1,23 @@
 {
-    "Livestock Id": {
+    "livestockId": {
         "type": "keyword"
     },
-    "Livestock": {
+    "livestock": {
         "type": "keyword"
     },
-    "Location type": {
+    "locationType": {
         "type": "keyword"
     },
-    "Breed": {
+    "breed": {
         "type": "keyword"
     },
-    "Gender": {
+    "gender": {
         "type": "keyword"
     },
-    "Production type": {
+    "productionType": {
         "type": "keyword"
     },
-    "Body condition": {
+    "bodyCondition": {
         "type": "keyword"
     }
 }

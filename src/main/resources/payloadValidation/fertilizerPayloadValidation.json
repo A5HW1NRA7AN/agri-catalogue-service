@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
-        "Fertilizer Id": {
+        "fertilizerId": {
             "type": "string",
             "prefix": "fertilizer-",
             "key": "Primary",
@@ -10,6 +10,6 @@
         }
     },
     "required": [
-        "Fertilizer Id"
+        "fertilizerId"
     ]
 }

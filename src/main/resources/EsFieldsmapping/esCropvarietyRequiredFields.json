@@ -1,1109 +1,1109 @@
 {
-    "Crop Variety Id": {
+    "cropVarietyId": {
         "type": "keyword"
     },
-    "Crop Category Id": {
+    "cropCategoryId": {
         "type": "keyword"
     },
-    "Crop Type Id": {
+    "cropTypeId": {
         "type": "keyword"
     },
-    "Crop Category Name": {
+    "cropCategoryName": {
         "type": "keyword"
     },
-    "Crop Type Name": {
+    "cropTypeName": {
         "type": "keyword"
     },
-    "Name": {
+    "name": {
         "type": "keyword"
     },
-    "Centre": {
+    "centre": {
         "type": "keyword"
     },
-    "Year": {
+    "year": {
         "type": "keyword"
     },
-    "Url": {
+    "url": {
         "type": "keyword"
     },
-    "Altitude": {
+    "altitude": {
         "type": "keyword"
     },
-    "Yield (Research field)": {
+    "yieldResearchField": {
         "type": "keyword"
     },
-    "Seed rate": {
+    "seedRate": {
         "type": "keyword"
     },
-    "Adaptation area": {
+    "adaptationArea": {
         "type": "keyword"
     },
-    "Rainfall": {
+    "rainfall": {
         "type": "keyword"
     },
-    "Planting date": {
+    "plantingDate": {
         "type": "keyword"
     },
-    "Days to Maturity": {
+    "daysToMaturity": {
         "type": "keyword"
     },
-    "Crop pest reaction": {
+    "cropPestReaction": {
         "type": "keyword"
     },
-    "Fertilizer rate (N)": {
+    "fertilizerRateN": {
         "type": "keyword"
     },
-    "Plant height": {
+    "plantHeight": {
         "type": "keyword"
     },
-    "Yield (Farmers field)": {
+    "yieldFarmersField": {
         "type": "keyword"
     },
-    "Growth habit": {
+    "growthHabit": {
         "type": "keyword"
     },
-    "Seed color": {
+    "seedColor": {
         "type": "keyword"
     },
-    "Spacing": {
+    "spacing": {
         "type": "keyword"
     },
-    "Fertilizer rate (P2O5)": {
+    "fertilizerRateP2O5": {
         "type": "keyword"
     },
-    "1000 seed weight": {
+    "1000SeedWeight": {
         "type": "keyword"
     },
-    "Fertilizer rate (NPS/NPSB)": {
+    "fertilizerRateNPSNPSB": {
         "type": "keyword"
     },
-    "Days to flowering": {
+    "daysToFlowering": {
         "type": "keyword"
     },
-    "Flower color": {
+    "flowerColor": {
         "type": "keyword"
     },
-    "Days to heading": {
+    "daysToHeading": {
         "type": "keyword"
     },
-    "100 seed weight": {
+    "100SeedWeight": {
         "type": "keyword"
     },
-    "Temperature": {
+    "temperature": {
         "type": "keyword"
     },
-    "Soil type": {
+    "soilType": {
         "type": "keyword"
     },
-    "Fruit shape": {
+    "fruitShape": {
         "type": "keyword"
     },
-    "Leaf color": {
+    "leafColor": {
         "type": "keyword"
     },
-    "Oil content": {
+    "oilContent": {
         "type": "keyword"
     },
-    "Protein": {
+    "protein": {
         "type": "keyword"
     },
-    "Outstanding values": {
+    "outstandingValues": {
         "type": "keyword"
     },
-    "Fruit quality (TSS)": {
+    "fruitQualityTSS": {
         "type": "keyword"
     },
-    "Grain size": {
+    "grainSize": {
         "type": "keyword"
     },
-    "Seed coat color": {
+    "seedCoatColor": {
         "type": "keyword"
     },
-    "Ear height (cm)": {
+    "earHeightCm": {
         "type": "keyword"
     },
-    "Fruit size": {
+    "fruitSize": {
         "type": "keyword"
     },
-    "Fruit firmness": {
+    "fruitFirmness": {
         "type": "keyword"
     },
-    "Leaf coverage": {
+    "leafCoverage": {
         "type": "keyword"
     },
-    "1000 kernel weight": {
+    "1000KernelWeight": {
         "type": "keyword"
     },
-    "Test weight": {
+    "testWeight": {
         "type": "keyword"
     },
-    "Fruit number per cluster": {
+    "fruitNumberPerCluster": {
         "type": "keyword"
     },
-    "Color of ripen fruit skin": {
+    "colorOfRipenFruitSkin": {
         "type": "keyword"
     },
-    "Seed size": {
+    "seedSize": {
         "type": "keyword"
     },
-    "Cracks": {
+    "cracks": {
         "type": "keyword"
     },
-    "Color before maturity": {
+    "colorBeforeMaturity": {
         "type": "keyword"
     },
-    "Color of fruit flesh": {
+    "colorOfFruitFlesh": {
         "type": "keyword"
     },
-    "No. of pods per plant": {
+    "noOfPodsPerPlant": {
         "type": "keyword"
     },
-    "Stem strength": {
+    "stemStrength": {
         "type": "keyword"
     },
-    "Grain type": {
+    "grainType": {
         "type": "keyword"
     },
-    "Pollen coloor": {
+    "pollenColoor": {
         "type": "keyword"
     },
-    "Panicle length": {
+    "panicleLength": {
         "type": "keyword"
     },
-    "Pungency": {
+    "pungency": {
         "type": "keyword"
     },
-    "Bulb yield (On research)": {
+    "bulbYieldOnResearch": {
         "type": "keyword"
     },
-    "Day to silking": {
+    "dayToSilking": {
         "type": "keyword"
     },
-    "Shelf life": {
+    "shelfLife": {
         "type": "keyword"
     },
-    "Leaf arrangement": {
+    "leafArrangement": {
         "type": "keyword"
     },
-    "Seed per pod": {
+    "seedPerPod": {
         "type": "keyword"
     },
-    "Seed shape": {
+    "seedShape": {
         "type": "keyword"
     },
-    "Bulb yield (on farm)": {
+    "bulbYieldOnFarm": {
         "type": "keyword"
     },
-    "Bulb size": {
+    "bulbSize": {
         "type": "keyword"
     },
-    "Bulb skin color": {
+    "bulbSkinColor": {
         "type": "keyword"
     },
-    "Cotyledon color": {
+    "cotyledonColor": {
         "type": "keyword"
     },
-    "Days to anthesis": {
+    "daysToAnthesis": {
         "type": "keyword"
     },
-    "Lodging tendency": {
+    "lodgingTendency": {
         "type": "keyword"
     },
-    "Planting season": {
+    "plantingSeason": {
         "type": "keyword"
     },
-    "days to harvest": {
+    "daysToHarvest": {
         "type": "keyword"
     },
-    "Leaf shape": {
+    "leafShape": {
         "type": "keyword"
     },
-    "Row type": {
+    "rowType": {
         "type": "keyword"
     },
-    "Stem and branching character": {
+    "stemAndBranchingCharacter": {
         "type": "keyword"
     },
-    "Fresh fruit yield": {
+    "freshFruitYield": {
         "type": "keyword"
     },
-    "Stem color": {
+    "stemColor": {
         "type": "keyword"
     },
-    "Average fruit weight": {
+    "averageFruitWeight": {
         "type": "keyword"
     },
-    "Leaf size": {
+    "leafSize": {
         "type": "keyword"
     },
-    "Oil yield": {
+    "oilYield": {
         "type": "keyword"
     },
-    "Pod color": {
+    "podColor": {
         "type": "keyword"
     },
-    "Tuber skin color": {
+    "tuberSkinColor": {
         "type": "keyword"
     },
-    "Average pod length": {
+    "averagePodLength": {
         "type": "keyword"
     },
-    "Bulb shape": {
+    "bulbShape": {
         "type": "keyword"
     },
-    "Days to 50% heading": {
+    "daysTo50Heading": {
         "type": "keyword"
     },
-    "Eye depth": {
+    "eyeDepth": {
         "type": "keyword"
     },
-    "Fruit qualty (Acceptability)": {
+    "fruitQualtyAcceptability": {
         "type": "keyword"
     },
-    "bulb flesh color": {
+    "bulbFleshColor": {
         "type": "keyword"
     },
-    "canopy diameter": {
+    "canopyDiameter": {
         "type": "keyword"
     },
-    "Days to 85% physiological maturity": {
+    "daysTo85PhysiologicalMaturity": {
         "type": "keyword"
     },
-    "Days to bulb maturity": {
+    "daysToBulbMaturity": {
         "type": "keyword"
     },
-    "Ear type": {
+    "earType": {
         "type": "keyword"
     },
-    "Fruit diameter": {
+    "fruitDiameter": {
         "type": "keyword"
     },
-    "Head shape": {
+    "headShape": {
         "type": "keyword"
     },
-    "Hectoliter weight": {
+    "hectoliterWeight": {
         "type": "keyword"
     },
-    "consumption category": {
+    "consumptionCategory": {
         "type": "keyword"
     },
-    "flesh color up on ripening": {
+    "fleshColorUpOnRipening": {
         "type": "keyword"
     },
-    "leaf apex shape": {
+    "leafApexShape": {
         "type": "keyword"
     },
-    "stipule shape": {
+    "stipuleShape": {
         "type": "keyword"
     },
-    "Average pod diameter": {
+    "averagePodDiameter": {
         "type": "keyword"
     },
-    "days from flowering to harvest": {
+    "daysFromFloweringToHarvest": {
         "type": "keyword"
     },
-    "Days to maturity for dry": {
+    "daysToMaturityForDry": {
         "type": "keyword"
     },
-    "Fruit color before maturity": {
+    "fruitColorBeforeMaturity": {
         "type": "keyword"
     },
-    "Hilum color": {
+    "hilumColor": {
         "type": "keyword"
     },
-    "Inflorescence compactness and shape": {
+    "inflorescenceCompactnessAndShape": {
         "type": "keyword"
     },
-    "leaf tip color": {
+    "leafTipColor": {
         "type": "keyword"
     },
-    "Seed shape and character": {
+    "seedShapeAndCharacter": {
         "type": "keyword"
     },
-    "Wet gluten": {
+    "wetGluten": {
         "type": "keyword"
     },
-    "Acceptability": {
+    "acceptability": {
         "type": "keyword"
     },
-    "Average green pod weight": {
+    "averageGreenPodWeight": {
         "type": "keyword"
     },
-    "chemical characteristics": {
+    "chemicalCharacteristics": {
         "type": "keyword"
     },
-    "Finger type": {
+    "fingerType": {
         "type": "keyword"
     },
-    "Fruit cluster per plant": {
+    "fruitClusterPerPlant": {
         "type": "keyword"
     },
-    "Fruit maturity for fresh use": {
+    "fruitMaturityForFreshUse": {
         "type": "keyword"
     },
-    "Head diameter": {
+    "headDiameter": {
         "type": "keyword"
     },
-    "Head length": {
+    "headLength": {
         "type": "keyword"
     },
-    "Leaf length": {
+    "leafLength": {
         "type": "keyword"
     },
     "ploidy": {
         "type": "keyword"
     },
-    "Average fruit length": {
+    "averageFruitLength": {
         "type": "keyword"
     },
-    "Bulb diameter": {
+    "bulbDiameter": {
         "type": "keyword"
     },
-    "date of initial flowering": {
+    "dateOfInitialFlowering": {
         "type": "keyword"
     },
-    "green pod yield": {
+    "greenPodYield": {
         "type": "keyword"
     },
-    "Leaf width": {
+    "leafWidth": {
         "type": "keyword"
     },
-    "No. of primary branch per plant": {
+    "noOfPrimaryBranchPerPlant": {
         "type": "keyword"
     },
-    "Plant canopy": {
+    "plantCanopy": {
         "type": "keyword"
     },
-    "Thresh ability": {
+    "threshAbility": {
         "type": "keyword"
     },
-    "Color at maturity": {
+    "colorAtMaturity": {
         "type": "keyword"
     },
-    "Dia": {
+    "dia": {
         "type": "keyword"
     },
-    "Dry pod yield": {
+    "dryPodYield": {
         "type": "keyword"
     },
-    "Fruit color": {
+    "fruitColor": {
         "type": "keyword"
     },
-    "Glutein": {
+    "glutein": {
         "type": "keyword"
     },
-    "Grain color": {
+    "grainColor": {
         "type": "keyword"
     },
-    "Head compactness": {
+    "headCompactness": {
         "type": "keyword"
     },
-    "Head weight": {
+    "headWeight": {
         "type": "keyword"
     },
-    "Len": {
+    "len": {
         "type": "keyword"
     },
-    "No. of fruit/ plant": {
+    "noOfFruitPlant": {
         "type": "keyword"
     },
-    "Oleoresin content": {
+    "oleoresinContent": {
         "type": "keyword"
     },
-    "organoleptixc preference": {
+    "organoleptixcPreference": {
         "type": "keyword"
     },
-    "Panicle appearance": {
+    "panicleAppearance": {
         "type": "keyword"
     },
-    "Shattering": {
+    "shattering": {
         "type": "keyword"
     },
-    "stem pigmentation": {
+    "stemPigmentation": {
         "type": "keyword"
     },
-    "Transplanting days in bed": {
+    "transplantingDaysInBed": {
         "type": "keyword"
     },
-    "Wt": {
+    "wt": {
         "type": "keyword"
     },
-    "Angle of insertion of prim. branches": {
+    "angleOfInsertionOfPrimBranches": {
         "type": "keyword"
     },
-    "Average head weight": {
+    "averageHeadWeight": {
         "type": "keyword"
     },
-    "Bulb firmness": {
+    "bulbFirmness": {
         "type": "keyword"
     },
-    "Bulb length": {
+    "bulbLength": {
         "type": "keyword"
     },
-    "Dry fruit yield": {
+    "dryFruitYield": {
         "type": "keyword"
     },
-    "Extract": {
+    "extract": {
         "type": "keyword"
     },
-    "Irrigation": {
+    "irrigation": {
         "type": "keyword"
     },
-    "No. grains per panicle": {
+    "noGrainsPerPanicle": {
         "type": "keyword"
     },
-    "Pubescence color": {
+    "pubescenceColor": {
         "type": "keyword"
     },
-    "Finger per ear": {
+    "fingerPerEar": {
         "type": "keyword"
     },
-    "Foliage color": {
+    "foliageColor": {
         "type": "keyword"
     },
-    "Fruit type": {
+    "fruitType": {
         "type": "keyword"
     },
-    "Head color": {
+    "headColor": {
         "type": "keyword"
     },
-    "Leaf height": {
+    "leafHeight": {
         "type": "keyword"
     },
-    "Leaf texture": {
+    "leafTexture": {
         "type": "keyword"
     },
-    "lint yield": {
+    "lintYield": {
         "type": "keyword"
     },
-    "Mature leaf color": {
+    "matureLeafColor": {
         "type": "keyword"
     },
-    "No of main stem nodes": {
+    "noOfMainStemNodes": {
         "type": "keyword"
     },
-    "principal use": {
+    "principalUse": {
         "type": "keyword"
     },
-    "Tillering": {
+    "tillering": {
         "type": "keyword"
     },
-    "Average bulb weight": {
+    "averageBulbWeight": {
         "type": "keyword"
     },
-    "calyx limp persistence": {
+    "calyxLimpPersistence": {
         "type": "keyword"
     },
-    "Cooking quality (minute)": {
+    "cookingQualityMinute": {
         "type": "keyword"
     },
-    "Cooking quality (Percent non-soakers)": {
+    "cookingQualityPercentNonSoakers": {
         "type": "keyword"
     },
-    "days till maturity": {
+    "daysTillMaturity": {
         "type": "keyword"
     },
-    "Ear attitude": {
+    "earAttitude": {
         "type": "keyword"
     },
-    "Ear/ Spike length": {
+    "earSpikeLength": {
         "type": "keyword"
     },
-    "Eye color": {
+    "eyeColor": {
         "type": "keyword"
     },
-    "Female flowering": {
+    "femaleFlowering": {
         "type": "keyword"
     },
-    "Fruit flesh taste": {
+    "fruitFleshTaste": {
         "type": "keyword"
     },
-    "Fruit shelf life": {
+    "fruitShelfLife": {
         "type": "keyword"
     },
-    "Fruit skin color": {
+    "fruitSkinColor": {
         "type": "keyword"
     },
-    "Girth": {
+    "girth": {
         "type": "keyword"
     },
-    "Growth pattern": {
+    "growthPattern": {
         "type": "keyword"
     },
-    "Leaf yield (DM)": {
+    "leafYieldDM": {
         "type": "keyword"
     },
-    "male flowering(tasseling)": {
+    "maleFloweringTasseling": {
         "type": "keyword"
     },
-    "No. of cloves per bulb": {
+    "noOfClovesPerBulb": {
         "type": "keyword"
     },
-    "Number of pods per plants": {
+    "numberOfPodsPerPlants": {
         "type": "keyword"
     },
-    "petal color": {
+    "petalColor": {
         "type": "keyword"
     },
-    "Plant length": {
+    "plantLength": {
         "type": "keyword"
     },
-    "Skin quality": {
+    "skinQuality": {
         "type": "keyword"
     },
-    "Years from nursery to first crop": {
+    "yearsFromNurseryToFirstCrop": {
         "type": "keyword"
     },
-    "Anthocyanin color of awn tips": {
+    "anthocyaninColorOfAwnTips": {
         "type": "keyword"
     },
-    "Anthocyanin color of flag leaf auricle": {
+    "anthocyaninColorOfFlagLeafAuricle": {
         "type": "keyword"
     },
-    "average fresh leaf weight": {
+    "averageFreshLeafWeight": {
         "type": "keyword"
     },
-    "Average head diameter": {
+    "averageHeadDiameter": {
         "type": "keyword"
     },
-    "Average no. of tillers": {
+    "averageNoOfTillers": {
         "type": "keyword"
     },
-    "Average pulp TSS (Brix)": {
+    "averagePulpTSSBrix": {
         "type": "keyword"
     },
-    "Boll bearing habit": {
+    "bollBearingHabit": {
         "type": "keyword"
     },
-    "Color of inner part": {
+    "colorOfInnerPart": {
         "type": "keyword"
     },
-    "date of initial boll opening": {
+    "dateOfInitialBollOpening": {
         "type": "keyword"
     },
-    "days to first picking": {
+    "daysToFirstPicking": {
         "type": "keyword"
     },
-    "Fiber quality parameter": {
+    "fiberQualityParameter": {
         "type": "keyword"
     },
-    "Fruit flesh color": {
+    "fruitFleshColor": {
         "type": "keyword"
     },
-    "Fruit length": {
+    "fruitLength": {
         "type": "keyword"
     },
-    "Fruit rind pattern": {
+    "fruitRindPattern": {
         "type": "keyword"
     },
-    "Grain husk": {
+    "grainHusk": {
         "type": "keyword"
     },
-    "Ground coverage": {
+    "groundCoverage": {
         "type": "keyword"
     },
-    "Head density": {
+    "headDensity": {
         "type": "keyword"
     },
-    "Head internal structure": {
+    "headInternalStructure": {
         "type": "keyword"
     },
-    "Leaf angel": {
+    "leafAngel": {
         "type": "keyword"
     },
-    "Leaf margins": {
+    "leafMargins": {
         "type": "keyword"
     },
-    "leaf number per plant": {
+    "leafNumberPerPlant": {
         "type": "keyword"
     },
-    "Leaf to stem ratio": {
+    "leafToStemRatio": {
         "type": "keyword"
     },
     "micronaire": {
         "type": "keyword"
     },
-    "Number of beranches": {
+    "numberOfBeranches": {
         "type": "keyword"
     },
-    "Over all quality (Cup)": {
+    "overAllQualityCup": {
         "type": "keyword"
     },
-    "Panicle form": {
+    "panicleForm": {
         "type": "keyword"
     },
-    "Petiole color": {
+    "petioleColor": {
         "type": "keyword"
     },
-    "Petiole length": {
+    "petioleLength": {
         "type": "keyword"
     },
-    "Ridges per fruit surface": {
+    "ridgesPerFruitSurface": {
         "type": "keyword"
     },
-    "Seed rate (Cutting/ha)": {
+    "seedRateCuttingHa": {
         "type": "keyword"
     },
-    "skin thicness": {
+    "skinThicness": {
         "type": "keyword"
     },
-    "Spike density": {
+    "spikeDensity": {
         "type": "keyword"
     },
-    "Storability": {
+    "storability": {
         "type": "keyword"
     },
-    "Suitability to shelling": {
+    "suitabilityToShelling": {
         "type": "keyword"
     },
-    "Zylenen Index": {
+    "zylenenIndex": {
         "type": "keyword"
     },
-    "Average fruit width": {
+    "averageFruitWidth": {
         "type": "keyword"
     },
-    "Color of tassel": {
+    "colorOfTassel": {
         "type": "keyword"
     },
-    "Density of tassel": {
+    "densityOfTassel": {
         "type": "keyword"
     },
-    "Flesh color": {
+    "fleshColor": {
         "type": "keyword"
     },
-    "Fruit color immature": {
+    "fruitColorImmature": {
         "type": "keyword"
     },
-    "Ginning outturn": {
+    "ginningOutturn": {
         "type": "keyword"
     },
-    "Head firmness": {
+    "headFirmness": {
         "type": "keyword"
     },
-    "Head inner part color": {
+    "headInnerPartColor": {
         "type": "keyword"
     },
-    "Leaf color (outer leaves)": {
+    "leafColorOuterLeaves": {
         "type": "keyword"
     },
-    "Leaf lobe number": {
+    "leafLobeNumber": {
         "type": "keyword"
     },
-    "Panicle type": {
+    "panicleType": {
         "type": "keyword"
     },
-    "planting material(No/ha)": {
+    "plantingMaterialNoHa": {
         "type": "keyword"
     },
-    "Planting method": {
+    "plantingMethod": {
         "type": "keyword"
     },
-    "population (trees)": {
+    "populationTrees": {
         "type": "keyword"
     },
     "propagation": {
         "type": "keyword"
     },
-    "Row number": {
+    "rowNumber": {
         "type": "keyword"
     },
-    "Soil pH": {
+    "soilPH": {
         "type": "keyword"
     },
-    "Special merits": {
+    "specialMerits": {
         "type": "keyword"
     },
-    "stalk juiciness": {
+    "stalkJuiciness": {
         "type": "keyword"
     },
-    "Storage root xcstics (root formation)": {
+    "storageRootXcsticsRootFormation": {
         "type": "keyword"
     },
-    "Angle between leaf blade": {
+    "angleBetweenLeafBlade": {
         "type": "keyword"
     },
-    "Auricle pigmentation": {
+    "auriclePigmentation": {
         "type": "keyword"
     },
-    "Average head length": {
+    "averageHeadLength": {
         "type": "keyword"
     },
-    "Boll prominence of tip": {
+    "bollProminenceOfTip": {
         "type": "keyword"
     },
-    "Branching index": {
+    "branchingIndex": {
         "type": "keyword"
     },
-    "central cavity diameter": {
+    "centralCavityDiameter": {
         "type": "keyword"
     },
-    "Color of anther": {
+    "colorOfAnther": {
         "type": "keyword"
     },
-    "Color of dried pod": {
+    "colorOfDriedPod": {
         "type": "keyword"
     },
-    "Color of sheath": {
+    "colorOfSheath": {
         "type": "keyword"
     },
-    "Days to initial heading": {
+    "daysToInitialHeading": {
         "type": "keyword"
     },
-    "Diameter of stem": {
+    "diameterOfStem": {
         "type": "keyword"
     },
-    "Dry calyx yield(g)": {
+    "dryCalyxYieldG": {
         "type": "keyword"
     },
-    "Ear shape": {
+    "earShape": {
         "type": "keyword"
     },
-    "Fiber": {
+    "fiber": {
         "type": "keyword"
     },
-    "fles fiber": {
+    "flesFiber": {
         "type": "keyword"
     },
-    "Flesh aroma": {
+    "fleshAroma": {
         "type": "keyword"
     },
-    "Flower presence": {
+    "flowerPresence": {
         "type": "keyword"
     },
-    "fresh calyx yield(g)/plant": {
+    "freshCalyxYieldGPlant": {
         "type": "keyword"
     },
-    "fresh calyx yield(kg/ha/harvest)": {
+    "freshCalyxYieldKgHaHarvest": {
         "type": "keyword"
     },
-    "Germination": {
+    "germination": {
         "type": "keyword"
     },
-    "Grain size (2.2 mm)": {
+    "grainSize22Mm": {
         "type": "keyword"
     },
-    "Hairiness on sheath": {
+    "hairinessOnSheath": {
         "type": "keyword"
     },
-    "leaf diameter": {
+    "leafDiameter": {
         "type": "keyword"
     },
-    "leaf maturity": {
+    "leafMaturity": {
         "type": "keyword"
     },
-    "leaf surface": {
+    "leafSurface": {
         "type": "keyword"
     },
-    "No of fruit per plant": {
+    "noOfFruitPerPlant": {
         "type": "keyword"
     },
-    "No of pedicle /axis": {
+    "noOfPedicleAxis": {
         "type": "keyword"
     },
-    "No of shoots": {
+    "noOfShoots": {
         "type": "keyword"
     },
-    "No. of storage root/plant": {
+    "noOfStorageRootPlant": {
         "type": "keyword"
     },
-    "Number of seeds per pod": {
+    "numberOfSeedsPerPod": {
         "type": "keyword"
     },
-    "Other uses": {
+    "otherUses": {
         "type": "keyword"
     },
-    "peak harvest period": {
+    "peakHarvestPeriod": {
         "type": "keyword"
     },
-    "pod height": {
+    "podHeight": {
         "type": "keyword"
     },
-    "Pod length": {
+    "podLength": {
         "type": "keyword"
     },
-    "pod shape": {
+    "podShape": {
         "type": "keyword"
     },
-    "Propagation method": {
+    "propagationMethod": {
         "type": "keyword"
     },
-    "Rind thicknews": {
+    "rindThicknews": {
         "type": "keyword"
     },
-    "Root cortex color": {
+    "rootCortexColor": {
         "type": "keyword"
     },
-    "Seedling vigor": {
+    "seedlingVigor": {
         "type": "keyword"
     },
-    "shape of apex": {
+    "shapeOfApex": {
         "type": "keyword"
     },
-    "shape of central cavity": {
+    "shapeOfCentralCavity": {
         "type": "keyword"
     },
-    "Sokability": {
+    "sokability": {
         "type": "keyword"
     },
-    "spines in leaf axil": {
+    "spinesInLeafAxil": {
         "type": "keyword"
     },
-    "Storage root xcstics (individual root weight)": {
+    "storageRootXcsticsIndividualRootWeight": {
         "type": "keyword"
     },
-    "Storage root xcstics (predominant root flesh color)": {
+    "storageRootXcsticsPredominantRootFleshColor": {
         "type": "keyword"
     },
-    "Storage root xcstics (predominant root skin color)": {
+    "storageRootXcsticsPredominantRootSkinColor": {
         "type": "keyword"
     },
-    "Storage root xcstics (root diameter)": {
+    "storageRootXcsticsRootDiameter": {
         "type": "keyword"
     },
-    "Storage root xcstics (root length)": {
+    "storageRootXcsticsRootLength": {
         "type": "keyword"
     },
-    "Storage root xcstics (root shape)": {
+    "storageRootXcsticsRootShape": {
         "type": "keyword"
     },
-    "Total energy": {
+    "totalEnergy": {
         "type": "keyword"
     },
-    "total root yield": {
+    "totalRootYield": {
         "type": "keyword"
     },
-    "Tuber maturity": {
+    "tuberMaturity": {
         "type": "keyword"
     },
-    "utilization information": {
+    "utilizationInformation": {
         "type": "keyword"
     },
-    "Vigor": {
+    "vigor": {
         "type": "keyword"
     },
-    "Yield (Dry leaf)": {
+    "yieldDryLeaf": {
         "type": "keyword"
     },
-    "Average ginning parcentage": {
+    "averageGinningParcentage": {
         "type": "keyword"
     },
-    "Average lint yield": {
+    "averageLintYield": {
         "type": "keyword"
     },
-    "Average seed cotton yield": {
+    "averageSeedCottonYield": {
         "type": "keyword"
     },
-    "Biomass yield": {
+    "biomassYield": {
         "type": "keyword"
     },
-    "Bolting tolerance": {
+    "boltingTolerance": {
         "type": "keyword"
     },
-    "Branching habit": {
+    "branchingHabit": {
         "type": "keyword"
     },
-    "Ca": {
+    "ca": {
         "type": "keyword"
     },
-    "Canopy width": {
+    "canopyWidth": {
         "type": "keyword"
     },
-    "Capsules per plant": {
+    "capsulesPerPlant": {
         "type": "keyword"
     },
-    "Carbohydrate content": {
+    "carbohydrateContent": {
         "type": "keyword"
     },
-    "Chaff color": {
+    "chaffColor": {
         "type": "keyword"
     },
-    "Color of silk": {
+    "colorOfSilk": {
         "type": "keyword"
     },
-    "crude fat": {
+    "crudeFat": {
         "type": "keyword"
     },
-    "crude proten": {
+    "crudeProten": {
         "type": "keyword"
     },
-    "days till 65% ball opending": {
+    "daysTill65BallOpending": {
         "type": "keyword"
     },
-    "Density of silk": {
+    "densityOfSilk": {
         "type": "keyword"
     },
-    "Fat content": {
+    "fatContent": {
         "type": "keyword"
     },
-    "fertilizer application method": {
+    "fertilizerApplicationMethod": {
         "type": "keyword"
     },
-    "Fooder quallty (Ash)": {
+    "fooderQualltyAsh": {
         "type": "keyword"
     },
-    "Fresh to dry leaf ratio": {
+    "freshToDryLeafRatio": {
         "type": "keyword"
     },
-    "Fruit pubescence": {
+    "fruitPubescence": {
         "type": "keyword"
     },
-    "Glume color": {
+    "glumeColor": {
         "type": "keyword"
     },
-    "Green leaf weight/plant": {
+    "greenLeafWeightPlant": {
         "type": "keyword"
     },
-    "Growing type": {
+    "growingType": {
         "type": "keyword"
     },
-    "Hydrogen cyanide content": {
+    "hydrogenCyanideContent": {
         "type": "keyword"
     },
-    "K": {
+    "k": {
         "type": "keyword"
     },
-    "Lamma awn barbs": {
+    "lammaAwnBarbs": {
         "type": "keyword"
     },
-    "Leaf color (inner leaves)": {
+    "leafColorInnerLeaves": {
         "type": "keyword"
     },
-    "Leaf no. per plant": {
+    "leafNoPerPlant": {
         "type": "keyword"
     },
-    "leaf of glum awn comp to kernel": {
+    "leafOfGlumAwnCompToKernel": {
         "type": "keyword"
     },
-    "Lemma color": {
+    "lemmaColor": {
         "type": "keyword"
     },
-    "Marketable bulb yield": {
+    "marketableBulbYield": {
         "type": "keyword"
     },
-    "marketable root yield": {
+    "marketableRootYield": {
         "type": "keyword"
     },
     "mulching": {
         "type": "keyword"
     },
-    "Net blotch": {
+    "netBlotch": {
         "type": "keyword"
     },
-    "Nicotine content": {
+    "nicotineContent": {
         "type": "keyword"
     },
-    "Number of fruit/cluster": {
+    "numberOfFruitCluster": {
         "type": "keyword"
     },
-    "Number of root per plant": {
+    "numberOfRootPerPlant": {
         "type": "keyword"
     },
-    "Number of sucker": {
+    "numberOfSucker": {
         "type": "keyword"
     },
-    "oil quality": {
+    "oilQuality": {
         "type": "keyword"
     },
-    "Other unique character": {
+    "otherUniqueCharacter": {
         "type": "keyword"
     },
-    "Petiole orientation": {
+    "petioleOrientation": {
         "type": "keyword"
     },
-    "pollination method": {
+    "pollinationMethod": {
         "type": "keyword"
     },
-    "proportion of cracked roots": {
+    "proportionOfCrackedRoots": {
         "type": "keyword"
     },
-    "proportion of forked roots": {
+    "proportionOfForkedRoots": {
         "type": "keyword"
     },
-    "proportion of hairy roots": {
+    "proportionOfHairyRoots": {
         "type": "keyword"
     },
-    "proportion of small size roots": {
+    "proportionOfSmallSizeRoots": {
         "type": "keyword"
     },
-    "proportion of twisted roots": {
+    "proportionOfTwistedRoots": {
         "type": "keyword"
     },
-    "Rain fall": {
+    "rainFall": {
         "type": "keyword"
     },
-    "recommended shade tree": {
+    "recommendedShadeTree": {
         "type": "keyword"
     },
-    "Rhizome weight": {
+    "rhizomeWeight": {
         "type": "keyword"
     },
-    "root color": {
+    "rootColor": {
         "type": "keyword"
     },
-    "Root core diameter": {
+    "rootCoreDiameter": {
         "type": "keyword"
     },
-    "Root flesh color": {
+    "rootFleshColor": {
         "type": "keyword"
     },
-    "Root length": {
+    "rootLength": {
         "type": "keyword"
     },
-    "Root size and variablity": {
+    "rootSizeAndVariablity": {
         "type": "keyword"
     },
-    "Root weight": {
+    "rootWeight": {
         "type": "keyword"
     },
-    "Rooted cutting": {
+    "rootedCutting": {
         "type": "keyword"
     },
-    "Row spacing": {
+    "rowSpacing": {
         "type": "keyword"
     },
     "scald": {
         "type": "keyword"
     },
-    "seed yield": {
+    "seedYield": {
         "type": "keyword"
     },
-    "shade level requirement": {
+    "shadeLevelRequirement": {
         "type": "keyword"
     },
-    "spacing b/n plants": {
+    "spacingBNPlants": {
         "type": "keyword"
     },
-    "Starch content": {
+    "starchContent": {
         "type": "keyword"
     },
-    "stem/sheath": {
+    "stemSheath": {
         "type": "keyword"
     },
-    "Sugar content": {
+    "sugarContent": {
         "type": "keyword"
     },
-    "Taste": {
+    "taste": {
         "type": "keyword"
     },
-    "Tuber branching": {
+    "tuberBranching": {
         "type": "keyword"
     },
-    "Tuber surface texture": {
+    "tuberSurfaceTexture": {
         "type": "keyword"
     },
-    "upper Half Mean length": {
+    "upperHalfMeanLength": {
         "type": "keyword"
     },
     "valinin": {
         "type": "keyword"
     },
-    "Vine color": {
+    "vineColor": {
         "type": "keyword"
     },
-    "Vine length": {
+    "vineLength": {
         "type": "keyword"
     },
-    "Yield (Green leaf)": {
+    "yieldGreenLeaf": {
         "type": "keyword"
     }
 }
