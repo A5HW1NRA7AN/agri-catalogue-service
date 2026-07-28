@@ -163,7 +163,7 @@ class CreateRegistry:
                     "description": f"description about {self.camel}Id"
                 }
             },
-            "required": [f"{self.regular} Id"]
+            "required": [f"{self.camel}Id"]
         }
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w") as f:
@@ -176,7 +176,10 @@ class CreateRegistry:
             log_skipped(f"{rel_path(output_path)} already exists.")
             return
         es_required_fields = {
-            f"{self.camel}Id": {"type": "keyword"}
+            f"{self.camel}Id": {"type": "keyword"},
+            "status": {"type": "keyword"},
+            "createdOn": {"type": "date"},
+            "updatedOn": {"type": "date"}
         }
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w") as f:

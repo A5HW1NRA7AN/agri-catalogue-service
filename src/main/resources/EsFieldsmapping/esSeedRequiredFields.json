@@ -1,5 +1,14 @@
 {
     "seedId": {
         "type": "keyword"
+    },
+    "status": {
+        "type": "keyword"
+    },
+    "createdOn": {
+        "type": "date"
+    },
+    "updatedOn": {
+        "type": "date"
     }
 }

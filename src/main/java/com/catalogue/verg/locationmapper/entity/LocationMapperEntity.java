@@ -1,4 +1,4 @@
-package com.catalogue.verg.location.entity;
+package com.catalogue.verg.locationmapper.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -19,11 +19,11 @@ import org.hibernate.annotations.Type;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "location")
+@Table(name = "locationmapper")
 @Entity
-public class LocationEntity {
+public class LocationMapperEntity {
     @Id
-    private String locationId;
+    private String locationMapperId;
 
     @Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb")

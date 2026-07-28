@@ -18,11 +18,25 @@ public class VergProperties {
         @Value("${search.string.max.regex.length}")
         private int searchStringMaxRegexLength;
 
-        @Value("${elastic.required.field.sample.json.path}")
-        private String elasticSampleJsonPath;
+
+        @Value("${elastic.required.field.locationmapper.json.path}")
+        private String elasticLocationMapperJsonPath;
+    
+        @Value("${elastic.required.field.locationobject.json.path}")
+        private String elasticLocationObjectJsonPath;
     
         @Value("${elastic.required.field.seed.json.path}")
         private String elasticSeedJsonPath;
+    
+        @Value("${elastic.required.field.croptype.json.path}")
+        private String elasticCroptypeJsonPath;
+    
+        @Value("${elastic.required.field.cropcategory.json.path}")
+        private String elasticCropcategoryJsonPath;
+    
+        @Value("${elastic.required.field.cropvariety.json.path}")
+        private String elasticCropvarietyJsonPath;
+    
         @Value("${elastic.required.field.livestock.json.path}")
         private String elasticLivestockJsonPath;
     
@@ -43,18 +57,6 @@ public class VergProperties {
     
         @Value("${elastic.required.field.fertilizer.json.path}")
         private String elasticFertilizerJsonPath;
-    
-        @Value("${elastic.required.field.location.json.path}")
-        private String elasticLocationJsonPath;
-    
-        @Value("${elastic.required.field.croptype.json.path}")
-        private String elasticCroptypeJsonPath;
-    
-        @Value("${elastic.required.field.cropcategory.json.path}")
-        private String elasticCropcategoryJsonPath;
-    
-        @Value("${elastic.required.field.cropvariety.json.path}")
-        private String elasticCropvarietyJsonPath;
     
         @Value("${elastic.required.field.marketplace.json.path}")
         private String elasticMarketPlaceJsonPath;

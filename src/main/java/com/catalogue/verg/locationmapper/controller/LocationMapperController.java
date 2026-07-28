@@ -1,9 +1,9 @@
-package com.catalogue.verg.location.controller;
+package com.catalogue.verg.locationmapper.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.catalogue.verg.core.dto.CustomResponse;
 import com.catalogue.verg.core.elasticsearch.dto.SearchCriteria;
-import com.catalogue.verg.location.service.LocationService;
+import com.catalogue.verg.locationmapper.service.LocationMapperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,38 +11,38 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/location")
-public class LocationController {
+@RequestMapping("/locationmapper")
+public class LocationMapperController {
     @Autowired
-    private LocationService locationService;
+    private LocationMapperService locationMapperService;
 
     @PostMapping("/v1/create")
-    public ResponseEntity<CustomResponse> create(@RequestBody JsonNode locationDetails) {
-        CustomResponse response = locationService.createLocation(locationDetails);
+    public ResponseEntity<CustomResponse> create(@RequestBody JsonNode locationMapperDetails) {
+        CustomResponse response = locationMapperService.createLocationMapper(locationMapperDetails);
         return new ResponseEntity<>(response, response.getResponseCode());
     }
 
     @PostMapping("/v1/search")
     public ResponseEntity<?> search(@RequestBody SearchCriteria searchCriteria) {
-        CustomResponse response = locationService.searchLocation(searchCriteria);
+        CustomResponse response = locationMapperService.searchLocationMapper(searchCriteria);
         return new ResponseEntity<>(response, response.getResponseCode());
     }
 
     @GetMapping("/v1/read/{id}")
     public ResponseEntity<?> read(@PathVariable String id) {
-        CustomResponse response = locationService.read(id);
+        CustomResponse response = locationMapperService.read(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/v1/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable String id) {
-        CustomResponse response = locationService.delete(id);
+        CustomResponse response = locationMapperService.delete(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/v1/import")
     public ResponseEntity<CustomResponse> importData(@RequestParam("file") MultipartFile file) {
-        CustomResponse response = locationService.importData(file);
+        CustomResponse response = locationMapperService.importData(file);
         return new ResponseEntity<>(response, response.getResponseCode());
     }
 }

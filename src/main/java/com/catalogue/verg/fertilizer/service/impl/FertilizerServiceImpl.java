@@ -10,12 +10,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.catalogue.verg.core.cache.CacheService;
 import com.catalogue.verg.core.dto.CustomResponse;
+import com.catalogue.verg.core.dto.LifecycleRequest;
 import com.catalogue.verg.core.dto.RespParam;
 import com.catalogue.verg.core.elasticsearch.dto.SearchCriteria;
 import com.catalogue.verg.core.elasticsearch.dto.SearchResult;
 import com.catalogue.verg.core.elasticsearch.service.ESUtilService;
 import com.catalogue.verg.core.exception.CustomException;
 import com.catalogue.verg.core.util.Constants;
+import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
@@ -38,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -94,15 +97,13 @@ public class FertilizerServiceImpl implements FertilizerService {
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             fertilizerEntity1.setCreatedOn(currentTime);
             fertilizerEntity1.setUpdatedOn(currentTime);
-            fertilizerEntity1.setStatus(Constants.ACTIVE);
+            fertilizerEntity1.setStatus(Constants.PENDING);
             fertilizerEntity1.setData(fertilizerEntity);
 
             fertilizerRepository.save(fertilizerEntity1);
 
             log.info("FertilizerServiceImpl::createFertilizer::persisted fertilizer in postgres");
-            ObjectNode jsonNode = objectMapper.createObjectNode();
-//            jsonNode.put("status", Constants.ACTIVE);
-            jsonNode.setAll((ObjectNode) fertilizerEntity);
+            ObjectNode jsonNode = buildDocument(fertilizerEntity, Constants.PENDING, currentTime, currentTime);
             Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
             esUtilService.addDocument(Constants.FERTILIZER_INDEX_NAME, Constants.INDEX_TYPE,
                     String.valueOf(primaryID), map, vergProperties.getElasticFertilizerJsonPath());
@@ -182,14 +183,17 @@ public class FertilizerServiceImpl implements FertilizerService {
                 Optional<FertilizerEntity> entityOptional = fertilizerRepository.findById(id);
                 if (entityOptional.isPresent()) {
                     FertilizerEntity fertilizerEntity = entityOptional.get();
-                    cacheService.putCache(id, fertilizerEntity.getData());
+                    ObjectNode jsonNode = buildDocument(fertilizerEntity.getData(),
+                            fertilizerEntity.getStatus(), fertilizerEntity.getCreatedOn(),
+                            fertilizerEntity.getUpdatedOn());
+                    cacheService.putCache(id, jsonNode);
                     log.info("FertilizerServiceImpl::read:Record coming from postgres db");
                     response.setMessage(Constants.SUCCESSFULLY_READING);
                     response
                             .getResult()
                             .put(Constants.RESULT,
                                     objectMapper.convertValue(
-                                            fertilizerEntity.getData(), new TypeReference<Object>() {
+                                            jsonNode, new TypeReference<Object>() {
                                             }));
                 } else {
                     response.setResponseCode(HttpStatus.NOT_FOUND);
@@ -201,6 +205,75 @@ public class FertilizerServiceImpl implements FertilizerService {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
+    }
+
+    @Override
+    public CustomResponse updateFertilizer(String id, JsonNode fertilizerEntity) {
+        log.info("FertilizerServiceImpl::updateFertilizer:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+
+        // Validate that the ID is not null or empty
+        if (StringUtils.isEmpty(id)) {
+            log.warn("FertilizerServiceImpl::updateFertilizer:id is null or empty");
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+
+        // Validate the incoming payload against the entity schema (same as create)
+        payloadValidation.validatePayload(Constants.FERTILIZER_VALIDATION_FILE_JSON, fertilizerEntity);
+        log.debug("FertilizerServiceImpl::updateFertilizer:validated the payload");
+
+        try {
+            // Check if the entity exists in the database
+            Optional<FertilizerEntity> entityOptional = fertilizerRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                log.warn("FertilizerServiceImpl::updateFertilizer:no record found for id: {}", id);
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+
+            FertilizerEntity fertilizerEntity1 = entityOptional.get();
+
+            // Reject updates on soft-deleted (DELETED) records
+            if (Constants.DELETED.equals(fertilizerEntity1.getStatus())) {
+                log.warn("FertilizerServiceImpl::updateFertilizer:record already deleted for id: {}", id);
+                response.setResponseCode(HttpStatus.BAD_REQUEST);
+                response.setMessage("Record is already deleted");
+                return response;
+            }
+
+            // Replace payload; preserve id / createdOn / status, bump updatedOn
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            fertilizerEntity1.setData(fertilizerEntity);
+            fertilizerEntity1.setUpdatedOn(currentTime);
+            fertilizerRepository.save(fertilizerEntity1);
+            log.info("FertilizerServiceImpl::updateFertilizer:updated record in postgres for id: {}", id);
+
+            // Re-index the document in Elasticsearch (filtered to whitelisted fields)
+            ObjectNode jsonNode = buildDocument(fertilizerEntity, fertilizerEntity1.getStatus(),
+                    fertilizerEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.FERTILIZER_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticFertilizerJsonPath());
+            log.info("FertilizerServiceImpl::updateFertilizer:updated document in elasticsearch for id: {}", id);
+
+            // Refresh the Redis cache
+            cacheService.putCache(id, jsonNode);
+            log.info("FertilizerServiceImpl::updateFertilizer:refreshed cache for id: {}", id);
+
+            map.put(Constants.FERTILIZER_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+
+        } catch (Exception e) {
+            log.error("FertilizerServiceImpl::updateFertilizer:error while updating record for id: {}", id, e);
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
@@ -228,16 +301,16 @@ public class FertilizerServiceImpl implements FertilizerService {
 
             FertilizerEntity fertilizerEntity = entityOptional.get();
 
-            // Check if the entity is already deleted (soft-deleted)
-            if (Constants.IN_ACTIVE.equals(fertilizerEntity.getStatus())) {
+            // Check if the entity is already deleted
+            if (Constants.DELETED.equals(fertilizerEntity.getStatus())) {
                 log.warn("FertilizerServiceImpl::delete:record already deleted for id: {}", id);
                 response.setResponseCode(HttpStatus.BAD_REQUEST);
                 response.setMessage("Record is already deleted");
                 return response;
             }
 
-            // Soft delete: update the status to INACTIVE and set updatedOn timestamp
-            fertilizerEntity.setStatus(Constants.IN_ACTIVE);
+            // Soft delete: mark the status DELETED and set updatedOn timestamp
+            fertilizerEntity.setStatus(Constants.DELETED);
             fertilizerEntity.setUpdatedOn(new Timestamp(System.currentTimeMillis()));
             fertilizerRepository.save(fertilizerEntity);
             log.info("FertilizerServiceImpl::delete:soft deleted record in postgres for id: {}", id);
@@ -269,6 +342,240 @@ public class FertilizerServiceImpl implements FertilizerService {
                 Constants.FERTILIZER_VALIDATION_FILE_JSON,
                 this::createFertilizer
         );
+    }
+
+    @Override
+    public CustomResponse draftFertilizer(JsonNode fertilizerEntity) {
+        log.info("FertilizerServiceImpl::draftFertilizer:entered the method: " + fertilizerEntity);
+        CustomResponse response = new CustomResponse();
+        // Relaxed validation: types/structure enforced, but required fields may be missing
+        payloadValidation.validatePayloadRelaxed(Constants.FERTILIZER_VALIDATION_FILE_JSON, fertilizerEntity);
+        log.debug("FertilizerServiceImpl::draftFertilizer:validated the payload (relaxed)");
+        try {
+            FertilizerEntity fertilizerEntity1 = new FertilizerEntity();
+            String primaryID = primaryKeyUtil.generateKey(Constants.FERTILIZER_VALIDATION_FILE_JSON);
+            fertilizerEntity1.setFertilizerId(primaryID);
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            fertilizerEntity1.setCreatedOn(currentTime);
+            fertilizerEntity1.setUpdatedOn(currentTime);
+            fertilizerEntity1.setStatus(Constants.DRAFT);
+            fertilizerEntity1.setData(fertilizerEntity);
+
+            fertilizerRepository.save(fertilizerEntity1);
+            log.info("FertilizerServiceImpl::draftFertilizer::persisted draft in postgres");
+
+            ObjectNode jsonNode = buildDocument(fertilizerEntity, Constants.DRAFT, currentTime, currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.addDocument(Constants.FERTILIZER_INDEX_NAME, Constants.INDEX_TYPE,
+                    String.valueOf(primaryID), map, vergProperties.getElasticFertilizerJsonPath());
+            cacheService.putCache(primaryID, jsonNode);
+            map.put(Constants.FERTILIZER_ID_RQST, primaryID);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_CREATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse addFertilizer(String id, JsonNode fertilizerEntity) {
+        log.info("FertilizerServiceImpl::addFertilizer:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+        if (StringUtils.isEmpty(id)) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        // Full validation: all required fields must be present to submit for approval
+        payloadValidation.validatePayload(Constants.FERTILIZER_VALIDATION_FILE_JSON, fertilizerEntity);
+        log.debug("FertilizerServiceImpl::addFertilizer:validated the payload");
+        try {
+            Optional<FertilizerEntity> entityOptional = fertilizerRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            FertilizerEntity fertilizerEntity1 = entityOptional.get();
+            // Only DRAFT or REWORK records can be (re-)submitted for approval
+            if (!LifecycleUtil.ADD_PROMOTABLE.contains(fertilizerEntity1.getStatus())) {
+                log.warn("FertilizerServiceImpl::addFertilizer:record {} not in DRAFT/REWORK (status={})",
+                        id, fertilizerEntity1.getStatus());
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            fertilizerEntity1.setData(fertilizerEntity);
+            fertilizerEntity1.setStatus(Constants.PENDING);
+            fertilizerEntity1.setUpdatedOn(currentTime);
+            fertilizerRepository.save(fertilizerEntity1);
+            log.info("FertilizerServiceImpl::addFertilizer:submitted record {} for approval (PENDING)", id);
+
+            ObjectNode jsonNode = buildDocument(fertilizerEntity, Constants.PENDING,
+                    fertilizerEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.FERTILIZER_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticFertilizerJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.FERTILIZER_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse approveFertilizer(LifecycleRequest request) {
+        log.info("FertilizerServiceImpl::approveFertilizer:entered the method");
+        return transitionStatus(request, LifecycleUtil.APPROVE_FROM, LifecycleUtil.APPROVE_TARGETS);
+    }
+
+    @Override
+    public CustomResponse reviewFertilizer(LifecycleRequest request) {
+        log.info("FertilizerServiceImpl::reviewFertilizer:entered the method");
+        return transitionStatus(request, LifecycleUtil.REVIEW_FROM, LifecycleUtil.REVIEW_TARGETS);
+    }
+
+    @Override
+    public CustomResponse toggleStatus(String id) {
+        log.info("FertilizerServiceImpl::toggleStatus:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+        if (StringUtils.isEmpty(id)) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        try {
+            Optional<FertilizerEntity> entityOptional = fertilizerRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            FertilizerEntity fertilizerEntity1 = entityOptional.get();
+            String currentStatus = fertilizerEntity1.getStatus();
+            String newStatus;
+            if (Constants.ACTIVE.equals(currentStatus)) {
+                newStatus = Constants.IN_ACTIVE;
+            } else if (Constants.IN_ACTIVE.equals(currentStatus)) {
+                newStatus = Constants.ACTIVE;
+            } else {
+                // Only a published (ACTIVE) or deactivated (INACTIVE) record can be toggled
+                log.warn("FertilizerServiceImpl::toggleStatus:record {} is {}, can only toggle ACTIVE<->INACTIVE",
+                        id, currentStatus);
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            fertilizerEntity1.setStatus(newStatus);
+            fertilizerEntity1.setUpdatedOn(currentTime);
+            fertilizerRepository.save(fertilizerEntity1);
+            log.info("FertilizerServiceImpl::toggleStatus:record {} toggled {} -> {}", id, currentStatus, newStatus);
+
+            ObjectNode jsonNode = buildDocument(fertilizerEntity1.getData(), newStatus,
+                    fertilizerEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.FERTILIZER_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticFertilizerJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.FERTILIZER_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Shared status-transition logic for approve/review. Validates the id and requested target status,
+     * enforces the required current status, then persists the new status to Postgres, ES and Redis.
+     */
+    private CustomResponse transitionStatus(LifecycleRequest request, String requiredCurrentStatus,
+                                            Set<String> allowedTargets) {
+        CustomResponse response = new CustomResponse();
+        if (request == null || StringUtils.isEmpty(request.getId())) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        String id = request.getId();
+        String targetStatus = LifecycleUtil.normalizeTarget(request.getStatus());
+        if (targetStatus == null || !allowedTargets.contains(targetStatus)) {
+            log.warn("FertilizerServiceImpl::transitionStatus:invalid target status '{}' for id {}",
+                    request.getStatus(), id);
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.INVALID_STATUS);
+            return response;
+        }
+        try {
+            Optional<FertilizerEntity> entityOptional = fertilizerRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            FertilizerEntity fertilizerEntity1 = entityOptional.get();
+            if (!requiredCurrentStatus.equals(fertilizerEntity1.getStatus())) {
+                log.warn("FertilizerServiceImpl::transitionStatus:record {} is {}, requires {}",
+                        id, fertilizerEntity1.getStatus(), requiredCurrentStatus);
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            fertilizerEntity1.setStatus(targetStatus);
+            fertilizerEntity1.setUpdatedOn(currentTime);
+            fertilizerRepository.save(fertilizerEntity1);
+            log.info("FertilizerServiceImpl::transitionStatus:record {} moved {} -> {}",
+                    id, requiredCurrentStatus, targetStatus);
+
+            ObjectNode jsonNode = buildDocument(fertilizerEntity1.getData(), targetStatus,
+                    fertilizerEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.FERTILIZER_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticFertilizerJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.FERTILIZER_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Builds the projection stored in Elasticsearch and Redis (and returned by read): the payload
+     * plus the lifecycle status and the Postgres createdOn/updatedOn timestamps (ISO-8601). ES keeps
+     * only whitelisted keys, so status/createdOn/updatedOn must be present in esFertilizerRequiredFields.json.
+     */
+    private ObjectNode buildDocument(JsonNode data, String status, Timestamp createdOn, Timestamp updatedOn) {
+        ObjectNode node = objectMapper.createObjectNode();
+        if (data != null && data.isObject()) {
+            node.setAll((ObjectNode) data);
+        }
+        node.put(Constants.STATUS, status);
+        if (createdOn != null) {
+            node.put(Constants.CREATED_ON, createdOn.toInstant().toString());
+        }
+        if (updatedOn != null) {
+            node.put(Constants.UPDATED_ON, updatedOn.toInstant().toString());
+        }
+        return node;
     }
 
     public void createSuccessResponse(CustomResponse response) {

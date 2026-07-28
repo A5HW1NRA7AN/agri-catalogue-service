@@ -16,5 +16,14 @@
     },
     "endDay": {
         "type": "integer"
+    },
+    "status": {
+        "type": "keyword"
+    },
+    "createdOn": {
+        "type": "date"
+    },
+    "updatedOn": {
+        "type": "date"
     }
 }

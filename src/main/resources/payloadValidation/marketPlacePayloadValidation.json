@@ -7,7 +7,7 @@
             "prefix": "marketplace-",
             "key": "Primary",
             "keyLength": 12,
-            "description": "description about marketPlaceId"
+            "description": "market place prefix"
         },
         "region": {
             "type": "string",

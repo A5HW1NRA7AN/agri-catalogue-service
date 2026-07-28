@@ -10,12 +10,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.catalogue.verg.core.cache.CacheService;
 import com.catalogue.verg.core.dto.CustomResponse;
+import com.catalogue.verg.core.dto.LifecycleRequest;
 import com.catalogue.verg.core.dto.RespParam;
 import com.catalogue.verg.core.elasticsearch.dto.SearchCriteria;
 import com.catalogue.verg.core.elasticsearch.dto.SearchResult;
 import com.catalogue.verg.core.elasticsearch.service.ESUtilService;
 import com.catalogue.verg.core.exception.CustomException;
 import com.catalogue.verg.core.util.Constants;
+import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
@@ -38,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -94,15 +97,13 @@ public class PesticideServiceImpl implements PesticideService {
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             pesticideEntity1.setCreatedOn(currentTime);
             pesticideEntity1.setUpdatedOn(currentTime);
-            pesticideEntity1.setStatus(Constants.ACTIVE);
+            pesticideEntity1.setStatus(Constants.PENDING);
             pesticideEntity1.setData(pesticideEntity);
 
             pesticideRepository.save(pesticideEntity1);
 
             log.info("PesticideServiceImpl::createPesticide::persisted pesticide in postgres");
-            ObjectNode jsonNode = objectMapper.createObjectNode();
-//            jsonNode.put("status", Constants.ACTIVE);
-            jsonNode.setAll((ObjectNode) pesticideEntity);
+            ObjectNode jsonNode = buildDocument(pesticideEntity, Constants.PENDING, currentTime, currentTime);
             Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
             esUtilService.addDocument(Constants.PESTICIDE_INDEX_NAME, Constants.INDEX_TYPE,
                     String.valueOf(primaryID), map, vergProperties.getElasticPesticideJsonPath());
@@ -182,14 +183,17 @@ public class PesticideServiceImpl implements PesticideService {
                 Optional<PesticideEntity> entityOptional = pesticideRepository.findById(id);
                 if (entityOptional.isPresent()) {
                     PesticideEntity pesticideEntity = entityOptional.get();
-                    cacheService.putCache(id, pesticideEntity.getData());
+                    ObjectNode jsonNode = buildDocument(pesticideEntity.getData(),
+                            pesticideEntity.getStatus(), pesticideEntity.getCreatedOn(),
+                            pesticideEntity.getUpdatedOn());
+                    cacheService.putCache(id, jsonNode);
                     log.info("PesticideServiceImpl::read:Record coming from postgres db");
                     response.setMessage(Constants.SUCCESSFULLY_READING);
                     response
                             .getResult()
                             .put(Constants.RESULT,
                                     objectMapper.convertValue(
-                                            pesticideEntity.getData(), new TypeReference<Object>() {
+                                            jsonNode, new TypeReference<Object>() {
                                             }));
                 } else {
                     response.setResponseCode(HttpStatus.NOT_FOUND);
@@ -201,6 +205,75 @@ public class PesticideServiceImpl implements PesticideService {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
+    }
+
+    @Override
+    public CustomResponse updatePesticide(String id, JsonNode pesticideEntity) {
+        log.info("PesticideServiceImpl::updatePesticide:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+
+        // Validate that the ID is not null or empty
+        if (StringUtils.isEmpty(id)) {
+            log.warn("PesticideServiceImpl::updatePesticide:id is null or empty");
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+
+        // Validate the incoming payload against the entity schema (same as create)
+        payloadValidation.validatePayload(Constants.PESTICIDE_VALIDATION_FILE_JSON, pesticideEntity);
+        log.debug("PesticideServiceImpl::updatePesticide:validated the payload");
+
+        try {
+            // Check if the entity exists in the database
+            Optional<PesticideEntity> entityOptional = pesticideRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                log.warn("PesticideServiceImpl::updatePesticide:no record found for id: {}", id);
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+
+            PesticideEntity pesticideEntity1 = entityOptional.get();
+
+            // Reject updates on soft-deleted (DELETED) records
+            if (Constants.DELETED.equals(pesticideEntity1.getStatus())) {
+                log.warn("PesticideServiceImpl::updatePesticide:record already deleted for id: {}", id);
+                response.setResponseCode(HttpStatus.BAD_REQUEST);
+                response.setMessage("Record is already deleted");
+                return response;
+            }
+
+            // Replace payload; preserve id / createdOn / status, bump updatedOn
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            pesticideEntity1.setData(pesticideEntity);
+            pesticideEntity1.setUpdatedOn(currentTime);
+            pesticideRepository.save(pesticideEntity1);
+            log.info("PesticideServiceImpl::updatePesticide:updated record in postgres for id: {}", id);
+
+            // Re-index the document in Elasticsearch (filtered to whitelisted fields)
+            ObjectNode jsonNode = buildDocument(pesticideEntity, pesticideEntity1.getStatus(),
+                    pesticideEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.PESTICIDE_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticPesticideJsonPath());
+            log.info("PesticideServiceImpl::updatePesticide:updated document in elasticsearch for id: {}", id);
+
+            // Refresh the Redis cache
+            cacheService.putCache(id, jsonNode);
+            log.info("PesticideServiceImpl::updatePesticide:refreshed cache for id: {}", id);
+
+            map.put(Constants.PESTICIDE_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+
+        } catch (Exception e) {
+            log.error("PesticideServiceImpl::updatePesticide:error while updating record for id: {}", id, e);
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
@@ -228,16 +301,16 @@ public class PesticideServiceImpl implements PesticideService {
 
             PesticideEntity pesticideEntity = entityOptional.get();
 
-            // Check if the entity is already deleted (soft-deleted)
-            if (Constants.IN_ACTIVE.equals(pesticideEntity.getStatus())) {
+            // Check if the entity is already deleted
+            if (Constants.DELETED.equals(pesticideEntity.getStatus())) {
                 log.warn("PesticideServiceImpl::delete:record already deleted for id: {}", id);
                 response.setResponseCode(HttpStatus.BAD_REQUEST);
                 response.setMessage("Record is already deleted");
                 return response;
             }
 
-            // Soft delete: update the status to INACTIVE and set updatedOn timestamp
-            pesticideEntity.setStatus(Constants.IN_ACTIVE);
+            // Soft delete: mark the status DELETED and set updatedOn timestamp
+            pesticideEntity.setStatus(Constants.DELETED);
             pesticideEntity.setUpdatedOn(new Timestamp(System.currentTimeMillis()));
             pesticideRepository.save(pesticideEntity);
             log.info("PesticideServiceImpl::delete:soft deleted record in postgres for id: {}", id);
@@ -269,6 +342,240 @@ public class PesticideServiceImpl implements PesticideService {
                 Constants.PESTICIDE_VALIDATION_FILE_JSON,
                 this::createPesticide
         );
+    }
+
+    @Override
+    public CustomResponse draftPesticide(JsonNode pesticideEntity) {
+        log.info("PesticideServiceImpl::draftPesticide:entered the method: " + pesticideEntity);
+        CustomResponse response = new CustomResponse();
+        // Relaxed validation: types/structure enforced, but required fields may be missing
+        payloadValidation.validatePayloadRelaxed(Constants.PESTICIDE_VALIDATION_FILE_JSON, pesticideEntity);
+        log.debug("PesticideServiceImpl::draftPesticide:validated the payload (relaxed)");
+        try {
+            PesticideEntity pesticideEntity1 = new PesticideEntity();
+            String primaryID = primaryKeyUtil.generateKey(Constants.PESTICIDE_VALIDATION_FILE_JSON);
+            pesticideEntity1.setPesticideId(primaryID);
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            pesticideEntity1.setCreatedOn(currentTime);
+            pesticideEntity1.setUpdatedOn(currentTime);
+            pesticideEntity1.setStatus(Constants.DRAFT);
+            pesticideEntity1.setData(pesticideEntity);
+
+            pesticideRepository.save(pesticideEntity1);
+            log.info("PesticideServiceImpl::draftPesticide::persisted draft in postgres");
+
+            ObjectNode jsonNode = buildDocument(pesticideEntity, Constants.DRAFT, currentTime, currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.addDocument(Constants.PESTICIDE_INDEX_NAME, Constants.INDEX_TYPE,
+                    String.valueOf(primaryID), map, vergProperties.getElasticPesticideJsonPath());
+            cacheService.putCache(primaryID, jsonNode);
+            map.put(Constants.PESTICIDE_ID_RQST, primaryID);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_CREATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse addPesticide(String id, JsonNode pesticideEntity) {
+        log.info("PesticideServiceImpl::addPesticide:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+        if (StringUtils.isEmpty(id)) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        // Full validation: all required fields must be present to submit for approval
+        payloadValidation.validatePayload(Constants.PESTICIDE_VALIDATION_FILE_JSON, pesticideEntity);
+        log.debug("PesticideServiceImpl::addPesticide:validated the payload");
+        try {
+            Optional<PesticideEntity> entityOptional = pesticideRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            PesticideEntity pesticideEntity1 = entityOptional.get();
+            // Only DRAFT or REWORK records can be (re-)submitted for approval
+            if (!LifecycleUtil.ADD_PROMOTABLE.contains(pesticideEntity1.getStatus())) {
+                log.warn("PesticideServiceImpl::addPesticide:record {} not in DRAFT/REWORK (status={})",
+                        id, pesticideEntity1.getStatus());
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            pesticideEntity1.setData(pesticideEntity);
+            pesticideEntity1.setStatus(Constants.PENDING);
+            pesticideEntity1.setUpdatedOn(currentTime);
+            pesticideRepository.save(pesticideEntity1);
+            log.info("PesticideServiceImpl::addPesticide:submitted record {} for approval (PENDING)", id);
+
+            ObjectNode jsonNode = buildDocument(pesticideEntity, Constants.PENDING,
+                    pesticideEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.PESTICIDE_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticPesticideJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.PESTICIDE_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse approvePesticide(LifecycleRequest request) {
+        log.info("PesticideServiceImpl::approvePesticide:entered the method");
+        return transitionStatus(request, LifecycleUtil.APPROVE_FROM, LifecycleUtil.APPROVE_TARGETS);
+    }
+
+    @Override
+    public CustomResponse reviewPesticide(LifecycleRequest request) {
+        log.info("PesticideServiceImpl::reviewPesticide:entered the method");
+        return transitionStatus(request, LifecycleUtil.REVIEW_FROM, LifecycleUtil.REVIEW_TARGETS);
+    }
+
+    @Override
+    public CustomResponse toggleStatus(String id) {
+        log.info("PesticideServiceImpl::toggleStatus:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+        if (StringUtils.isEmpty(id)) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        try {
+            Optional<PesticideEntity> entityOptional = pesticideRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            PesticideEntity pesticideEntity1 = entityOptional.get();
+            String currentStatus = pesticideEntity1.getStatus();
+            String newStatus;
+            if (Constants.ACTIVE.equals(currentStatus)) {
+                newStatus = Constants.IN_ACTIVE;
+            } else if (Constants.IN_ACTIVE.equals(currentStatus)) {
+                newStatus = Constants.ACTIVE;
+            } else {
+                // Only a published (ACTIVE) or deactivated (INACTIVE) record can be toggled
+                log.warn("PesticideServiceImpl::toggleStatus:record {} is {}, can only toggle ACTIVE<->INACTIVE",
+                        id, currentStatus);
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            pesticideEntity1.setStatus(newStatus);
+            pesticideEntity1.setUpdatedOn(currentTime);
+            pesticideRepository.save(pesticideEntity1);
+            log.info("PesticideServiceImpl::toggleStatus:record {} toggled {} -> {}", id, currentStatus, newStatus);
+
+            ObjectNode jsonNode = buildDocument(pesticideEntity1.getData(), newStatus,
+                    pesticideEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.PESTICIDE_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticPesticideJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.PESTICIDE_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Shared status-transition logic for approve/review. Validates the id and requested target status,
+     * enforces the required current status, then persists the new status to Postgres, ES and Redis.
+     */
+    private CustomResponse transitionStatus(LifecycleRequest request, String requiredCurrentStatus,
+                                            Set<String> allowedTargets) {
+        CustomResponse response = new CustomResponse();
+        if (request == null || StringUtils.isEmpty(request.getId())) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        String id = request.getId();
+        String targetStatus = LifecycleUtil.normalizeTarget(request.getStatus());
+        if (targetStatus == null || !allowedTargets.contains(targetStatus)) {
+            log.warn("PesticideServiceImpl::transitionStatus:invalid target status '{}' for id {}",
+                    request.getStatus(), id);
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.INVALID_STATUS);
+            return response;
+        }
+        try {
+            Optional<PesticideEntity> entityOptional = pesticideRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            PesticideEntity pesticideEntity1 = entityOptional.get();
+            if (!requiredCurrentStatus.equals(pesticideEntity1.getStatus())) {
+                log.warn("PesticideServiceImpl::transitionStatus:record {} is {}, requires {}",
+                        id, pesticideEntity1.getStatus(), requiredCurrentStatus);
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            pesticideEntity1.setStatus(targetStatus);
+            pesticideEntity1.setUpdatedOn(currentTime);
+            pesticideRepository.save(pesticideEntity1);
+            log.info("PesticideServiceImpl::transitionStatus:record {} moved {} -> {}",
+                    id, requiredCurrentStatus, targetStatus);
+
+            ObjectNode jsonNode = buildDocument(pesticideEntity1.getData(), targetStatus,
+                    pesticideEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.PESTICIDE_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticPesticideJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.PESTICIDE_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Builds the projection stored in Elasticsearch and Redis (and returned by read): the payload
+     * plus the lifecycle status and the Postgres createdOn/updatedOn timestamps (ISO-8601). ES keeps
+     * only whitelisted keys, so status/createdOn/updatedOn must be present in esPesticideRequiredFields.json.
+     */
+    private ObjectNode buildDocument(JsonNode data, String status, Timestamp createdOn, Timestamp updatedOn) {
+        ObjectNode node = objectMapper.createObjectNode();
+        if (data != null && data.isObject()) {
+            node.setAll((ObjectNode) data);
+        }
+        node.put(Constants.STATUS, status);
+        if (createdOn != null) {
+            node.put(Constants.CREATED_ON, createdOn.toInstant().toString());
+        }
+        if (updatedOn != null) {
+            node.put(Constants.UPDATED_ON, updatedOn.toInstant().toString());
+        }
+        return node;
     }
 
     public void createSuccessResponse(CustomResponse response) {

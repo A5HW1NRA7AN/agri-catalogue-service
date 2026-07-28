@@ -23,7 +23,7 @@
     "year": {
         "type": "keyword"
     },
-    "url": {
+    "imageUrl": {
         "type": "keyword"
     },
     "altitude": {
@@ -1105,5 +1105,14 @@
     },
     "yieldGreenLeaf": {
         "type": "keyword"
+    },
+    "status": {
+        "type": "keyword"
+    },
+    "createdOn": {
+        "type": "date"
+    },
+    "updatedOn": {
+        "type": "date"
     }
 }
