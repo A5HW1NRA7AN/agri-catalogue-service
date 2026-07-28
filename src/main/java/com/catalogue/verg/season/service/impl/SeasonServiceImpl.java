@@ -10,12 +10,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.catalogue.verg.core.cache.CacheService;
 import com.catalogue.verg.core.dto.CustomResponse;
+import com.catalogue.verg.core.dto.LifecycleRequest;
 import com.catalogue.verg.core.dto.RespParam;
 import com.catalogue.verg.core.elasticsearch.dto.SearchCriteria;
 import com.catalogue.verg.core.elasticsearch.dto.SearchResult;
 import com.catalogue.verg.core.elasticsearch.service.ESUtilService;
 import com.catalogue.verg.core.exception.CustomException;
 import com.catalogue.verg.core.util.Constants;
+import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
@@ -38,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -94,15 +97,13 @@ public class SeasonServiceImpl implements SeasonService {
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             seasonEntity1.setCreatedOn(currentTime);
             seasonEntity1.setUpdatedOn(currentTime);
-            seasonEntity1.setStatus(Constants.ACTIVE);
+            seasonEntity1.setStatus(Constants.PENDING);
             seasonEntity1.setData(seasonEntity);
 
             seasonRepository.save(seasonEntity1);
 
             log.info("SeasonServiceImpl::createSeason::persisted season in postgres");
-            ObjectNode jsonNode = objectMapper.createObjectNode();
-//            jsonNode.put("status", Constants.ACTIVE);
-            jsonNode.setAll((ObjectNode) seasonEntity);
+            ObjectNode jsonNode = buildDocument(seasonEntity, Constants.PENDING, currentTime, currentTime);
             Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
             esUtilService.addDocument(Constants.SEASON_INDEX_NAME, Constants.INDEX_TYPE,
                     String.valueOf(primaryID), map, vergProperties.getElasticSeasonJsonPath());
@@ -182,14 +183,17 @@ public class SeasonServiceImpl implements SeasonService {
                 Optional<SeasonEntity> entityOptional = seasonRepository.findById(id);
                 if (entityOptional.isPresent()) {
                     SeasonEntity seasonEntity = entityOptional.get();
-                    cacheService.putCache(id, seasonEntity.getData());
+                    ObjectNode jsonNode = buildDocument(seasonEntity.getData(),
+                            seasonEntity.getStatus(), seasonEntity.getCreatedOn(),
+                            seasonEntity.getUpdatedOn());
+                    cacheService.putCache(id, jsonNode);
                     log.info("SeasonServiceImpl::read:Record coming from postgres db");
                     response.setMessage(Constants.SUCCESSFULLY_READING);
                     response
                             .getResult()
                             .put(Constants.RESULT,
                                     objectMapper.convertValue(
-                                            seasonEntity.getData(), new TypeReference<Object>() {
+                                            jsonNode, new TypeReference<Object>() {
                                             }));
                 } else {
                     response.setResponseCode(HttpStatus.NOT_FOUND);
@@ -201,6 +205,75 @@ public class SeasonServiceImpl implements SeasonService {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
+    }
+
+    @Override
+    public CustomResponse updateSeason(String id, JsonNode seasonEntity) {
+        log.info("SeasonServiceImpl::updateSeason:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+
+        // Validate that the ID is not null or empty
+        if (StringUtils.isEmpty(id)) {
+            log.warn("SeasonServiceImpl::updateSeason:id is null or empty");
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+
+        // Validate the incoming payload against the entity schema (same as create)
+        payloadValidation.validatePayload(Constants.SEASON_VALIDATION_FILE_JSON, seasonEntity);
+        log.debug("SeasonServiceImpl::updateSeason:validated the payload");
+
+        try {
+            // Check if the entity exists in the database
+            Optional<SeasonEntity> entityOptional = seasonRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                log.warn("SeasonServiceImpl::updateSeason:no record found for id: {}", id);
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+
+            SeasonEntity seasonEntity1 = entityOptional.get();
+
+            // Reject updates on soft-deleted (DELETED) records
+            if (Constants.DELETED.equals(seasonEntity1.getStatus())) {
+                log.warn("SeasonServiceImpl::updateSeason:record already deleted for id: {}", id);
+                response.setResponseCode(HttpStatus.BAD_REQUEST);
+                response.setMessage("Record is already deleted");
+                return response;
+            }
+
+            // Replace payload; preserve id / createdOn / status, bump updatedOn
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            seasonEntity1.setData(seasonEntity);
+            seasonEntity1.setUpdatedOn(currentTime);
+            seasonRepository.save(seasonEntity1);
+            log.info("SeasonServiceImpl::updateSeason:updated record in postgres for id: {}", id);
+
+            // Re-index the document in Elasticsearch (filtered to whitelisted fields)
+            ObjectNode jsonNode = buildDocument(seasonEntity, seasonEntity1.getStatus(),
+                    seasonEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.SEASON_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticSeasonJsonPath());
+            log.info("SeasonServiceImpl::updateSeason:updated document in elasticsearch for id: {}", id);
+
+            // Refresh the Redis cache
+            cacheService.putCache(id, jsonNode);
+            log.info("SeasonServiceImpl::updateSeason:refreshed cache for id: {}", id);
+
+            map.put(Constants.SEASON_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+
+        } catch (Exception e) {
+            log.error("SeasonServiceImpl::updateSeason:error while updating record for id: {}", id, e);
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
@@ -228,16 +301,16 @@ public class SeasonServiceImpl implements SeasonService {
 
             SeasonEntity seasonEntity = entityOptional.get();
 
-            // Check if the entity is already deleted (soft-deleted)
-            if (Constants.IN_ACTIVE.equals(seasonEntity.getStatus())) {
+            // Check if the entity is already deleted
+            if (Constants.DELETED.equals(seasonEntity.getStatus())) {
                 log.warn("SeasonServiceImpl::delete:record already deleted for id: {}", id);
                 response.setResponseCode(HttpStatus.BAD_REQUEST);
                 response.setMessage("Record is already deleted");
                 return response;
             }
 
-            // Soft delete: update the status to INACTIVE and set updatedOn timestamp
-            seasonEntity.setStatus(Constants.IN_ACTIVE);
+            // Soft delete: mark the status DELETED and set updatedOn timestamp
+            seasonEntity.setStatus(Constants.DELETED);
             seasonEntity.setUpdatedOn(new Timestamp(System.currentTimeMillis()));
             seasonRepository.save(seasonEntity);
             log.info("SeasonServiceImpl::delete:soft deleted record in postgres for id: {}", id);
@@ -269,6 +342,240 @@ public class SeasonServiceImpl implements SeasonService {
                 Constants.SEASON_VALIDATION_FILE_JSON,
                 this::createSeason
         );
+    }
+
+    @Override
+    public CustomResponse draftSeason(JsonNode seasonEntity) {
+        log.info("SeasonServiceImpl::draftSeason:entered the method: " + seasonEntity);
+        CustomResponse response = new CustomResponse();
+        // Relaxed validation: types/structure enforced, but required fields may be missing
+        payloadValidation.validatePayloadRelaxed(Constants.SEASON_VALIDATION_FILE_JSON, seasonEntity);
+        log.debug("SeasonServiceImpl::draftSeason:validated the payload (relaxed)");
+        try {
+            SeasonEntity seasonEntity1 = new SeasonEntity();
+            String primaryID = primaryKeyUtil.generateKey(Constants.SEASON_VALIDATION_FILE_JSON);
+            seasonEntity1.setSeasonId(primaryID);
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            seasonEntity1.setCreatedOn(currentTime);
+            seasonEntity1.setUpdatedOn(currentTime);
+            seasonEntity1.setStatus(Constants.DRAFT);
+            seasonEntity1.setData(seasonEntity);
+
+            seasonRepository.save(seasonEntity1);
+            log.info("SeasonServiceImpl::draftSeason::persisted draft in postgres");
+
+            ObjectNode jsonNode = buildDocument(seasonEntity, Constants.DRAFT, currentTime, currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.addDocument(Constants.SEASON_INDEX_NAME, Constants.INDEX_TYPE,
+                    String.valueOf(primaryID), map, vergProperties.getElasticSeasonJsonPath());
+            cacheService.putCache(primaryID, jsonNode);
+            map.put(Constants.SEASON_ID_RQST, primaryID);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_CREATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse addSeason(String id, JsonNode seasonEntity) {
+        log.info("SeasonServiceImpl::addSeason:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+        if (StringUtils.isEmpty(id)) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        // Full validation: all required fields must be present to submit for approval
+        payloadValidation.validatePayload(Constants.SEASON_VALIDATION_FILE_JSON, seasonEntity);
+        log.debug("SeasonServiceImpl::addSeason:validated the payload");
+        try {
+            Optional<SeasonEntity> entityOptional = seasonRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            SeasonEntity seasonEntity1 = entityOptional.get();
+            // Only DRAFT or REWORK records can be (re-)submitted for approval
+            if (!LifecycleUtil.ADD_PROMOTABLE.contains(seasonEntity1.getStatus())) {
+                log.warn("SeasonServiceImpl::addSeason:record {} not in DRAFT/REWORK (status={})",
+                        id, seasonEntity1.getStatus());
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            seasonEntity1.setData(seasonEntity);
+            seasonEntity1.setStatus(Constants.PENDING);
+            seasonEntity1.setUpdatedOn(currentTime);
+            seasonRepository.save(seasonEntity1);
+            log.info("SeasonServiceImpl::addSeason:submitted record {} for approval (PENDING)", id);
+
+            ObjectNode jsonNode = buildDocument(seasonEntity, Constants.PENDING,
+                    seasonEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.SEASON_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticSeasonJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.SEASON_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse approveSeason(LifecycleRequest request) {
+        log.info("SeasonServiceImpl::approveSeason:entered the method");
+        return transitionStatus(request, LifecycleUtil.APPROVE_FROM, LifecycleUtil.APPROVE_TARGETS);
+    }
+
+    @Override
+    public CustomResponse reviewSeason(LifecycleRequest request) {
+        log.info("SeasonServiceImpl::reviewSeason:entered the method");
+        return transitionStatus(request, LifecycleUtil.REVIEW_FROM, LifecycleUtil.REVIEW_TARGETS);
+    }
+
+    @Override
+    public CustomResponse toggleStatus(String id) {
+        log.info("SeasonServiceImpl::toggleStatus:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+        if (StringUtils.isEmpty(id)) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        try {
+            Optional<SeasonEntity> entityOptional = seasonRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            SeasonEntity seasonEntity1 = entityOptional.get();
+            String currentStatus = seasonEntity1.getStatus();
+            String newStatus;
+            if (Constants.ACTIVE.equals(currentStatus)) {
+                newStatus = Constants.IN_ACTIVE;
+            } else if (Constants.IN_ACTIVE.equals(currentStatus)) {
+                newStatus = Constants.ACTIVE;
+            } else {
+                // Only a published (ACTIVE) or deactivated (INACTIVE) record can be toggled
+                log.warn("SeasonServiceImpl::toggleStatus:record {} is {}, can only toggle ACTIVE<->INACTIVE",
+                        id, currentStatus);
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            seasonEntity1.setStatus(newStatus);
+            seasonEntity1.setUpdatedOn(currentTime);
+            seasonRepository.save(seasonEntity1);
+            log.info("SeasonServiceImpl::toggleStatus:record {} toggled {} -> {}", id, currentStatus, newStatus);
+
+            ObjectNode jsonNode = buildDocument(seasonEntity1.getData(), newStatus,
+                    seasonEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.SEASON_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticSeasonJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.SEASON_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Shared status-transition logic for approve/review. Validates the id and requested target status,
+     * enforces the required current status, then persists the new status to Postgres, ES and Redis.
+     */
+    private CustomResponse transitionStatus(LifecycleRequest request, String requiredCurrentStatus,
+                                            Set<String> allowedTargets) {
+        CustomResponse response = new CustomResponse();
+        if (request == null || StringUtils.isEmpty(request.getId())) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        String id = request.getId();
+        String targetStatus = LifecycleUtil.normalizeTarget(request.getStatus());
+        if (targetStatus == null || !allowedTargets.contains(targetStatus)) {
+            log.warn("SeasonServiceImpl::transitionStatus:invalid target status '{}' for id {}",
+                    request.getStatus(), id);
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.INVALID_STATUS);
+            return response;
+        }
+        try {
+            Optional<SeasonEntity> entityOptional = seasonRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            SeasonEntity seasonEntity1 = entityOptional.get();
+            if (!requiredCurrentStatus.equals(seasonEntity1.getStatus())) {
+                log.warn("SeasonServiceImpl::transitionStatus:record {} is {}, requires {}",
+                        id, seasonEntity1.getStatus(), requiredCurrentStatus);
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            seasonEntity1.setStatus(targetStatus);
+            seasonEntity1.setUpdatedOn(currentTime);
+            seasonRepository.save(seasonEntity1);
+            log.info("SeasonServiceImpl::transitionStatus:record {} moved {} -> {}",
+                    id, requiredCurrentStatus, targetStatus);
+
+            ObjectNode jsonNode = buildDocument(seasonEntity1.getData(), targetStatus,
+                    seasonEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.SEASON_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticSeasonJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.SEASON_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Builds the projection stored in Elasticsearch and Redis (and returned by read): the payload
+     * plus the lifecycle status and the Postgres createdOn/updatedOn timestamps (ISO-8601). ES keeps
+     * only whitelisted keys, so status/createdOn/updatedOn must be present in esSeasonRequiredFields.json.
+     */
+    private ObjectNode buildDocument(JsonNode data, String status, Timestamp createdOn, Timestamp updatedOn) {
+        ObjectNode node = objectMapper.createObjectNode();
+        if (data != null && data.isObject()) {
+            node.setAll((ObjectNode) data);
+        }
+        node.put(Constants.STATUS, status);
+        if (createdOn != null) {
+            node.put(Constants.CREATED_ON, createdOn.toInstant().toString());
+        }
+        if (updatedOn != null) {
+            node.put(Constants.UPDATED_ON, updatedOn.toInstant().toString());
+        }
+        return node;
     }
 
     public void createSuccessResponse(CustomResponse response) {

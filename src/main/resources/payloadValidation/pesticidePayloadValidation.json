@@ -6,10 +6,11 @@
             "type": "string",
             "prefix": "pesticide-",
             "key": "Primary",
+            "keyLength": 12,
             "description": "description about pesticideId"
         }
     },
     "required": [
-        "pesticideId"
+        "Pesticide Id"
     ]
 }

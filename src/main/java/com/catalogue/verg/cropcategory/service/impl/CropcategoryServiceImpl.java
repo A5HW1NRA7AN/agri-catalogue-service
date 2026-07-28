@@ -10,12 +10,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.catalogue.verg.core.cache.CacheService;
 import com.catalogue.verg.core.dto.CustomResponse;
+import com.catalogue.verg.core.dto.LifecycleRequest;
 import com.catalogue.verg.core.dto.RespParam;
 import com.catalogue.verg.core.elasticsearch.dto.SearchCriteria;
 import com.catalogue.verg.core.elasticsearch.dto.SearchResult;
 import com.catalogue.verg.core.elasticsearch.service.ESUtilService;
 import com.catalogue.verg.core.exception.CustomException;
 import com.catalogue.verg.core.util.Constants;
+import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
@@ -38,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -94,15 +97,13 @@ public class CropcategoryServiceImpl implements CropcategoryService {
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             cropcategoryEntity1.setCreatedOn(currentTime);
             cropcategoryEntity1.setUpdatedOn(currentTime);
-            cropcategoryEntity1.setStatus(Constants.ACTIVE);
+            cropcategoryEntity1.setStatus(Constants.PENDING);
             cropcategoryEntity1.setData(cropcategoryEntity);
 
             cropcategoryRepository.save(cropcategoryEntity1);
 
             log.info("CropcategoryServiceImpl::createCropcategory::persisted cropcategory in postgres");
-            ObjectNode jsonNode = objectMapper.createObjectNode();
-//            jsonNode.put("status", Constants.ACTIVE);
-            jsonNode.setAll((ObjectNode) cropcategoryEntity);
+            ObjectNode jsonNode = buildDocument(cropcategoryEntity, Constants.PENDING, currentTime, currentTime);
             Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
             esUtilService.addDocument(Constants.CROPCATEGORY_INDEX_NAME, Constants.INDEX_TYPE,
                     String.valueOf(primaryID), map, vergProperties.getElasticCropcategoryJsonPath());
@@ -182,14 +183,17 @@ public class CropcategoryServiceImpl implements CropcategoryService {
                 Optional<CropcategoryEntity> entityOptional = cropcategoryRepository.findById(id);
                 if (entityOptional.isPresent()) {
                     CropcategoryEntity cropcategoryEntity = entityOptional.get();
-                    cacheService.putCache(id, cropcategoryEntity.getData());
+                    ObjectNode jsonNode = buildDocument(cropcategoryEntity.getData(),
+                            cropcategoryEntity.getStatus(), cropcategoryEntity.getCreatedOn(),
+                            cropcategoryEntity.getUpdatedOn());
+                    cacheService.putCache(id, jsonNode);
                     log.info("CropcategoryServiceImpl::read:Record coming from postgres db");
                     response.setMessage(Constants.SUCCESSFULLY_READING);
                     response
                             .getResult()
                             .put(Constants.RESULT,
                                     objectMapper.convertValue(
-                                            cropcategoryEntity.getData(), new TypeReference<Object>() {
+                                            jsonNode, new TypeReference<Object>() {
                                             }));
                 } else {
                     response.setResponseCode(HttpStatus.NOT_FOUND);
@@ -201,6 +205,75 @@ public class CropcategoryServiceImpl implements CropcategoryService {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
+    }
+
+    @Override
+    public CustomResponse updateCropcategory(String id, JsonNode cropcategoryEntity) {
+        log.info("CropcategoryServiceImpl::updateCropcategory:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+
+        // Validate that the ID is not null or empty
+        if (StringUtils.isEmpty(id)) {
+            log.warn("CropcategoryServiceImpl::updateCropcategory:id is null or empty");
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+
+        // Validate the incoming payload against the entity schema (same as create)
+        payloadValidation.validatePayload(Constants.CROPCATEGORY_VALIDATION_FILE_JSON, cropcategoryEntity);
+        log.debug("CropcategoryServiceImpl::updateCropcategory:validated the payload");
+
+        try {
+            // Check if the entity exists in the database
+            Optional<CropcategoryEntity> entityOptional = cropcategoryRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                log.warn("CropcategoryServiceImpl::updateCropcategory:no record found for id: {}", id);
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+
+            CropcategoryEntity cropcategoryEntity1 = entityOptional.get();
+
+            // Reject updates on soft-deleted (DELETED) records
+            if (Constants.DELETED.equals(cropcategoryEntity1.getStatus())) {
+                log.warn("CropcategoryServiceImpl::updateCropcategory:record already deleted for id: {}", id);
+                response.setResponseCode(HttpStatus.BAD_REQUEST);
+                response.setMessage("Record is already deleted");
+                return response;
+            }
+
+            // Replace payload; preserve id / createdOn / status, bump updatedOn
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            cropcategoryEntity1.setData(cropcategoryEntity);
+            cropcategoryEntity1.setUpdatedOn(currentTime);
+            cropcategoryRepository.save(cropcategoryEntity1);
+            log.info("CropcategoryServiceImpl::updateCropcategory:updated record in postgres for id: {}", id);
+
+            // Re-index the document in Elasticsearch (filtered to whitelisted fields)
+            ObjectNode jsonNode = buildDocument(cropcategoryEntity, cropcategoryEntity1.getStatus(),
+                    cropcategoryEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.CROPCATEGORY_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticCropcategoryJsonPath());
+            log.info("CropcategoryServiceImpl::updateCropcategory:updated document in elasticsearch for id: {}", id);
+
+            // Refresh the Redis cache
+            cacheService.putCache(id, jsonNode);
+            log.info("CropcategoryServiceImpl::updateCropcategory:refreshed cache for id: {}", id);
+
+            map.put(Constants.CROPCATEGORY_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+
+        } catch (Exception e) {
+            log.error("CropcategoryServiceImpl::updateCropcategory:error while updating record for id: {}", id, e);
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
@@ -228,16 +301,16 @@ public class CropcategoryServiceImpl implements CropcategoryService {
 
             CropcategoryEntity cropcategoryEntity = entityOptional.get();
 
-            // Check if the entity is already deleted (soft-deleted)
-            if (Constants.IN_ACTIVE.equals(cropcategoryEntity.getStatus())) {
+            // Check if the entity is already deleted
+            if (Constants.DELETED.equals(cropcategoryEntity.getStatus())) {
                 log.warn("CropcategoryServiceImpl::delete:record already deleted for id: {}", id);
                 response.setResponseCode(HttpStatus.BAD_REQUEST);
                 response.setMessage("Record is already deleted");
                 return response;
             }
 
-            // Soft delete: update the status to INACTIVE and set updatedOn timestamp
-            cropcategoryEntity.setStatus(Constants.IN_ACTIVE);
+            // Soft delete: mark the status DELETED and set updatedOn timestamp
+            cropcategoryEntity.setStatus(Constants.DELETED);
             cropcategoryEntity.setUpdatedOn(new Timestamp(System.currentTimeMillis()));
             cropcategoryRepository.save(cropcategoryEntity);
             log.info("CropcategoryServiceImpl::delete:soft deleted record in postgres for id: {}", id);
@@ -269,6 +342,240 @@ public class CropcategoryServiceImpl implements CropcategoryService {
                 Constants.CROPCATEGORY_VALIDATION_FILE_JSON,
                 this::createCropcategory
         );
+    }
+
+    @Override
+    public CustomResponse draftCropcategory(JsonNode cropcategoryEntity) {
+        log.info("CropcategoryServiceImpl::draftCropcategory:entered the method: " + cropcategoryEntity);
+        CustomResponse response = new CustomResponse();
+        // Relaxed validation: types/structure enforced, but required fields may be missing
+        payloadValidation.validatePayloadRelaxed(Constants.CROPCATEGORY_VALIDATION_FILE_JSON, cropcategoryEntity);
+        log.debug("CropcategoryServiceImpl::draftCropcategory:validated the payload (relaxed)");
+        try {
+            CropcategoryEntity cropcategoryEntity1 = new CropcategoryEntity();
+            String primaryID = primaryKeyUtil.generateKey(Constants.CROPCATEGORY_VALIDATION_FILE_JSON);
+            cropcategoryEntity1.setCropcategoryId(primaryID);
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            cropcategoryEntity1.setCreatedOn(currentTime);
+            cropcategoryEntity1.setUpdatedOn(currentTime);
+            cropcategoryEntity1.setStatus(Constants.DRAFT);
+            cropcategoryEntity1.setData(cropcategoryEntity);
+
+            cropcategoryRepository.save(cropcategoryEntity1);
+            log.info("CropcategoryServiceImpl::draftCropcategory::persisted draft in postgres");
+
+            ObjectNode jsonNode = buildDocument(cropcategoryEntity, Constants.DRAFT, currentTime, currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.addDocument(Constants.CROPCATEGORY_INDEX_NAME, Constants.INDEX_TYPE,
+                    String.valueOf(primaryID), map, vergProperties.getElasticCropcategoryJsonPath());
+            cacheService.putCache(primaryID, jsonNode);
+            map.put(Constants.CROPCATEGORY_ID_RQST, primaryID);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_CREATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse addCropcategory(String id, JsonNode cropcategoryEntity) {
+        log.info("CropcategoryServiceImpl::addCropcategory:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+        if (StringUtils.isEmpty(id)) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        // Full validation: all required fields must be present to submit for approval
+        payloadValidation.validatePayload(Constants.CROPCATEGORY_VALIDATION_FILE_JSON, cropcategoryEntity);
+        log.debug("CropcategoryServiceImpl::addCropcategory:validated the payload");
+        try {
+            Optional<CropcategoryEntity> entityOptional = cropcategoryRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            CropcategoryEntity cropcategoryEntity1 = entityOptional.get();
+            // Only DRAFT or REWORK records can be (re-)submitted for approval
+            if (!LifecycleUtil.ADD_PROMOTABLE.contains(cropcategoryEntity1.getStatus())) {
+                log.warn("CropcategoryServiceImpl::addCropcategory:record {} not in DRAFT/REWORK (status={})",
+                        id, cropcategoryEntity1.getStatus());
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            cropcategoryEntity1.setData(cropcategoryEntity);
+            cropcategoryEntity1.setStatus(Constants.PENDING);
+            cropcategoryEntity1.setUpdatedOn(currentTime);
+            cropcategoryRepository.save(cropcategoryEntity1);
+            log.info("CropcategoryServiceImpl::addCropcategory:submitted record {} for approval (PENDING)", id);
+
+            ObjectNode jsonNode = buildDocument(cropcategoryEntity, Constants.PENDING,
+                    cropcategoryEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.CROPCATEGORY_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticCropcategoryJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.CROPCATEGORY_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse approveCropcategory(LifecycleRequest request) {
+        log.info("CropcategoryServiceImpl::approveCropcategory:entered the method");
+        return transitionStatus(request, LifecycleUtil.APPROVE_FROM, LifecycleUtil.APPROVE_TARGETS);
+    }
+
+    @Override
+    public CustomResponse reviewCropcategory(LifecycleRequest request) {
+        log.info("CropcategoryServiceImpl::reviewCropcategory:entered the method");
+        return transitionStatus(request, LifecycleUtil.REVIEW_FROM, LifecycleUtil.REVIEW_TARGETS);
+    }
+
+    @Override
+    public CustomResponse toggleStatus(String id) {
+        log.info("CropcategoryServiceImpl::toggleStatus:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+        if (StringUtils.isEmpty(id)) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        try {
+            Optional<CropcategoryEntity> entityOptional = cropcategoryRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            CropcategoryEntity cropcategoryEntity1 = entityOptional.get();
+            String currentStatus = cropcategoryEntity1.getStatus();
+            String newStatus;
+            if (Constants.ACTIVE.equals(currentStatus)) {
+                newStatus = Constants.IN_ACTIVE;
+            } else if (Constants.IN_ACTIVE.equals(currentStatus)) {
+                newStatus = Constants.ACTIVE;
+            } else {
+                // Only a published (ACTIVE) or deactivated (INACTIVE) record can be toggled
+                log.warn("CropcategoryServiceImpl::toggleStatus:record {} is {}, can only toggle ACTIVE<->INACTIVE",
+                        id, currentStatus);
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            cropcategoryEntity1.setStatus(newStatus);
+            cropcategoryEntity1.setUpdatedOn(currentTime);
+            cropcategoryRepository.save(cropcategoryEntity1);
+            log.info("CropcategoryServiceImpl::toggleStatus:record {} toggled {} -> {}", id, currentStatus, newStatus);
+
+            ObjectNode jsonNode = buildDocument(cropcategoryEntity1.getData(), newStatus,
+                    cropcategoryEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.CROPCATEGORY_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticCropcategoryJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.CROPCATEGORY_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Shared status-transition logic for approve/review. Validates the id and requested target status,
+     * enforces the required current status, then persists the new status to Postgres, ES and Redis.
+     */
+    private CustomResponse transitionStatus(LifecycleRequest request, String requiredCurrentStatus,
+                                            Set<String> allowedTargets) {
+        CustomResponse response = new CustomResponse();
+        if (request == null || StringUtils.isEmpty(request.getId())) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        String id = request.getId();
+        String targetStatus = LifecycleUtil.normalizeTarget(request.getStatus());
+        if (targetStatus == null || !allowedTargets.contains(targetStatus)) {
+            log.warn("CropcategoryServiceImpl::transitionStatus:invalid target status '{}' for id {}",
+                    request.getStatus(), id);
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.INVALID_STATUS);
+            return response;
+        }
+        try {
+            Optional<CropcategoryEntity> entityOptional = cropcategoryRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            CropcategoryEntity cropcategoryEntity1 = entityOptional.get();
+            if (!requiredCurrentStatus.equals(cropcategoryEntity1.getStatus())) {
+                log.warn("CropcategoryServiceImpl::transitionStatus:record {} is {}, requires {}",
+                        id, cropcategoryEntity1.getStatus(), requiredCurrentStatus);
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            cropcategoryEntity1.setStatus(targetStatus);
+            cropcategoryEntity1.setUpdatedOn(currentTime);
+            cropcategoryRepository.save(cropcategoryEntity1);
+            log.info("CropcategoryServiceImpl::transitionStatus:record {} moved {} -> {}",
+                    id, requiredCurrentStatus, targetStatus);
+
+            ObjectNode jsonNode = buildDocument(cropcategoryEntity1.getData(), targetStatus,
+                    cropcategoryEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.CROPCATEGORY_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticCropcategoryJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.CROPCATEGORY_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Builds the projection stored in Elasticsearch and Redis (and returned by read): the payload
+     * plus the lifecycle status and the Postgres createdOn/updatedOn timestamps (ISO-8601). ES keeps
+     * only whitelisted keys, so status/createdOn/updatedOn must be present in esCropcategoryRequiredFields.json.
+     */
+    private ObjectNode buildDocument(JsonNode data, String status, Timestamp createdOn, Timestamp updatedOn) {
+        ObjectNode node = objectMapper.createObjectNode();
+        if (data != null && data.isObject()) {
+            node.setAll((ObjectNode) data);
+        }
+        node.put(Constants.STATUS, status);
+        if (createdOn != null) {
+            node.put(Constants.CREATED_ON, createdOn.toInstant().toString());
+        }
+        if (updatedOn != null) {
+            node.put(Constants.UPDATED_ON, updatedOn.toInstant().toString());
+        }
+        return node;
     }
 
     public void createSuccessResponse(CustomResponse response) {

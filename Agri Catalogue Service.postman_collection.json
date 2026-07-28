@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "086247b3-1f7d-4fa9-a533-eb6d8ad4b7a8",
+    "_postman_id": "d54b5479-b5f0-4e10-a13b-4405dde2aca1",
     "name": "Agri Catalogue Service",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "54270722",
-    "_collection_link": "https://go.postman.co/collection/54270722-086247b3-1f7d-4fa9-a533-eb6d8ad4b7a8?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/54270722-d54b5479-b5f0-4e10-a13b-4405dde2aca1?source=collection_link"
   },
   "item": [
     {
@@ -58,6 +58,324 @@
                 "cropcategory",
                 "v1",
                 "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cereals (draft)\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cropcategory/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropcategory",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cereals\",\n  \"imageUrl\": \"https://example.com/images/cereals.png\",\n  \"description\": \"Cereal crops such as teff, wheat, maize and barley\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cropcategory/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropcategory",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cereals\",\n  \"imageUrl\": \"https://example.com/images/cereals.png\",\n  \"description\": \"Cereal crops such as teff, wheat, maize and barley\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cropcategory/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropcategory",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"cropcategory-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cropcategory/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropcategory",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"cropcategory-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cropcategory/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropcategory",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cropcategory/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropcategory",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
               ]
             }
           },
@@ -163,6 +481,66 @@
           "response": []
         },
         {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cereals & Grains\",\n  \"imageUrl\": \"https://example.com/images/cereals-grains.png\",\n  \"description\": \"Updated: cereal and grain crops such as teff, wheat, maize and barley\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cropcategory/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropcategory",
+                "v1",
+                "update",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "delete",
           "request": {
             "auth": {
@@ -240,7 +618,7 @@
                   "key": "file",
                   "type": "file",
                   "description": "CSV or XLSX file to import (max 5MB). Column headers must match schema property names exactly.",
-                  "value": ""
+                  "src": "postman-cloud:///1f184316-af06-4780-ad77-16b755ea313a"
                 }
               ]
             },
@@ -493,7 +871,7 @@
                   "key": "file",
                   "type": "file",
                   "description": "CSV or XLSX file to import (max 5MB). Column headers must match schema property names exactly.",
-                  "value": ""
+                  "src": "postman-cloud:///1f184319-0ff9-4950-85b2-9e3bc51cebfe"
                 }
               ]
             },
@@ -601,7 +979,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"filterCriteriaMap\": {\n    \"cropTypeName\": \"Teff\",\n    \"year\": \"2006\"\n  },\n  \"pageNumber\": 0,\n  \"pageSize\": 10,\n  \"orderBy\": \"name\",\n  \"orderDirection\": \"asc\",\n  \"facets\": [\n    \"centre\",\n    \"year\"\n  ]\n}",
+              "raw": "{\n  \"filterCriteriaMap\": {\n    \"cropTypeName\": \"Tef (ጤፍ)\",\n    \"year\": \"2006\"\n  },\n  \"pageNumber\": 0,\n  \"pageSize\": 10,\n  \"orderBy\": \"name\",\n  \"orderDirection\": \"asc\",\n  \"facets\": [\n    \"centre\",\n    \"year\"\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -746,7 +1124,7 @@
                   "key": "file",
                   "type": "file",
                   "description": "CSV or XLSX file to import (max 5MB). Column headers must match schema property names exactly.",
-                  "value": ""
+                  "src": "postman-cloud:///1f184323-a9df-4e20-8092-c515640ac223"
                 }
               ]
             },
@@ -1598,7 +1976,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"filterCriteriaMap\": {\n    \"livestock\": \"Cattle\",\n    \"breed\": \"Boran\"\n  },\n  \"pageNumber\": 0,\n  \"pageSize\": 10,\n  \"orderBy\": \"breed\",\n  \"orderDirection\": \"asc\",\n  \"facets\": [\n    \"livestock\",\n    \"breed\"\n  ]\n}",
+              "raw": "{\n  \"filterCriteriaMap\": {\n    \"livestock\": \"Cow\",\n    \"breed\": \"Indegenous\"\n  },\n  \"pageNumber\": 0,\n  \"pageSize\": 10,\n  \"orderBy\": \"breed\",\n  \"orderDirection\": \"asc\",\n  \"facets\": [\n    \"livestock\",\n    \"breed\"\n  ]\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1743,7 +2121,7 @@
                   "key": "file",
                   "type": "file",
                   "description": "CSV or XLSX file to import (max 5MB). Column headers must match schema property names exactly.",
-                  "value": ""
+                  "src": "postman-cloud:///1f184327-490b-4d70-b6cf-dab404af707a"
                 }
               ]
             },
@@ -1764,7 +2142,7 @@
       ]
     },
     {
-      "name": "location",
+      "name": "marketplace",
       "item": [
         {
           "name": "create",
@@ -1806,14 +2184,332 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/location/v1/create",
+              "raw": "{{baseUrl}}/marketplace/v1/create",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "location",
+                "marketplace",
                 "v1",
                 "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"region\": \"Oromia\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/marketplace/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "marketplace",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"region\": \"Oromia\",\n  \"marketPlace\": \"Adama Market\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/marketplace/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "marketplace",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"region\": \"Oromia\",\n  \"marketPlace\": \"Adama Market\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/marketplace/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "marketplace",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"marketplace-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/marketplace/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "marketplace",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"marketplace-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/marketplace/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "marketplace",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/marketplace/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "marketplace",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
               ]
             }
           },
@@ -1859,12 +2555,12 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/location/v1/search",
+              "raw": "{{baseUrl}}/marketplace/v1/search",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "location",
+                "marketplace",
                 "v1",
                 "search"
               ]
@@ -1898,14 +2594,74 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/location/v1/read/:id",
+              "raw": "{{baseUrl}}/marketplace/v1/read/:id",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "location",
+                "marketplace",
                 "v1",
                 "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"region\": \"Oromia\",\n  \"marketPlace\": \"Adama Central Market\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/marketplace/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "marketplace",
+                "v1",
+                "update",
                 ":id"
               ],
               "variable": [
@@ -1944,12 +2700,12 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/location/v1/delete/:id",
+              "raw": "{{baseUrl}}/marketplace/v1/delete/:id",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "location",
+                "marketplace",
                 "v1",
                 "delete",
                 ":id"
@@ -1996,17 +2752,17 @@
                   "key": "file",
                   "type": "file",
                   "description": "CSV or XLSX file to import (max 5MB). Column headers must match schema property names exactly.",
-                  "value": ""
+                  "src": ""
                 }
               ]
             },
             "url": {
-              "raw": "{{baseUrl}}/location/v1/import",
+              "raw": "{{baseUrl}}/marketplace/v1/import",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "location",
+                "marketplace",
                 "v1",
                 "import"
               ]
@@ -2497,7 +3253,7 @@
                   "key": "file",
                   "type": "file",
                   "description": "CSV or XLSX file to import (max 5MB). Column headers must match schema property names exactly.",
-                  "value": ""
+                  "src": "postman-cloud:///1f18432a-7897-4230-a96e-f3f1653098c5"
                 }
               ]
             },
@@ -3041,11 +3797,11 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://35.78.108.187:30080"
+      "value": ""
     },
     {
       "key": "api_key",
-      "value": "testapi-123"
+      "value": ""
     }
   ]
 }

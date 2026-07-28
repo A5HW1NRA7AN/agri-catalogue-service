@@ -1,0 +1,607 @@
+package com.catalogue.verg.marketplace.service.impl;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.datastax.oss.driver.api.core.uuid.Uuids;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.catalogue.verg.core.cache.CacheService;
+import com.catalogue.verg.core.dto.CustomResponse;
+import com.catalogue.verg.core.dto.LifecycleRequest;
+import com.catalogue.verg.core.dto.RespParam;
+import com.catalogue.verg.core.elasticsearch.dto.SearchCriteria;
+import com.catalogue.verg.core.elasticsearch.dto.SearchResult;
+import com.catalogue.verg.core.elasticsearch.service.ESUtilService;
+import com.catalogue.verg.core.exception.CustomException;
+import com.catalogue.verg.core.util.Constants;
+import com.catalogue.verg.core.util.LifecycleUtil;
+import com.catalogue.verg.core.util.PayloadValidation;
+import com.catalogue.verg.core.util.VergProperties;
+import com.catalogue.verg.core.service.ImportService;
+import com.catalogue.verg.core.util.PrimaryKeyUtil;
+import com.catalogue.verg.marketplace.entity.MarketPlaceEntity;
+import com.catalogue.verg.marketplace.repository.MarketPlaceRepository;
+import com.catalogue.verg.marketplace.service.MarketPlaceService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import java.sql.Timestamp;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+
+@Service
+@Slf4j
+public class MarketPlaceServiceImpl implements MarketPlaceService {
+    @Autowired
+    private PayloadValidation payloadValidation;
+
+    @Autowired
+    private PrimaryKeyUtil primaryKeyUtil;
+
+    @Autowired
+    private MarketPlaceRepository marketPlaceRepository;
+
+    @Autowired
+    private ESUtilService esUtilService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private CacheService cacheService;
+
+    @Autowired
+    private RedisTemplate<String, SearchResult> redisTemplate;
+
+    @Autowired
+    private VergProperties vergProperties;
+
+    @Autowired
+    private ImportService importService;
+
+    private Logger logger = LoggerFactory.getLogger(MarketPlaceServiceImpl.class);
+
+    @Value("${spring.redis.cacheTtl}")
+    private long searchResultRedisTtl;
+
+    @Override
+    public CustomResponse createMarketPlace(JsonNode marketPlaceEntity) {
+        log.info("MarketPlaceServiceImpl::createMarketPlace:entered the method: " + marketPlaceEntity);
+        CustomResponse response = new CustomResponse();
+        payloadValidation.validatePayload(Constants.MARKET_PLACE_VALIDATION_FILE_JSON, marketPlaceEntity);
+
+        log.debug("MarketPlaceServiceImpl::createMarketPlace:validated the payload");
+        try {
+            log.info("MarketPlaceServiceImpl::createMarketPlace:creating marketPlace");
+            MarketPlaceEntity marketPlaceEntity1 = new MarketPlaceEntity();
+            // Generate Primary Key
+            String primaryID = primaryKeyUtil.generateKey(Constants.MARKET_PLACE_VALIDATION_FILE_JSON);
+            marketPlaceEntity1.setMarketPlaceId(primaryID);
+            // Create Parameters like createdDate / updateDate / Data and Status
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            marketPlaceEntity1.setCreatedOn(currentTime);
+            marketPlaceEntity1.setUpdatedOn(currentTime);
+            marketPlaceEntity1.setStatus(Constants.PENDING);
+            marketPlaceEntity1.setData(marketPlaceEntity);
+
+            marketPlaceRepository.save(marketPlaceEntity1);
+
+            log.info("MarketPlaceServiceImpl::createMarketPlace::persisted marketPlace in postgres");
+            ObjectNode jsonNode = buildDocument(marketPlaceEntity, Constants.PENDING, currentTime, currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.addDocument(Constants.MARKET_PLACE_INDEX_NAME, Constants.INDEX_TYPE,
+                    String.valueOf(primaryID), map, vergProperties.getElasticMarketPlaceJsonPath());
+            cacheService.putCache(primaryID, jsonNode);
+            response.setMessage(Constants.SUCCESSFULLY_CREATED);
+            map.put(Constants.MARKET_PLACE_ID_RQST, primaryID);
+            response.setResult(map);
+            response.setResponseCode(HttpStatus.OK);
+            log.info("MarketPlaceServiceImpl::createMarketPlace::persisted marketPlace in OAS");
+            return response;
+
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse searchMarketPlace(SearchCriteria searchCriteria) {
+        log.info("MarketPlaceServiceImpl::searchMarketPlace");
+        CustomResponse response = new CustomResponse();
+        SearchResult searchResult = redisTemplate.opsForValue()
+                .get(generateRedisJwtTokenKey(searchCriteria));
+        if (searchResult != null) {
+            log.info("MarketPlaceServiceImpl::searchMarketPlace: marketPlace search result fetched from redis");
+            response.getResult().put(Constants.RESULT, searchResult);
+            createSuccessResponse(response);
+            return response;
+        }
+        String searchString = searchCriteria.getSearchString();
+        if (searchString != null && searchString.length() < 2) {
+            createErrorResponse(response, "Minimum 3 characters are required to search",
+                    HttpStatus.BAD_REQUEST,
+                    Constants.FAILED_CONST);
+            return response;
+        }
+        try {
+            searchResult =
+                    esUtilService.searchDocuments(Constants.MARKET_PLACE_INDEX_NAME, searchCriteria);
+            response.getResult().put(Constants.RESULT, searchResult);
+            createSuccessResponse(response);
+            return response;
+        } catch (Exception e) {
+            createErrorResponse(response, e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR,
+                    Constants.FAILED_CONST);
+            redisTemplate.opsForValue()
+                    .set(generateRedisJwtTokenKey(searchCriteria), searchResult, searchResultRedisTtl,
+                            TimeUnit.SECONDS);
+            return response;
+        }
+    }
+
+    @Override
+    public CustomResponse assignMarketPlace(JsonNode marketPlaceEntity, String token) {
+        return null;
+    }
+
+    @Override
+    public CustomResponse read(String id) {
+        log.info("MarketPlaceServiceImpl::read:inside the method");
+        CustomResponse response = new CustomResponse();
+        if (StringUtils.isEmpty(id)) {
+            response.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        try {
+            String cachedJson = cacheService.getCache(id);
+            if (StringUtils.isNotEmpty(cachedJson)) {
+                log.info("MarketPlaceServiceImpl::read:Record coming from redis cache");
+                response.setMessage(Constants.SUCCESSFULLY_READING);
+                response
+                        .getResult()
+                        .put(Constants.RESULT, objectMapper.readValue(cachedJson, new TypeReference<Object>() {
+                        }));
+            } else {
+                Optional<MarketPlaceEntity> entityOptional = marketPlaceRepository.findById(id);
+                if (entityOptional.isPresent()) {
+                    MarketPlaceEntity marketPlaceEntity = entityOptional.get();
+                    ObjectNode jsonNode = buildDocument(marketPlaceEntity.getData(),
+                            marketPlaceEntity.getStatus(), marketPlaceEntity.getCreatedOn(),
+                            marketPlaceEntity.getUpdatedOn());
+                    cacheService.putCache(id, jsonNode);
+                    log.info("MarketPlaceServiceImpl::read:Record coming from postgres db");
+                    response.setMessage(Constants.SUCCESSFULLY_READING);
+                    response
+                            .getResult()
+                            .put(Constants.RESULT,
+                                    objectMapper.convertValue(
+                                            jsonNode, new TypeReference<Object>() {
+                                            }));
+                } else {
+                    response.setResponseCode(HttpStatus.NOT_FOUND);
+                    response.setMessage(Constants.INVALID_ID);
+                }
+            }
+        } catch (Exception e) {
+            throw new CustomException(Constants.ERROR, "error while processing",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
+    }
+
+    @Override
+    public CustomResponse updateMarketPlace(String id, JsonNode marketPlaceEntity) {
+        log.info("MarketPlaceServiceImpl::updateMarketPlace:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+
+        // Validate that the ID is not null or empty
+        if (StringUtils.isEmpty(id)) {
+            log.warn("MarketPlaceServiceImpl::updateMarketPlace:id is null or empty");
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+
+        // Validate the incoming payload against the entity schema (same as create)
+        payloadValidation.validatePayload(Constants.MARKET_PLACE_VALIDATION_FILE_JSON, marketPlaceEntity);
+        log.debug("MarketPlaceServiceImpl::updateMarketPlace:validated the payload");
+
+        try {
+            // Check if the entity exists in the database
+            Optional<MarketPlaceEntity> entityOptional = marketPlaceRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                log.warn("MarketPlaceServiceImpl::updateMarketPlace:no record found for id: {}", id);
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+
+            MarketPlaceEntity marketPlaceEntity1 = entityOptional.get();
+
+            // Reject updates on soft-deleted (DELETED) records
+            if (Constants.DELETED.equals(marketPlaceEntity1.getStatus())) {
+                log.warn("MarketPlaceServiceImpl::updateMarketPlace:record already deleted for id: {}", id);
+                response.setResponseCode(HttpStatus.BAD_REQUEST);
+                response.setMessage("Record is already deleted");
+                return response;
+            }
+
+            // Replace payload; preserve id / createdOn / status, bump updatedOn
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            marketPlaceEntity1.setData(marketPlaceEntity);
+            marketPlaceEntity1.setUpdatedOn(currentTime);
+            marketPlaceRepository.save(marketPlaceEntity1);
+            log.info("MarketPlaceServiceImpl::updateMarketPlace:updated record in postgres for id: {}", id);
+
+            // Re-index the document in Elasticsearch (filtered to whitelisted fields)
+            ObjectNode jsonNode = buildDocument(marketPlaceEntity, marketPlaceEntity1.getStatus(),
+                    marketPlaceEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.MARKET_PLACE_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticMarketPlaceJsonPath());
+            log.info("MarketPlaceServiceImpl::updateMarketPlace:updated document in elasticsearch for id: {}", id);
+
+            // Refresh the Redis cache
+            cacheService.putCache(id, jsonNode);
+            log.info("MarketPlaceServiceImpl::updateMarketPlace:refreshed cache for id: {}", id);
+
+            map.put(Constants.MARKET_PLACE_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+
+        } catch (Exception e) {
+            log.error("MarketPlaceServiceImpl::updateMarketPlace:error while updating record for id: {}", id, e);
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse delete(String id) {
+        log.info("MarketPlaceServiceImpl::delete:inside the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+
+        // Validate that the ID is not null or empty
+        if (StringUtils.isEmpty(id)) {
+            log.warn("MarketPlaceServiceImpl::delete:id is null or empty");
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+
+        try {
+            // Check if the entity exists in the database
+            Optional<MarketPlaceEntity> entityOptional = marketPlaceRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                log.warn("MarketPlaceServiceImpl::delete:no record found for id: {}", id);
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+
+            MarketPlaceEntity marketPlaceEntity = entityOptional.get();
+
+            // Check if the entity is already deleted
+            if (Constants.DELETED.equals(marketPlaceEntity.getStatus())) {
+                log.warn("MarketPlaceServiceImpl::delete:record already deleted for id: {}", id);
+                response.setResponseCode(HttpStatus.BAD_REQUEST);
+                response.setMessage("Record is already deleted");
+                return response;
+            }
+
+            // Soft delete: mark the status DELETED and set updatedOn timestamp
+            marketPlaceEntity.setStatus(Constants.DELETED);
+            marketPlaceEntity.setUpdatedOn(new Timestamp(System.currentTimeMillis()));
+            marketPlaceRepository.save(marketPlaceEntity);
+            log.info("MarketPlaceServiceImpl::delete:soft deleted record in postgres for id: {}", id);
+
+            // Remove document from Elasticsearch
+            esUtilService.deleteDocument(id, Constants.MARKET_PLACE_INDEX_NAME);
+            log.info("MarketPlaceServiceImpl::delete:deleted document from elasticsearch for id: {}", id);
+
+            // Remove from Redis cache
+            cacheService.deleteCache(id);
+            log.info("MarketPlaceServiceImpl::delete:evicted cache for id: {}", id);
+
+            response.setMessage(Constants.SUCCESSFULLY_DELETED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+
+        } catch (Exception e) {
+            log.error("MarketPlaceServiceImpl::delete:error while deleting record for id: {}", id, e);
+            throw new CustomException(Constants.ERROR, "error while deleting record",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse importData(MultipartFile file) {
+        log.info("MarketPlaceServiceImpl::importData::started");
+        return importService.processBulkImport(
+                file,
+                Constants.MARKET_PLACE_VALIDATION_FILE_JSON,
+                this::createMarketPlace
+        );
+    }
+
+    @Override
+    public CustomResponse draftMarketPlace(JsonNode marketPlaceEntity) {
+        log.info("MarketPlaceServiceImpl::draftMarketPlace:entered the method: " + marketPlaceEntity);
+        CustomResponse response = new CustomResponse();
+        // Relaxed validation: types/structure enforced, but required fields may be missing
+        payloadValidation.validatePayloadRelaxed(Constants.MARKET_PLACE_VALIDATION_FILE_JSON, marketPlaceEntity);
+        log.debug("MarketPlaceServiceImpl::draftMarketPlace:validated the payload (relaxed)");
+        try {
+            MarketPlaceEntity marketPlaceEntity1 = new MarketPlaceEntity();
+            String primaryID = primaryKeyUtil.generateKey(Constants.MARKET_PLACE_VALIDATION_FILE_JSON);
+            marketPlaceEntity1.setMarketPlaceId(primaryID);
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            marketPlaceEntity1.setCreatedOn(currentTime);
+            marketPlaceEntity1.setUpdatedOn(currentTime);
+            marketPlaceEntity1.setStatus(Constants.DRAFT);
+            marketPlaceEntity1.setData(marketPlaceEntity);
+
+            marketPlaceRepository.save(marketPlaceEntity1);
+            log.info("MarketPlaceServiceImpl::draftMarketPlace::persisted draft in postgres");
+
+            ObjectNode jsonNode = buildDocument(marketPlaceEntity, Constants.DRAFT, currentTime, currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.addDocument(Constants.MARKET_PLACE_INDEX_NAME, Constants.INDEX_TYPE,
+                    String.valueOf(primaryID), map, vergProperties.getElasticMarketPlaceJsonPath());
+            cacheService.putCache(primaryID, jsonNode);
+            map.put(Constants.MARKET_PLACE_ID_RQST, primaryID);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_CREATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse addMarketPlace(String id, JsonNode marketPlaceEntity) {
+        log.info("MarketPlaceServiceImpl::addMarketPlace:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+        if (StringUtils.isEmpty(id)) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        // Full validation: all required fields must be present to submit for approval
+        payloadValidation.validatePayload(Constants.MARKET_PLACE_VALIDATION_FILE_JSON, marketPlaceEntity);
+        log.debug("MarketPlaceServiceImpl::addMarketPlace:validated the payload");
+        try {
+            Optional<MarketPlaceEntity> entityOptional = marketPlaceRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            MarketPlaceEntity marketPlaceEntity1 = entityOptional.get();
+            // Only DRAFT or REWORK records can be (re-)submitted for approval
+            if (!LifecycleUtil.ADD_PROMOTABLE.contains(marketPlaceEntity1.getStatus())) {
+                log.warn("MarketPlaceServiceImpl::addMarketPlace:record {} not in DRAFT/REWORK (status={})",
+                        id, marketPlaceEntity1.getStatus());
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            marketPlaceEntity1.setData(marketPlaceEntity);
+            marketPlaceEntity1.setStatus(Constants.PENDING);
+            marketPlaceEntity1.setUpdatedOn(currentTime);
+            marketPlaceRepository.save(marketPlaceEntity1);
+            log.info("MarketPlaceServiceImpl::addMarketPlace:submitted record {} for approval (PENDING)", id);
+
+            ObjectNode jsonNode = buildDocument(marketPlaceEntity, Constants.PENDING,
+                    marketPlaceEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.MARKET_PLACE_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticMarketPlaceJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.MARKET_PLACE_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse approveMarketPlace(LifecycleRequest request) {
+        log.info("MarketPlaceServiceImpl::approveMarketPlace:entered the method");
+        return transitionStatus(request, LifecycleUtil.APPROVE_FROM, LifecycleUtil.APPROVE_TARGETS);
+    }
+
+    @Override
+    public CustomResponse reviewMarketPlace(LifecycleRequest request) {
+        log.info("MarketPlaceServiceImpl::reviewMarketPlace:entered the method");
+        return transitionStatus(request, LifecycleUtil.REVIEW_FROM, LifecycleUtil.REVIEW_TARGETS);
+    }
+
+    @Override
+    public CustomResponse toggleStatus(String id) {
+        log.info("MarketPlaceServiceImpl::toggleStatus:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+        if (StringUtils.isEmpty(id)) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        try {
+            Optional<MarketPlaceEntity> entityOptional = marketPlaceRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            MarketPlaceEntity marketPlaceEntity1 = entityOptional.get();
+            String currentStatus = marketPlaceEntity1.getStatus();
+            String newStatus;
+            if (Constants.ACTIVE.equals(currentStatus)) {
+                newStatus = Constants.IN_ACTIVE;
+            } else if (Constants.IN_ACTIVE.equals(currentStatus)) {
+                newStatus = Constants.ACTIVE;
+            } else {
+                // Only a published (ACTIVE) or deactivated (INACTIVE) record can be toggled
+                log.warn("MarketPlaceServiceImpl::toggleStatus:record {} is {}, can only toggle ACTIVE<->INACTIVE",
+                        id, currentStatus);
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            marketPlaceEntity1.setStatus(newStatus);
+            marketPlaceEntity1.setUpdatedOn(currentTime);
+            marketPlaceRepository.save(marketPlaceEntity1);
+            log.info("MarketPlaceServiceImpl::toggleStatus:record {} toggled {} -> {}", id, currentStatus, newStatus);
+
+            ObjectNode jsonNode = buildDocument(marketPlaceEntity1.getData(), newStatus,
+                    marketPlaceEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.MARKET_PLACE_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticMarketPlaceJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.MARKET_PLACE_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Shared status-transition logic for approve/review. Validates the id and requested target status,
+     * enforces the required current status, then persists the new status to Postgres, ES and Redis.
+     */
+    private CustomResponse transitionStatus(LifecycleRequest request, String requiredCurrentStatus,
+                                            Set<String> allowedTargets) {
+        CustomResponse response = new CustomResponse();
+        if (request == null || StringUtils.isEmpty(request.getId())) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        String id = request.getId();
+        String targetStatus = LifecycleUtil.normalizeTarget(request.getStatus());
+        if (targetStatus == null || !allowedTargets.contains(targetStatus)) {
+            log.warn("MarketPlaceServiceImpl::transitionStatus:invalid target status '{}' for id {}",
+                    request.getStatus(), id);
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.INVALID_STATUS);
+            return response;
+        }
+        try {
+            Optional<MarketPlaceEntity> entityOptional = marketPlaceRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            MarketPlaceEntity marketPlaceEntity1 = entityOptional.get();
+            if (!requiredCurrentStatus.equals(marketPlaceEntity1.getStatus())) {
+                log.warn("MarketPlaceServiceImpl::transitionStatus:record {} is {}, requires {}",
+                        id, marketPlaceEntity1.getStatus(), requiredCurrentStatus);
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            marketPlaceEntity1.setStatus(targetStatus);
+            marketPlaceEntity1.setUpdatedOn(currentTime);
+            marketPlaceRepository.save(marketPlaceEntity1);
+            log.info("MarketPlaceServiceImpl::transitionStatus:record {} moved {} -> {}",
+                    id, requiredCurrentStatus, targetStatus);
+
+            ObjectNode jsonNode = buildDocument(marketPlaceEntity1.getData(), targetStatus,
+                    marketPlaceEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.MARKET_PLACE_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticMarketPlaceJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.MARKET_PLACE_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Builds the projection stored in Elasticsearch and Redis (and returned by read): the payload
+     * plus the lifecycle status and the Postgres createdOn/updatedOn timestamps (ISO-8601). ES keeps
+     * only whitelisted keys, so status/createdOn/updatedOn must be present in esMarketPlaceRequiredFields.json.
+     */
+    private ObjectNode buildDocument(JsonNode data, String status, Timestamp createdOn, Timestamp updatedOn) {
+        ObjectNode node = objectMapper.createObjectNode();
+        if (data != null && data.isObject()) {
+            node.setAll((ObjectNode) data);
+        }
+        node.put(Constants.STATUS, status);
+        if (createdOn != null) {
+            node.put(Constants.CREATED_ON, createdOn.toInstant().toString());
+        }
+        if (updatedOn != null) {
+            node.put(Constants.UPDATED_ON, updatedOn.toInstant().toString());
+        }
+        return node;
+    }
+
+    public void createSuccessResponse(CustomResponse response) {
+        response.setParams(new RespParam());
+        response.getParams().setStatus(Constants.SUCCESS);
+        response.setResponseCode(HttpStatus.OK);
+    }
+
+    public String generateRedisJwtTokenKey(Object requestPayload) {
+        if (requestPayload != null) {
+            try {
+                String reqJsonString = objectMapper.writeValueAsString(requestPayload);
+                return JWT.create()
+                        .withClaim(Constants.REQUEST_PAYLOAD, reqJsonString)
+                        .sign(Algorithm.HMAC256(Constants.JWT_SECRET_KEY));
+            } catch (JsonProcessingException e) {
+                // logger.error("Error occurred while converting json object to json string", e);
+            }
+        }
+        return "";
+    }
+
+    public void createErrorResponse(
+            CustomResponse response, String errorMessage, HttpStatus httpStatus, String status) {
+        response.setParams(new RespParam());
+        response.getParams().setStatus(status);
+        response.setResponseCode(httpStatus);
+    }
+}

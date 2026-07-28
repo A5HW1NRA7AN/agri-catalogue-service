@@ -1,0 +1,20 @@
+{
+    "marketPlaceId": {
+        "type": "keyword"
+    },
+    "region": {
+        "type": "keyword"
+    },
+    "marketPlace": {
+        "type": "keyword"
+    },
+    "status": {
+        "type": "keyword"
+    },
+    "createdOn": {
+        "type": "date"
+    },
+    "updatedOn": {
+        "type": "date"
+    }
+}

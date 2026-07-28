@@ -2,12 +2,12 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
-        "locationId": {
+        "marketPlaceId": {
             "type": "string",
-            "prefix": "location-",
+            "prefix": "marketplace-",
             "key": "Primary",
             "keyLength": 12,
-            "description": "location prefix"
+            "description": "market place prefix"
         },
         "region": {
             "type": "string",

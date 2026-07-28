@@ -6,6 +6,7 @@ public class Constants{
     public static final String ACTIVE = "ACTIVE";
     public static final String IN_ACTIVE = "INACTIVE";
     public static final String SUCCESSFULLY_CREATED = "successfully created";
+    public static final String SUCCESSFULLY_UPDATED = "successfully updated";
     public static final String SUCCESSFULLY_DELETED = "successfully deleted";
     public static final String RESULT = "result";
     public static final String FAILED_CONST = "FAILED";
@@ -13,6 +14,22 @@ public class Constants{
 
     public static final String ERROR = "ERROR";
     public static final String REDIS_KEY_PREFIX = "verg_cache_";
+
+    // Lifecycle / approval workflow constants
+    // Note: ACTIVE (published/live) is reused; IN_ACTIVE now means deactivated (toggle);
+    // DELETED (below) is the soft-delete state set by delete().
+    public static final String DRAFT = "DRAFT";
+    public static final String PENDING = "PENDING";
+    public static final String APPROVED = "APPROVED";
+    public static final String REWORK = "REWORK";
+    public static final String REJECTED = "REJECTED";
+    public static final String DELETED = "DELETED";
+    public static final String PUBLISHED = "PUBLISHED"; // accepted alias for ACTIVE on the review endpoint
+    public static final String STATUS = "status";
+    public static final String CREATED_ON = "createdOn";
+    public static final String UPDATED_ON = "updatedOn";
+    public static final String INVALID_STATUS = "Invalid target status";
+    public static final String INVALID_STATUS_TRANSITION = "Record is not in a state that allows this action";
 
     //ES Specific Constants
     public static final String INDEX_TYPE = "_doc";
@@ -55,22 +72,41 @@ public class Constants{
     public static final String FAILED = "Failed";
     public static final String ERROR_MESSAGE = "errmsg";
 
-    // Entity Specific Constants
-    public static final String SAMPLE_VALIDATION_FILE_JSON = "/payloadValidation/samplePayloadValidation.json";
-    public static final String SAMPLE_ID_RQST = "sampleId";
-    public static final String INTEREST_INDEX_NAME = "sampleIndex";
+    
+    // LocationMapper Specific Constants
+    public static final String LOCATION_MAPPER_VALIDATION_FILE_JSON = "/payloadValidation/locationMapperPayloadValidation.json";
+    public static final String LOCATION_MAPPER_ID_RQST = "locationMapperId";
+    public static final String LOCATION_MAPPER_INDEX_NAME = "locationMapper_index";
 
     
-    // Testthree Specific Constants
-    public static final String TESTTHREE_VALIDATION_FILE_JSON = "/payloadValidation/testthreePayloadValidation.json";
-    public static final String TESTTHREE_ID_RQST = "testthreeId";
-    public static final String TESTTHREE_INDEX_NAME = "testthree_index";
+    // LocationObject Specific Constants
+    public static final String LOCATION_OBJECT_VALIDATION_FILE_JSON = "/payloadValidation/locationObjectPayloadValidation.json";
+    public static final String LOCATION_OBJECT_ID_RQST = "locationObjectId";
+    public static final String LOCATION_OBJECT_INDEX_NAME = "locationObject_index";
 
     
     // Seed Specific Constants
     public static final String SEED_VALIDATION_FILE_JSON = "/payloadValidation/seedPayloadValidation.json";
     public static final String SEED_ID_RQST = "seedId";
     public static final String SEED_INDEX_NAME = "seed_index";
+
+    
+    // Croptype Specific Constants
+    public static final String CROPTYPE_VALIDATION_FILE_JSON = "/payloadValidation/croptypePayloadValidation.json";
+    public static final String CROPTYPE_ID_RQST = "croptypeId";
+    public static final String CROPTYPE_INDEX_NAME = "croptype_index";
+
+    
+    // Cropcategory Specific Constants
+    public static final String CROPCATEGORY_VALIDATION_FILE_JSON = "/payloadValidation/cropcategoryPayloadValidation.json";
+    public static final String CROPCATEGORY_ID_RQST = "cropcategoryId";
+    public static final String CROPCATEGORY_INDEX_NAME = "cropcategory_index";
+
+    
+    // Cropvariety Specific Constants
+    public static final String CROPVARIETY_VALIDATION_FILE_JSON = "/payloadValidation/cropvarietyPayloadValidation.json";
+    public static final String CROPVARIETY_ID_RQST = "cropvarietyId";
+    public static final String CROPVARIETY_INDEX_NAME = "cropvariety_index";
 
     
     // Livestock Specific Constants
@@ -115,28 +151,10 @@ public class Constants{
     public static final String FERTILIZER_INDEX_NAME = "fertilizer_index";
 
     
-    // Location Specific Constants
-    public static final String LOCATION_VALIDATION_FILE_JSON = "/payloadValidation/locationPayloadValidation.json";
-    public static final String LOCATION_ID_RQST = "locationId";
-    public static final String LOCATION_INDEX_NAME = "location_index";
-
-    
-    // Croptype Specific Constants
-    public static final String CROPTYPE_VALIDATION_FILE_JSON = "/payloadValidation/croptypePayloadValidation.json";
-    public static final String CROPTYPE_ID_RQST = "croptypeId";
-    public static final String CROPTYPE_INDEX_NAME = "croptype_index";
-
-    
-    // Cropcategory Specific Constants
-    public static final String CROPCATEGORY_VALIDATION_FILE_JSON = "/payloadValidation/cropcategoryPayloadValidation.json";
-    public static final String CROPCATEGORY_ID_RQST = "cropcategoryId";
-    public static final String CROPCATEGORY_INDEX_NAME = "cropcategory_index";
-
-    
-    // Cropvariety Specific Constants
-    public static final String CROPVARIETY_VALIDATION_FILE_JSON = "/payloadValidation/cropvarietyPayloadValidation.json";
-    public static final String CROPVARIETY_ID_RQST = "cropvarietyId";
-    public static final String CROPVARIETY_INDEX_NAME = "cropvariety_index";
+    // MarketPlace Specific Constants
+    public static final String MARKET_PLACE_VALIDATION_FILE_JSON = "/payloadValidation/marketPlacePayloadValidation.json";
+    public static final String MARKET_PLACE_ID_RQST = "marketPlaceId";
+    public static final String MARKET_PLACE_INDEX_NAME = "marketPlace_index";
 
         private Constants() {
     }
