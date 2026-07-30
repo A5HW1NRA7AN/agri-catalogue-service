@@ -204,7 +204,7 @@ class CreateRegistry:
     // {self.pascal} Specific Constants
     public static final String {self.upper}_VALIDATION_FILE_JSON = "/payloadValidation/{self.camel}PayloadValidation.json";
     public static final String {self.upper}_ID_RQST = "{self.camel}Id";
-    public static final String {self.upper}_INDEX_NAME = "{self.camel}_index";
+    public static final String {self.upper}_INDEX_NAME = "{self.lower}_index";
 
     """
         updated_content = content.replace(insertion_point, new_constants + insertion_point)

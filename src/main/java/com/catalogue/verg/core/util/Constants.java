@@ -73,18 +73,6 @@ public class Constants{
     public static final String ERROR_MESSAGE = "errmsg";
 
     
-    // LocationMapper Specific Constants
-    public static final String LOCATION_MAPPER_VALIDATION_FILE_JSON = "/payloadValidation/locationMapperPayloadValidation.json";
-    public static final String LOCATION_MAPPER_ID_RQST = "locationMapperId";
-    public static final String LOCATION_MAPPER_INDEX_NAME = "locationMapper_index";
-
-    
-    // LocationObject Specific Constants
-    public static final String LOCATION_OBJECT_VALIDATION_FILE_JSON = "/payloadValidation/locationObjectPayloadValidation.json";
-    public static final String LOCATION_OBJECT_ID_RQST = "locationObjectId";
-    public static final String LOCATION_OBJECT_INDEX_NAME = "locationObject_index";
-
-    
     // Seed Specific Constants
     public static final String SEED_VALIDATION_FILE_JSON = "/payloadValidation/seedPayloadValidation.json";
     public static final String SEED_ID_RQST = "seedId";
@@ -155,6 +143,18 @@ public class Constants{
     public static final String MARKET_PLACE_VALIDATION_FILE_JSON = "/payloadValidation/marketPlacePayloadValidation.json";
     public static final String MARKET_PLACE_ID_RQST = "marketPlaceId";
     public static final String MARKET_PLACE_INDEX_NAME = "marketPlace_index";
+
+    
+    // LocationMapper Specific Constants
+    public static final String LOCATION_MAPPER_VALIDATION_FILE_JSON = "/payloadValidation/locationMapperPayloadValidation.json";
+    public static final String LOCATION_MAPPER_ID_RQST = "locationMapperId";
+    public static final String LOCATION_MAPPER_INDEX_NAME = "locationMapper_index";
+
+    
+    // LocationObject Specific Constants
+    public static final String LOCATION_OBJECT_VALIDATION_FILE_JSON = "/payloadValidation/locationObjectPayloadValidation.json";
+    public static final String LOCATION_OBJECT_ID_RQST = "locationObjectId";
+    public static final String LOCATION_OBJECT_INDEX_NAME = "locationobject_index";
 
         private Constants() {
     }

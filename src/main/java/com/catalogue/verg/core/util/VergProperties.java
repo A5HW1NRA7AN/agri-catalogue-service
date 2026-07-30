@@ -17,14 +17,6 @@ public class VergProperties {
 
         @Value("${search.string.max.regex.length}")
         private int searchStringMaxRegexLength;
-
-
-        @Value("${elastic.required.field.locationmapper.json.path}")
-        private String elasticLocationMapperJsonPath;
-    
-        @Value("${elastic.required.field.locationobject.json.path}")
-        private String elasticLocationObjectJsonPath;
-    
         @Value("${elastic.required.field.seed.json.path}")
         private String elasticSeedJsonPath;
     
@@ -60,4 +52,10 @@ public class VergProperties {
     
         @Value("${elastic.required.field.marketplace.json.path}")
         private String elasticMarketPlaceJsonPath;
+    
+        @Value("${elastic.required.field.locationmapper.json.path}")
+        private String elasticLocationMapperJsonPath;
+    
+        @Value("${elastic.required.field.locationobject.json.path}")
+        private String elasticLocationObjectJsonPath;
     }

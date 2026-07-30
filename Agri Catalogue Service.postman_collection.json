@@ -695,6 +695,324 @@
           "response": []
         },
         {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cropCategoryId\": \"cropcategory-12345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/croptype/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "croptype",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cropCategoryId\": \"cropcategory-12345\",\n  \"cropCategoryName\": \"Cereals\",\n  \"name\": \"Teff\",\n  \"scientificName\": \"Eragrostis tef\",\n  \"centre\": \"Debre Zeit Agricultural Research Center\",\n  \"varietiesCount\": 42,\n  \"imageUrl\": \"https://example.com/images/teff.png\",\n  \"description\": \"Teff is a staple cereal crop grown mainly in the Ethiopian highlands\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/croptype/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "croptype",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cropCategoryId\": \"cropcategory-12345\",\n  \"cropCategoryName\": \"Cereals\",\n  \"name\": \"Teff\",\n  \"scientificName\": \"Eragrostis tef\",\n  \"centre\": \"Debre Zeit Agricultural Research Center\",\n  \"varietiesCount\": 42,\n  \"imageUrl\": \"https://example.com/images/teff.png\",\n  \"description\": \"Teff is a staple cereal crop grown mainly in the Ethiopian highlands\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/croptype/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "croptype",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"croptype-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/croptype/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "croptype",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"croptype-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/croptype/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "croptype",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/croptype/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "croptype",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "search",
           "request": {
             "auth": {
@@ -781,6 +1099,66 @@
                 "croptype",
                 "v1",
                 "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cropCategoryId\": \"cropcategory-12345\",\n  \"cropCategoryName\": \"Cereals\",\n  \"name\": \"Teff\",\n  \"scientificName\": \"Eragrostis tef\",\n  \"centre\": \"Debre Zeit Agricultural Research Center\",\n  \"varietiesCount\": 42,\n  \"imageUrl\": \"https://example.com/images/teff.png\",\n  \"description\": \"Teff is a staple cereal crop grown mainly in the Ethiopian highlands\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/croptype/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "croptype",
+                "v1",
+                "update",
                 ":id"
               ],
               "variable": [
@@ -948,6 +1326,324 @@
           "response": []
         },
         {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cropCategoryId\": \"cropcategory-12345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cropvariety/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropvariety",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cropCategoryId\": \"cropcategory-12345\",\n  \"cropTypeId\": \"croptype-123456789012\",\n  \"cropCategoryName\": \"Cereals\",\n  \"cropTypeName\": \"Teff\",\n  \"name\": \"Quncho (DZ-Cr-387 RIL355)\",\n  \"centre\": \"Debre Zeit Agricultural Research Center\",\n  \"year\": \"2006\",\n  \"imageUrl\": \"https://example.com/varieties/quncho\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cropvariety/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropvariety",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cropCategoryId\": \"cropcategory-12345\",\n  \"cropTypeId\": \"croptype-123456789012\",\n  \"cropCategoryName\": \"Cereals\",\n  \"cropTypeName\": \"Teff\",\n  \"name\": \"Quncho (DZ-Cr-387 RIL355)\",\n  \"centre\": \"Debre Zeit Agricultural Research Center\",\n  \"year\": \"2006\",\n  \"imageUrl\": \"https://example.com/varieties/quncho\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cropvariety/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropvariety",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"cropvariety-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cropvariety/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropvariety",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"cropvariety-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cropvariety/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropvariety",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cropvariety/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropvariety",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "search",
           "request": {
             "auth": {
@@ -1034,6 +1730,66 @@
                 "cropvariety",
                 "v1",
                 "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cropCategoryId\": \"cropcategory-12345\",\n  \"cropTypeId\": \"croptype-123456789012\",\n  \"cropCategoryName\": \"Cereals\",\n  \"cropTypeName\": \"Teff\",\n  \"name\": \"Quncho (DZ-Cr-387 RIL355)\",\n  \"centre\": \"Debre Zeit Agricultural Research Center\",\n  \"year\": \"2006\",\n  \"imageUrl\": \"https://example.com/varieties/quncho\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cropvariety/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropvariety",
+                "v1",
+                "update",
                 ":id"
               ],
               "variable": [
@@ -1196,6 +1952,324 @@
           "response": []
         },
         {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"extensionequipmentId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/extensionequipment/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "extensionequipment",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"extensionequipmentId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/extensionequipment/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "extensionequipment",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"extensionequipmentId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/extensionequipment/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "extensionequipment",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"extensionequipment-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/extensionequipment/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "extensionequipment",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"extensionequipment-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/extensionequipment/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "extensionequipment",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/extensionequipment/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "extensionequipment",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "search",
           "request": {
             "auth": {
@@ -1282,6 +2356,66 @@
                 "extensionequipment",
                 "v1",
                 "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"extensionequipmentId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/extensionequipment/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "extensionequipment",
+                "v1",
+                "update",
                 ":id"
               ],
               "variable": [
@@ -1444,6 +2578,324 @@
           "response": []
         },
         {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fertilizerId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fertilizer/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fertilizer",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fertilizerId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fertilizer/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fertilizer",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fertilizerId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fertilizer/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fertilizer",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"fertilizer-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fertilizer/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fertilizer",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"fertilizer-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fertilizer/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fertilizer",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fertilizer/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fertilizer",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "search",
           "request": {
             "auth": {
@@ -1530,6 +2982,66 @@
                 "fertilizer",
                 "v1",
                 "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fertilizerId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/fertilizer/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fertilizer",
+                "v1",
+                "update",
                 ":id"
               ],
               "variable": [
@@ -1692,6 +3204,324 @@
           "response": []
         },
         {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"insecticideId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/insecticide/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "insecticide",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"insecticideId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/insecticide/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "insecticide",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"insecticideId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/insecticide/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "insecticide",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"insecticide-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/insecticide/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "insecticide",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"insecticide-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/insecticide/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "insecticide",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/insecticide/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "insecticide",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "search",
           "request": {
             "auth": {
@@ -1778,6 +3608,66 @@
                 "insecticide",
                 "v1",
                 "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"insecticideId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/insecticide/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "insecticide",
+                "v1",
+                "update",
                 ":id"
               ],
               "variable": [
@@ -1945,6 +3835,324 @@
           "response": []
         },
         {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"livestock\": \"Cattle\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/livestock/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "livestock",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"livestock\": \"Cattle\",\n  \"locationType\": \"Low Land\",\n  \"breed\": \"Boran\",\n  \"gender\": \"Female\",\n  \"productionType\": \"Milk\",\n  \"bodyCondition\": \"Moderate Weight\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/livestock/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "livestock",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"livestock\": \"Cattle\",\n  \"locationType\": \"Low Land\",\n  \"breed\": \"Boran\",\n  \"gender\": \"Female\",\n  \"productionType\": \"Milk\",\n  \"bodyCondition\": \"Moderate Weight\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/livestock/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "livestock",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"livestock-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/livestock/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "livestock",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"livestock-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/livestock/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "livestock",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/livestock/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "livestock",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "search",
           "request": {
             "auth": {
@@ -2031,6 +4239,66 @@
                 "livestock",
                 "v1",
                 "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"livestock\": \"Cattle\",\n  \"locationType\": \"Low Land\",\n  \"breed\": \"Boran\",\n  \"gender\": \"Female\",\n  \"productionType\": \"Milk\",\n  \"bodyCondition\": \"Moderate Weight\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/livestock/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "livestock",
+                "v1",
+                "update",
                 ":id"
               ],
               "variable": [
@@ -2132,6 +4400,1268 @@
               ],
               "path": [
                 "livestock",
+                "v1",
+                "import"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "locationmapper",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location0Order\": 0,\n  \"locationIdName\": \"locationobject-523128200376\",\n  \"location1Id\": \"locationobject-474504123416\",\n  \"location1Name\": \"Tigray\",\n  \"location1Order\": 1,\n  \"location2Id\": \"locationobject-497546833165\",\n  \"location2Name\": \"North Western\",\n  \"location2Order\": 2,\n  \"location3Id\": \"locationobject-161945581327\",\n  \"location3Name\": \"Tahtay Adiyabo\",\n  \"location3Order\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationmapper/v1/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationmapper",
+                "v1",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location1Name\": \"Tigray\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationmapper/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationmapper",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location0Order\": 0,\n  \"locationIdName\": \"locationobject-523128200376\",\n  \"location1Id\": \"locationobject-474504123416\",\n  \"location1Name\": \"Tigray\",\n  \"location1Order\": 1,\n  \"location2Id\": \"locationobject-497546833165\",\n  \"location2Name\": \"North Western\",\n  \"location2Order\": 2,\n  \"location3Id\": \"locationobject-161945581327\",\n  \"location3Name\": \"Tahtay Adiyabo\",\n  \"location3Order\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationmapper/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationmapper",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location0Order\": 0,\n  \"locationIdName\": \"locationobject-523128200376\",\n  \"location1Id\": \"locationobject-474504123416\",\n  \"location1Name\": \"Tigray\",\n  \"location1Order\": 1,\n  \"location2Id\": \"locationobject-497546833165\",\n  \"location2Name\": \"North Western\",\n  \"location2Order\": 2,\n  \"location3Id\": \"locationobject-161945581327\",\n  \"location3Name\": \"Tahtay Adiyabo\",\n  \"location3Order\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationmapper/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationmapper",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"locationmapper-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationmapper/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationmapper",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"locationmapper-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationmapper/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationmapper",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locationmapper/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationmapper",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "search",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filterCriteriaMap\": {\n    \"location1Name\": \"Tigray\"\n  },\n  \"pageNumber\": 0,\n  \"pageSize\": 10,\n  \"orderBy\": \"location3Order\",\n  \"orderDirection\": \"asc\",\n  \"facets\": [\n    \"location1Name\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationmapper/v1/search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationmapper",
+                "v1",
+                "search"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "read",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locationmapper/v1/read/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationmapper",
+                "v1",
+                "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location0Order\": 0,\n  \"locationIdName\": \"locationobject-523128200376\",\n  \"location1Id\": \"locationobject-474504123416\",\n  \"location1Name\": \"Tigray\",\n  \"location1Order\": 1,\n  \"location2Id\": \"locationobject-497546833165\",\n  \"location2Name\": \"North Western\",\n  \"location2Order\": 2,\n  \"location3Id\": \"locationobject-161945581327\",\n  \"location3Name\": \"Tahtay Adiyabo\",\n  \"location3Order\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationmapper/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationmapper",
+                "v1",
+                "update",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locationmapper/v1/delete/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationmapper",
+                "v1",
+                "delete",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "import",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "description": "CSV or XLSX file to import (max 5MB). Column headers must match schema property names exactly.",
+                  "value": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationmapper/v1/import",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationmapper",
+                "v1",
+                "import"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "locationobject",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationName\": \"Addis Ababa\",\n  \"locationOrder\": 1,\n  \"locationRefN\": \"ET-AA\",\n  \"locationAltN\": \"Addis Abeba\",\n  \"locationAl_1\": \"Finfinne\",\n  \"locationDate\": \"2024-01-01\",\n  \"locationLat\": 9.03,\n  \"locationLong\": 38.74,\n  \"locationShapeLeng\": 1.01086910871,\n  \"locationShapeArea\": 0.0443693499924,\n  \"locationGeom\": \"MultiPolygon, 4326 (197 vertices)\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationobject/v1/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationobject",
+                "v1",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationName\": \"Afar\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationobject/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationobject",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationName\": \"Amhara\",\n  \"locationOrder\": 3,\n  \"locationRefN\": \"ET-AM\",\n  \"locationAltN\": \"Amara\",\n  \"locationAl_1\": \"\",\n  \"locationDate\": \"2024-01-01\",\n  \"locationLat\": 11.5,\n  \"locationLong\": 37.5,\n  \"locationShapeLeng\": 25.8942223233,\n  \"locationShapeArea\": 12.9014535141,\n  \"locationGeom\": \"MultiPolygon, 4326 (3,087 vertices)\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationobject/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationobject",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationName\": \"Amhara\",\n  \"locationOrder\": 3,\n  \"locationRefN\": \"ET-AM\",\n  \"locationAltN\": \"Amara\",\n  \"locationAl_1\": \"\",\n  \"locationDate\": \"2024-01-01\",\n  \"locationLat\": 11.5,\n  \"locationLong\": 37.5,\n  \"locationShapeLeng\": 25.8942223233,\n  \"locationShapeArea\": 12.9014535141,\n  \"locationGeom\": \"MultiPolygon, 4326 (3,087 vertices)\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationobject/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationobject",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"locationobject-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationobject/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationobject",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"locationobject-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationobject/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationobject",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locationobject/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationobject",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "search",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationobject/v1/search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationobject",
+                "v1",
+                "search"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "read",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locationobject/v1/read/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationobject",
+                "v1",
+                "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"locationName\": \"Addis Ababa\",\n  \"locationOrder\": 1,\n  \"locationRefN\": \"ET-AA\",\n  \"locationAltN\": \"Addis Abeba\",\n  \"locationAl_1\": \"Finfinne\",\n  \"locationDate\": \"2024-01-01\",\n  \"locationLat\": 9.03,\n  \"locationLong\": 38.74,\n  \"locationShapeLeng\": 1.01086910871,\n  \"locationShapeArea\": 0.0443693499924,\n  \"locationGeom\": \"MultiPolygon, 4326 (197 vertices)\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationobject/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationobject",
+                "v1",
+                "update",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locationobject/v1/delete/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationobject",
+                "v1",
+                "delete",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "import",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "description": "CSV or XLSX file to import (max 5MB). Column headers must match schema property names exactly.",
+                  "value": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locationobject/v1/import",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationobject",
                 "v1",
                 "import"
               ]
@@ -2824,6 +6354,324 @@
           "response": []
         },
         {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pesticideId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pesticide/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pesticide",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pesticideId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pesticide/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pesticide",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pesticideId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pesticide/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pesticide",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"pesticide-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pesticide/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pesticide",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"pesticide-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pesticide/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pesticide",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pesticide/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pesticide",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "search",
           "request": {
             "auth": {
@@ -2910,6 +6758,66 @@
                 "pesticide",
                 "v1",
                 "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pesticideId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pesticide/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pesticide",
+                "v1",
+                "update",
                 ":id"
               ],
               "variable": [
@@ -3077,6 +6985,324 @@
           "response": []
         },
         {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"season\": \"Kiremt\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/season/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "season",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"season\": \"Kiremt\",\n  \"startMonth\": \"June\",\n  \"startDay\": 1,\n  \"endMonth\": \"September\",\n  \"endDay\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/season/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "season",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"season\": \"Kiremt\",\n  \"startMonth\": \"June\",\n  \"startDay\": 1,\n  \"endMonth\": \"September\",\n  \"endDay\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/season/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "season",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"season-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/season/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "season",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"season-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/season/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "season",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/season/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "season",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "search",
           "request": {
             "auth": {
@@ -3163,6 +7389,66 @@
                 "season",
                 "v1",
                 "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"season\": \"Kiremt\",\n  \"startMonth\": \"June\",\n  \"startDay\": 1,\n  \"endMonth\": \"September\",\n  \"endDay\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/season/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "season",
+                "v1",
+                "update",
                 ":id"
               ],
               "variable": [
@@ -3325,6 +7611,324 @@
           "response": []
         },
         {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/seed/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seed",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/seed/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seed",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/seed/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seed",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"seed-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/seed/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seed",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"seed-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/seed/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seed",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/seed/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seed",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "search",
           "request": {
             "auth": {
@@ -3411,6 +8015,66 @@
                 "seed",
                 "v1",
                 "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seedId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/seed/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seed",
+                "v1",
+                "update",
                 ":id"
               ],
               "variable": [
@@ -3573,6 +8237,324 @@
           "response": []
         },
         {
+          "name": "draft",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"soilId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/soil/v1/draft",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "soil",
+                "v1",
+                "draft"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-new",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"soilId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/soil/v1/add",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "soil",
+                "v1",
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add-promote",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"soilId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/soil/v1/add/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "soil",
+                "v1",
+                "add",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "approve",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"soil-12345\",\n  \"status\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/soil/v1/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "soil",
+                "v1",
+                "approve"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "review",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"soil-12345\",\n  \"status\": \"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/soil/v1/review",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "soil",
+                "v1",
+                "review"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/soil/v1/toggle/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "soil",
+                "v1",
+                "toggle",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "search",
           "request": {
             "auth": {
@@ -3659,6 +8641,66 @@
                 "soil",
                 "v1",
                 "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "123"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"soilId\": \"sample string\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/soil/v1/update/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "soil",
+                "v1",
+                "update",
                 ":id"
               ],
               "variable": [
@@ -3797,7 +8839,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": ""
+      "value": "http://35.78.108.187:30080"
     },
     {
       "key": "api_key",

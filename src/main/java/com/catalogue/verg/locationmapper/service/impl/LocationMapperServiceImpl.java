@@ -10,12 +10,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.catalogue.verg.core.cache.CacheService;
 import com.catalogue.verg.core.dto.CustomResponse;
+import com.catalogue.verg.core.dto.LifecycleRequest;
 import com.catalogue.verg.core.dto.RespParam;
 import com.catalogue.verg.core.elasticsearch.dto.SearchCriteria;
 import com.catalogue.verg.core.elasticsearch.dto.SearchResult;
 import com.catalogue.verg.core.elasticsearch.service.ESUtilService;
 import com.catalogue.verg.core.exception.CustomException;
 import com.catalogue.verg.core.util.Constants;
+import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
@@ -38,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -94,15 +97,13 @@ public class LocationMapperServiceImpl implements LocationMapperService {
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             locationMapperEntity1.setCreatedOn(currentTime);
             locationMapperEntity1.setUpdatedOn(currentTime);
-            locationMapperEntity1.setStatus(Constants.ACTIVE);
+            locationMapperEntity1.setStatus(Constants.PENDING);
             locationMapperEntity1.setData(locationMapperEntity);
 
             locationMapperRepository.save(locationMapperEntity1);
 
             log.info("LocationMapperServiceImpl::createLocationMapper::persisted locationMapper in postgres");
-            ObjectNode jsonNode = objectMapper.createObjectNode();
-//            jsonNode.put("status", Constants.ACTIVE);
-            jsonNode.setAll((ObjectNode) locationMapperEntity);
+            ObjectNode jsonNode = buildDocument(locationMapperEntity, Constants.PENDING, currentTime, currentTime);
             Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
             esUtilService.addDocument(Constants.LOCATION_MAPPER_INDEX_NAME, Constants.INDEX_TYPE,
                     String.valueOf(primaryID), map, vergProperties.getElasticLocationMapperJsonPath());
@@ -182,14 +183,17 @@ public class LocationMapperServiceImpl implements LocationMapperService {
                 Optional<LocationMapperEntity> entityOptional = locationMapperRepository.findById(id);
                 if (entityOptional.isPresent()) {
                     LocationMapperEntity locationMapperEntity = entityOptional.get();
-                    cacheService.putCache(id, locationMapperEntity.getData());
+                    ObjectNode jsonNode = buildDocument(locationMapperEntity.getData(),
+                            locationMapperEntity.getStatus(), locationMapperEntity.getCreatedOn(),
+                            locationMapperEntity.getUpdatedOn());
+                    cacheService.putCache(id, jsonNode);
                     log.info("LocationMapperServiceImpl::read:Record coming from postgres db");
                     response.setMessage(Constants.SUCCESSFULLY_READING);
                     response
                             .getResult()
                             .put(Constants.RESULT,
                                     objectMapper.convertValue(
-                                            locationMapperEntity.getData(), new TypeReference<Object>() {
+                                            jsonNode, new TypeReference<Object>() {
                                             }));
                 } else {
                     response.setResponseCode(HttpStatus.NOT_FOUND);
@@ -201,6 +205,75 @@ public class LocationMapperServiceImpl implements LocationMapperService {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
+    }
+
+    @Override
+    public CustomResponse updateLocationMapper(String id, JsonNode locationMapperEntity) {
+        log.info("LocationMapperServiceImpl::updateLocationMapper:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+
+        // Validate that the ID is not null or empty
+        if (StringUtils.isEmpty(id)) {
+            log.warn("LocationMapperServiceImpl::updateLocationMapper:id is null or empty");
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+
+        // Validate the incoming payload against the entity schema (same as create)
+        payloadValidation.validatePayload(Constants.LOCATION_MAPPER_VALIDATION_FILE_JSON, locationMapperEntity);
+        log.debug("LocationMapperServiceImpl::updateLocationMapper:validated the payload");
+
+        try {
+            // Check if the entity exists in the database
+            Optional<LocationMapperEntity> entityOptional = locationMapperRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                log.warn("LocationMapperServiceImpl::updateLocationMapper:no record found for id: {}", id);
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+
+            LocationMapperEntity locationMapperEntity1 = entityOptional.get();
+
+            // Reject updates on soft-deleted (DELETED) records
+            if (Constants.DELETED.equals(locationMapperEntity1.getStatus())) {
+                log.warn("LocationMapperServiceImpl::updateLocationMapper:record already deleted for id: {}", id);
+                response.setResponseCode(HttpStatus.BAD_REQUEST);
+                response.setMessage("Record is already deleted");
+                return response;
+            }
+
+            // Replace payload; preserve id / createdOn / status, bump updatedOn
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            locationMapperEntity1.setData(locationMapperEntity);
+            locationMapperEntity1.setUpdatedOn(currentTime);
+            locationMapperRepository.save(locationMapperEntity1);
+            log.info("LocationMapperServiceImpl::updateLocationMapper:updated record in postgres for id: {}", id);
+
+            // Re-index the document in Elasticsearch (filtered to whitelisted fields)
+            ObjectNode jsonNode = buildDocument(locationMapperEntity, locationMapperEntity1.getStatus(),
+                    locationMapperEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.LOCATION_MAPPER_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticLocationMapperJsonPath());
+            log.info("LocationMapperServiceImpl::updateLocationMapper:updated document in elasticsearch for id: {}", id);
+
+            // Refresh the Redis cache
+            cacheService.putCache(id, jsonNode);
+            log.info("LocationMapperServiceImpl::updateLocationMapper:refreshed cache for id: {}", id);
+
+            map.put(Constants.LOCATION_MAPPER_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+
+        } catch (Exception e) {
+            log.error("LocationMapperServiceImpl::updateLocationMapper:error while updating record for id: {}", id, e);
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
@@ -228,16 +301,16 @@ public class LocationMapperServiceImpl implements LocationMapperService {
 
             LocationMapperEntity locationMapperEntity = entityOptional.get();
 
-            // Check if the entity is already deleted (soft-deleted)
-            if (Constants.IN_ACTIVE.equals(locationMapperEntity.getStatus())) {
+            // Check if the entity is already deleted
+            if (Constants.DELETED.equals(locationMapperEntity.getStatus())) {
                 log.warn("LocationMapperServiceImpl::delete:record already deleted for id: {}", id);
                 response.setResponseCode(HttpStatus.BAD_REQUEST);
                 response.setMessage("Record is already deleted");
                 return response;
             }
 
-            // Soft delete: update the status to INACTIVE and set updatedOn timestamp
-            locationMapperEntity.setStatus(Constants.IN_ACTIVE);
+            // Soft delete: mark the status DELETED and set updatedOn timestamp
+            locationMapperEntity.setStatus(Constants.DELETED);
             locationMapperEntity.setUpdatedOn(new Timestamp(System.currentTimeMillis()));
             locationMapperRepository.save(locationMapperEntity);
             log.info("LocationMapperServiceImpl::delete:soft deleted record in postgres for id: {}", id);
@@ -269,6 +342,240 @@ public class LocationMapperServiceImpl implements LocationMapperService {
                 Constants.LOCATION_MAPPER_VALIDATION_FILE_JSON,
                 this::createLocationMapper
         );
+    }
+
+    @Override
+    public CustomResponse draftLocationMapper(JsonNode locationMapperEntity) {
+        log.info("LocationMapperServiceImpl::draftLocationMapper:entered the method: " + locationMapperEntity);
+        CustomResponse response = new CustomResponse();
+        // Relaxed validation: types/structure enforced, but required fields may be missing
+        payloadValidation.validatePayloadRelaxed(Constants.LOCATION_MAPPER_VALIDATION_FILE_JSON, locationMapperEntity);
+        log.debug("LocationMapperServiceImpl::draftLocationMapper:validated the payload (relaxed)");
+        try {
+            LocationMapperEntity locationMapperEntity1 = new LocationMapperEntity();
+            String primaryID = primaryKeyUtil.generateKey(Constants.LOCATION_MAPPER_VALIDATION_FILE_JSON);
+            locationMapperEntity1.setLocationMapperId(primaryID);
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            locationMapperEntity1.setCreatedOn(currentTime);
+            locationMapperEntity1.setUpdatedOn(currentTime);
+            locationMapperEntity1.setStatus(Constants.DRAFT);
+            locationMapperEntity1.setData(locationMapperEntity);
+
+            locationMapperRepository.save(locationMapperEntity1);
+            log.info("LocationMapperServiceImpl::draftLocationMapper::persisted draft in postgres");
+
+            ObjectNode jsonNode = buildDocument(locationMapperEntity, Constants.DRAFT, currentTime, currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.addDocument(Constants.LOCATION_MAPPER_INDEX_NAME, Constants.INDEX_TYPE,
+                    String.valueOf(primaryID), map, vergProperties.getElasticLocationMapperJsonPath());
+            cacheService.putCache(primaryID, jsonNode);
+            map.put(Constants.LOCATION_MAPPER_ID_RQST, primaryID);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_CREATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse addLocationMapper(String id, JsonNode locationMapperEntity) {
+        log.info("LocationMapperServiceImpl::addLocationMapper:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+        if (StringUtils.isEmpty(id)) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        // Full validation: all required fields must be present to submit for approval
+        payloadValidation.validatePayload(Constants.LOCATION_MAPPER_VALIDATION_FILE_JSON, locationMapperEntity);
+        log.debug("LocationMapperServiceImpl::addLocationMapper:validated the payload");
+        try {
+            Optional<LocationMapperEntity> entityOptional = locationMapperRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            LocationMapperEntity locationMapperEntity1 = entityOptional.get();
+            // Only DRAFT or REWORK records can be (re-)submitted for approval
+            if (!LifecycleUtil.ADD_PROMOTABLE.contains(locationMapperEntity1.getStatus())) {
+                log.warn("LocationMapperServiceImpl::addLocationMapper:record {} not in DRAFT/REWORK (status={})",
+                        id, locationMapperEntity1.getStatus());
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            locationMapperEntity1.setData(locationMapperEntity);
+            locationMapperEntity1.setStatus(Constants.PENDING);
+            locationMapperEntity1.setUpdatedOn(currentTime);
+            locationMapperRepository.save(locationMapperEntity1);
+            log.info("LocationMapperServiceImpl::addLocationMapper:submitted record {} for approval (PENDING)", id);
+
+            ObjectNode jsonNode = buildDocument(locationMapperEntity, Constants.PENDING,
+                    locationMapperEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.LOCATION_MAPPER_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticLocationMapperJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.LOCATION_MAPPER_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public CustomResponse approveLocationMapper(LifecycleRequest request) {
+        log.info("LocationMapperServiceImpl::approveLocationMapper:entered the method");
+        return transitionStatus(request, LifecycleUtil.APPROVE_FROM, LifecycleUtil.APPROVE_TARGETS);
+    }
+
+    @Override
+    public CustomResponse reviewLocationMapper(LifecycleRequest request) {
+        log.info("LocationMapperServiceImpl::reviewLocationMapper:entered the method");
+        return transitionStatus(request, LifecycleUtil.REVIEW_FROM, LifecycleUtil.REVIEW_TARGETS);
+    }
+
+    @Override
+    public CustomResponse toggleStatus(String id) {
+        log.info("LocationMapperServiceImpl::toggleStatus:entered the method with id: {}", id);
+        CustomResponse response = new CustomResponse();
+        if (StringUtils.isEmpty(id)) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        try {
+            Optional<LocationMapperEntity> entityOptional = locationMapperRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            LocationMapperEntity locationMapperEntity1 = entityOptional.get();
+            String currentStatus = locationMapperEntity1.getStatus();
+            String newStatus;
+            if (Constants.ACTIVE.equals(currentStatus)) {
+                newStatus = Constants.IN_ACTIVE;
+            } else if (Constants.IN_ACTIVE.equals(currentStatus)) {
+                newStatus = Constants.ACTIVE;
+            } else {
+                // Only a published (ACTIVE) or deactivated (INACTIVE) record can be toggled
+                log.warn("LocationMapperServiceImpl::toggleStatus:record {} is {}, can only toggle ACTIVE<->INACTIVE",
+                        id, currentStatus);
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            locationMapperEntity1.setStatus(newStatus);
+            locationMapperEntity1.setUpdatedOn(currentTime);
+            locationMapperRepository.save(locationMapperEntity1);
+            log.info("LocationMapperServiceImpl::toggleStatus:record {} toggled {} -> {}", id, currentStatus, newStatus);
+
+            ObjectNode jsonNode = buildDocument(locationMapperEntity1.getData(), newStatus,
+                    locationMapperEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.LOCATION_MAPPER_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticLocationMapperJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.LOCATION_MAPPER_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Shared status-transition logic for approve/review. Validates the id and requested target status,
+     * enforces the required current status, then persists the new status to Postgres, ES and Redis.
+     */
+    private CustomResponse transitionStatus(LifecycleRequest request, String requiredCurrentStatus,
+                                            Set<String> allowedTargets) {
+        CustomResponse response = new CustomResponse();
+        if (request == null || StringUtils.isEmpty(request.getId())) {
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.ID_NOT_FOUND);
+            return response;
+        }
+        String id = request.getId();
+        String targetStatus = LifecycleUtil.normalizeTarget(request.getStatus());
+        if (targetStatus == null || !allowedTargets.contains(targetStatus)) {
+            log.warn("LocationMapperServiceImpl::transitionStatus:invalid target status '{}' for id {}",
+                    request.getStatus(), id);
+            response.setResponseCode(HttpStatus.BAD_REQUEST);
+            response.setMessage(Constants.INVALID_STATUS);
+            return response;
+        }
+        try {
+            Optional<LocationMapperEntity> entityOptional = locationMapperRepository.findById(id);
+            if (entityOptional.isEmpty()) {
+                response.setResponseCode(HttpStatus.NOT_FOUND);
+                response.setMessage(Constants.INVALID_ID);
+                return response;
+            }
+            LocationMapperEntity locationMapperEntity1 = entityOptional.get();
+            if (!requiredCurrentStatus.equals(locationMapperEntity1.getStatus())) {
+                log.warn("LocationMapperServiceImpl::transitionStatus:record {} is {}, requires {}",
+                        id, locationMapperEntity1.getStatus(), requiredCurrentStatus);
+                response.setResponseCode(HttpStatus.CONFLICT);
+                response.setMessage(Constants.INVALID_STATUS_TRANSITION);
+                return response;
+            }
+            Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            locationMapperEntity1.setStatus(targetStatus);
+            locationMapperEntity1.setUpdatedOn(currentTime);
+            locationMapperRepository.save(locationMapperEntity1);
+            log.info("LocationMapperServiceImpl::transitionStatus:record {} moved {} -> {}",
+                    id, requiredCurrentStatus, targetStatus);
+
+            ObjectNode jsonNode = buildDocument(locationMapperEntity1.getData(), targetStatus,
+                    locationMapperEntity1.getCreatedOn(), currentTime);
+            Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
+            esUtilService.updateDocument(Constants.LOCATION_MAPPER_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticLocationMapperJsonPath());
+            cacheService.putCache(id, jsonNode);
+            map.put(Constants.LOCATION_MAPPER_ID_RQST, id);
+            response.setResult(map);
+            response.setMessage(Constants.SUCCESSFULLY_UPDATED);
+            response.setResponseCode(HttpStatus.OK);
+            return response;
+        } catch (Exception e) {
+            throw new CustomException("error while processing", e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Builds the projection stored in Elasticsearch and Redis (and returned by read): the payload
+     * plus the lifecycle status and the Postgres createdOn/updatedOn timestamps (ISO-8601). ES keeps
+     * only whitelisted keys, so status/createdOn/updatedOn must be present in esLocationMapperRequiredFields.json.
+     */
+    private ObjectNode buildDocument(JsonNode data, String status, Timestamp createdOn, Timestamp updatedOn) {
+        ObjectNode node = objectMapper.createObjectNode();
+        if (data != null && data.isObject()) {
+            node.setAll((ObjectNode) data);
+        }
+        node.put(Constants.STATUS, status);
+        if (createdOn != null) {
+            node.put(Constants.CREATED_ON, createdOn.toInstant().toString());
+        }
+        if (updatedOn != null) {
+            node.put(Constants.UPDATED_ON, updatedOn.toInstant().toString());
+        }
+        return node;
     }
 
     public void createSuccessResponse(CustomResponse response) {
