@@ -9,7 +9,7 @@
     "location0Order": {
         "type": "integer"
     },
-    "locationIdName": {
+    "location0Id": {
         "type": "keyword"
     },
 
