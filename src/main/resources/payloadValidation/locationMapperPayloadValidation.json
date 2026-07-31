@@ -18,7 +18,7 @@
             "type": "integer",
             "description": "ordering/rank of the level 0 location within its level"
         },
-        "locationIdName": {
+        "location0Id": {
             "type": "string",
             "description": "locationObject id of the level 0 location (root)"
         },
@@ -68,7 +68,7 @@
     "required": [
         "location0Name",
         "location0Order",
-        "locationIdName",
+        "location0Id",
         "location1Id",
         "location1Name",
         "location1Order",
