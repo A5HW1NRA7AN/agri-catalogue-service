@@ -156,6 +156,12 @@ public class Constants{
     public static final String LOCATION_OBJECT_ID_RQST = "locationObjectId";
     public static final String LOCATION_OBJECT_INDEX_NAME = "locationobject_index";
 
+    
+    // Audit Specific Constants
+    public static final String AUDIT_VALIDATION_FILE_JSON = "/payloadValidation/auditPayloadValidation.json";
+    public static final String AUDIT_ID_RQST = "auditId";
+    public static final String AUDIT_INDEX_NAME = "audit_index";
+
         private Constants() {
     }
 }
