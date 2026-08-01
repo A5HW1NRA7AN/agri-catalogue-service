@@ -58,4 +58,7 @@ public class VergProperties {
     
         @Value("${elastic.required.field.locationobject.json.path}")
         private String elasticLocationObjectJsonPath;
+    
+        @Value("${elastic.required.field.audit.json.path}")
+        private String elasticAuditJsonPath;
     }
