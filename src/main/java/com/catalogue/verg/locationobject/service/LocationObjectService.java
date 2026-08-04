@@ -7,34 +7,37 @@ import com.catalogue.verg.core.elasticsearch.dto.SearchCriteria;
 import org.springframework.web.multipart.MultipartFile;
 
 
-public interface LocationObjectService {
+public interface LocationobjectService {
 
-    CustomResponse createLocationObject(JsonNode locationObjectEntity);
+    CustomResponse createLocationobject(JsonNode locationobjectEntity);
 
-    CustomResponse updateLocationObject(String id, JsonNode locationObjectEntity);
+    CustomResponse updateLocationobject(String id, JsonNode locationobjectEntity);
 
     // Lifecycle: create an incomplete DRAFT (relaxed validation)
-    CustomResponse draftLocationObject(JsonNode locationObjectEntity);
+    CustomResponse draftLocationobject(JsonNode locationobjectEntity);
 
     // Lifecycle: (re-)submit a DRAFT/REWORK record for approval -> PENDING (full validation)
-    CustomResponse addLocationObject(String id, JsonNode locationObjectEntity);
+    CustomResponse addLocationobject(String id, JsonNode locationobjectEntity);
 
     // Lifecycle: PENDING -> APPROVED | REJECTED | REWORK
-    CustomResponse approveLocationObject(LifecycleRequest request);
+    CustomResponse approveLocationobject(LifecycleRequest request);
 
     // Lifecycle: APPROVED -> ACTIVE(published) | REJECTED | REWORK | PENDING
-    CustomResponse reviewLocationObject(LifecycleRequest request);
+    CustomResponse reviewLocationobject(LifecycleRequest request);
 
     // Toggle a live record between ACTIVE and INACTIVE (rejects any other status)
     CustomResponse toggleStatus(String id);
 
-    CustomResponse searchLocationObject(SearchCriteria searchCriteria);
+    CustomResponse searchLocationobject(SearchCriteria searchCriteria);
 
-    CustomResponse assignLocationObject(JsonNode locationObjectEntity, String token);
+    CustomResponse assignLocationobject(JsonNode locationobjectEntity, String token);
 
     CustomResponse read(String id);
 
     CustomResponse delete(String id);
 
     CustomResponse importData(MultipartFile file);
+
+    // Drops the ES index and rebuilds it from the primary store (Postgres); skips DELETED records
+    CustomResponse loadFromPrimaryLocationobject();
 }

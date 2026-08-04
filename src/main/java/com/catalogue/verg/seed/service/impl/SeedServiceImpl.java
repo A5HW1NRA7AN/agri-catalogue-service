@@ -21,6 +21,7 @@ import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
+import com.catalogue.verg.core.service.LoadFromPrimaryService;
 import com.catalogue.verg.core.util.PrimaryKeyUtil;
 import com.catalogue.verg.seed.entity.SeedEntity;
 import com.catalogue.verg.seed.repository.SeedRepository;
@@ -74,6 +75,9 @@ public class SeedServiceImpl implements SeedService {
 
     @Autowired
     private ImportService importService;
+
+    @Autowired
+    private LoadFromPrimaryService loadFromPrimaryService;
 
     private Logger logger = LoggerFactory.getLogger(SeedServiceImpl.class);
 
@@ -342,6 +346,20 @@ public class SeedServiceImpl implements SeedService {
                 Constants.SEED_VALIDATION_FILE_JSON,
                 this::createSeed
         );
+    }
+
+    @Override
+    public CustomResponse loadFromPrimarySeed() {
+        log.info("SeedServiceImpl::loadFromPrimarySeed::started");
+        return loadFromPrimaryService.loadFromPrimary(
+                Constants.SEED_INDEX_NAME,
+                vergProperties.getElasticSeedJsonPath(),
+                seedRepository.findAll(),
+                SeedEntity::getSeedId,
+                e -> objectMapper.convertValue(
+                        buildDocument(e.getData(), e.getStatus(), e.getCreatedOn(), e.getUpdatedOn()),
+                        Map.class),
+                e -> !Constants.DELETED.equals(e.getStatus()));   // skip DELETED; INACTIVE is indexed
     }
 
     @Override

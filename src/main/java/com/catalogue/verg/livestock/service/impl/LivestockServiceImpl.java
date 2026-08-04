@@ -21,6 +21,7 @@ import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
+import com.catalogue.verg.core.service.LoadFromPrimaryService;
 import com.catalogue.verg.core.util.PrimaryKeyUtil;
 import com.catalogue.verg.livestock.entity.LivestockEntity;
 import com.catalogue.verg.livestock.repository.LivestockRepository;
@@ -74,6 +75,9 @@ public class LivestockServiceImpl implements LivestockService {
 
     @Autowired
     private ImportService importService;
+
+    @Autowired
+    private LoadFromPrimaryService loadFromPrimaryService;
 
     private Logger logger = LoggerFactory.getLogger(LivestockServiceImpl.class);
 
@@ -342,6 +346,20 @@ public class LivestockServiceImpl implements LivestockService {
                 Constants.LIVESTOCK_VALIDATION_FILE_JSON,
                 this::createLivestock
         );
+    }
+
+    @Override
+    public CustomResponse loadFromPrimaryLivestock() {
+        log.info("LivestockServiceImpl::loadFromPrimaryLivestock::started");
+        return loadFromPrimaryService.loadFromPrimary(
+                Constants.LIVESTOCK_INDEX_NAME,
+                vergProperties.getElasticLivestockJsonPath(),
+                livestockRepository.findAll(),
+                LivestockEntity::getLivestockId,
+                e -> objectMapper.convertValue(
+                        buildDocument(e.getData(), e.getStatus(), e.getCreatedOn(), e.getUpdatedOn()),
+                        Map.class),
+                e -> !Constants.DELETED.equals(e.getStatus()));   // skip DELETED; INACTIVE is indexed
     }
 
     @Override

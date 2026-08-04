@@ -21,6 +21,7 @@ import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
+import com.catalogue.verg.core.service.LoadFromPrimaryService;
 import com.catalogue.verg.core.util.PrimaryKeyUtil;
 import com.catalogue.verg.insecticide.entity.InsecticideEntity;
 import com.catalogue.verg.insecticide.repository.InsecticideRepository;
@@ -74,6 +75,9 @@ public class InsecticideServiceImpl implements InsecticideService {
 
     @Autowired
     private ImportService importService;
+
+    @Autowired
+    private LoadFromPrimaryService loadFromPrimaryService;
 
     private Logger logger = LoggerFactory.getLogger(InsecticideServiceImpl.class);
 
@@ -342,6 +346,20 @@ public class InsecticideServiceImpl implements InsecticideService {
                 Constants.INSECTICIDE_VALIDATION_FILE_JSON,
                 this::createInsecticide
         );
+    }
+
+    @Override
+    public CustomResponse loadFromPrimaryInsecticide() {
+        log.info("InsecticideServiceImpl::loadFromPrimaryInsecticide::started");
+        return loadFromPrimaryService.loadFromPrimary(
+                Constants.INSECTICIDE_INDEX_NAME,
+                vergProperties.getElasticInsecticideJsonPath(),
+                insecticideRepository.findAll(),
+                InsecticideEntity::getInsecticideId,
+                e -> objectMapper.convertValue(
+                        buildDocument(e.getData(), e.getStatus(), e.getCreatedOn(), e.getUpdatedOn()),
+                        Map.class),
+                e -> !Constants.DELETED.equals(e.getStatus()));   // skip DELETED; INACTIVE is indexed
     }
 
     @Override

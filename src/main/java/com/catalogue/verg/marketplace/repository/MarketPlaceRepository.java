@@ -1,8 +1,8 @@
 package com.catalogue.verg.marketplace.repository;
 
-import com.catalogue.verg.marketplace.entity.MarketPlaceEntity;
+import com.catalogue.verg.marketplace.entity.MarketplaceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MarketPlaceRepository extends JpaRepository<MarketPlaceEntity, String> {
+public interface MarketplaceRepository extends JpaRepository<MarketplaceEntity, String> {
 
 }

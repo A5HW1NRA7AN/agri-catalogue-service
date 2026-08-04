@@ -25,9 +25,12 @@
             "type": "string",
             "description": "Display name of the actor (denormalised; role is derived from the user when needed)."
         },
+        "userRole": {
+            "type": "string",
+            "description": "Id of the actor who performed the action."
+        },
         "auditStatus": {
             "type": "string",
-            "enum": ["DRAFT", "PENDING", "APPROVED", "REJECTED", "REWORK", "ACTIVE", "INACTIVE", "DELETED"],
             "description": "Resulting lifecycle state recorded by this immutable row; matches the source catalogue's status (UPPERCASE)."
         },
         "entityBeforeChanges": {
@@ -50,12 +53,9 @@
         }
     },
     "required": [
-        "entityId",
         "entityName",
         "userId",
-        "auditStatus",
-        "entityBeforeChanges",
-        "entityAfterChanges",
-        "createdOn"
+        "userName",
+        "userRole"
     ]
 }

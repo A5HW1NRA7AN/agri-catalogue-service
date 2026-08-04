@@ -1,8 +1,8 @@
 package com.catalogue.verg.locationobject.repository;
 
-import com.catalogue.verg.locationobject.entity.LocationObjectEntity;
+import com.catalogue.verg.locationobject.entity.LocationobjectEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LocationObjectRepository extends JpaRepository<LocationObjectEntity, String> {
+public interface LocationobjectRepository extends JpaRepository<LocationobjectEntity, String> {
 
 }

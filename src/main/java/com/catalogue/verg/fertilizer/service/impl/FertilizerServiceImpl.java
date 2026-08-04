@@ -21,6 +21,7 @@ import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
+import com.catalogue.verg.core.service.LoadFromPrimaryService;
 import com.catalogue.verg.core.util.PrimaryKeyUtil;
 import com.catalogue.verg.fertilizer.entity.FertilizerEntity;
 import com.catalogue.verg.fertilizer.repository.FertilizerRepository;
@@ -74,6 +75,9 @@ public class FertilizerServiceImpl implements FertilizerService {
 
     @Autowired
     private ImportService importService;
+
+    @Autowired
+    private LoadFromPrimaryService loadFromPrimaryService;
 
     private Logger logger = LoggerFactory.getLogger(FertilizerServiceImpl.class);
 
@@ -342,6 +346,20 @@ public class FertilizerServiceImpl implements FertilizerService {
                 Constants.FERTILIZER_VALIDATION_FILE_JSON,
                 this::createFertilizer
         );
+    }
+
+    @Override
+    public CustomResponse loadFromPrimaryFertilizer() {
+        log.info("FertilizerServiceImpl::loadFromPrimaryFertilizer::started");
+        return loadFromPrimaryService.loadFromPrimary(
+                Constants.FERTILIZER_INDEX_NAME,
+                vergProperties.getElasticFertilizerJsonPath(),
+                fertilizerRepository.findAll(),
+                FertilizerEntity::getFertilizerId,
+                e -> objectMapper.convertValue(
+                        buildDocument(e.getData(), e.getStatus(), e.getCreatedOn(), e.getUpdatedOn()),
+                        Map.class),
+                e -> !Constants.DELETED.equals(e.getStatus()));   // skip DELETED; INACTIVE is indexed
     }
 
     @Override

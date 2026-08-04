@@ -21,6 +21,7 @@ import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
+import com.catalogue.verg.core.service.LoadFromPrimaryService;
 import com.catalogue.verg.core.util.PrimaryKeyUtil;
 import com.catalogue.verg.extensionequipment.entity.ExtensionequipmentEntity;
 import com.catalogue.verg.extensionequipment.repository.ExtensionequipmentRepository;
@@ -74,6 +75,9 @@ public class ExtensionequipmentServiceImpl implements ExtensionequipmentService 
 
     @Autowired
     private ImportService importService;
+
+    @Autowired
+    private LoadFromPrimaryService loadFromPrimaryService;
 
     private Logger logger = LoggerFactory.getLogger(ExtensionequipmentServiceImpl.class);
 
@@ -342,6 +346,20 @@ public class ExtensionequipmentServiceImpl implements ExtensionequipmentService 
                 Constants.EXTENSIONEQUIPMENT_VALIDATION_FILE_JSON,
                 this::createExtensionequipment
         );
+    }
+
+    @Override
+    public CustomResponse loadFromPrimaryExtensionequipment() {
+        log.info("ExtensionequipmentServiceImpl::loadFromPrimaryExtensionequipment::started");
+        return loadFromPrimaryService.loadFromPrimary(
+                Constants.EXTENSIONEQUIPMENT_INDEX_NAME,
+                vergProperties.getElasticExtensionequipmentJsonPath(),
+                extensionequipmentRepository.findAll(),
+                ExtensionequipmentEntity::getExtensionequipmentId,
+                e -> objectMapper.convertValue(
+                        buildDocument(e.getData(), e.getStatus(), e.getCreatedOn(), e.getUpdatedOn()),
+                        Map.class),
+                e -> !Constants.DELETED.equals(e.getStatus()));   // skip DELETED; INACTIVE is indexed
     }
 
     @Override

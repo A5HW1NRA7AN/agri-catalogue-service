@@ -21,10 +21,11 @@ import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
+import com.catalogue.verg.core.service.LoadFromPrimaryService;
 import com.catalogue.verg.core.util.PrimaryKeyUtil;
-import com.catalogue.verg.locationobject.entity.LocationObjectEntity;
-import com.catalogue.verg.locationobject.repository.LocationObjectRepository;
-import com.catalogue.verg.locationobject.service.LocationObjectService;
+import com.catalogue.verg.locationobject.entity.LocationobjectEntity;
+import com.catalogue.verg.locationobject.repository.LocationobjectRepository;
+import com.catalogue.verg.locationobject.service.LocationobjectService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -47,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
-public class LocationObjectServiceImpl implements LocationObjectService {
+public class LocationobjectServiceImpl implements LocationobjectService {
     @Autowired
     private PayloadValidation payloadValidation;
 
@@ -55,7 +56,7 @@ public class LocationObjectServiceImpl implements LocationObjectService {
     private PrimaryKeyUtil primaryKeyUtil;
 
     @Autowired
-    private LocationObjectRepository locationObjectRepository;
+    private LocationobjectRepository locationobjectRepository;
 
     @Autowired
     private ESUtilService esUtilService;
@@ -75,44 +76,47 @@ public class LocationObjectServiceImpl implements LocationObjectService {
     @Autowired
     private ImportService importService;
 
-    private Logger logger = LoggerFactory.getLogger(LocationObjectServiceImpl.class);
+    @Autowired
+    private LoadFromPrimaryService loadFromPrimaryService;
+
+    private Logger logger = LoggerFactory.getLogger(LocationobjectServiceImpl.class);
 
     @Value("${spring.redis.cacheTtl}")
     private long searchResultRedisTtl;
 
     @Override
-    public CustomResponse createLocationObject(JsonNode locationObjectEntity) {
-        log.info("LocationObjectServiceImpl::createLocationObject:entered the method: " + locationObjectEntity);
+    public CustomResponse createLocationobject(JsonNode locationobjectEntity) {
+        log.info("LocationobjectServiceImpl::createLocationobject:entered the method: " + locationobjectEntity);
         CustomResponse response = new CustomResponse();
-        payloadValidation.validatePayload(Constants.LOCATION_OBJECT_VALIDATION_FILE_JSON, locationObjectEntity);
+        payloadValidation.validatePayload(Constants.LOCATIONOBJECT_VALIDATION_FILE_JSON, locationobjectEntity);
 
-        log.debug("LocationObjectServiceImpl::createLocationObject:validated the payload");
+        log.debug("LocationobjectServiceImpl::createLocationobject:validated the payload");
         try {
-            log.info("LocationObjectServiceImpl::createLocationObject:creating locationObject");
-            LocationObjectEntity locationObjectEntity1 = new LocationObjectEntity();
+            log.info("LocationobjectServiceImpl::createLocationobject:creating locationobject");
+            LocationobjectEntity locationobjectEntity1 = new LocationobjectEntity();
             // Generate Primary Key
-            String primaryID = primaryKeyUtil.generateKey(Constants.LOCATION_OBJECT_VALIDATION_FILE_JSON);
-            locationObjectEntity1.setLocationObjectId(primaryID);
+            String primaryID = primaryKeyUtil.generateKey(Constants.LOCATIONOBJECT_VALIDATION_FILE_JSON);
+            locationobjectEntity1.setLocationobjectId(primaryID);
             // Create Parameters like createdDate / updateDate / Data and Status
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            locationObjectEntity1.setCreatedOn(currentTime);
-            locationObjectEntity1.setUpdatedOn(currentTime);
-            locationObjectEntity1.setStatus(Constants.PENDING);
-            locationObjectEntity1.setData(locationObjectEntity);
+            locationobjectEntity1.setCreatedOn(currentTime);
+            locationobjectEntity1.setUpdatedOn(currentTime);
+            locationobjectEntity1.setStatus(Constants.PENDING);
+            locationobjectEntity1.setData(locationobjectEntity);
 
-            locationObjectRepository.save(locationObjectEntity1);
+            locationobjectRepository.save(locationobjectEntity1);
 
-            log.info("LocationObjectServiceImpl::createLocationObject::persisted locationObject in postgres");
-            ObjectNode jsonNode = buildDocument(locationObjectEntity, Constants.PENDING, currentTime, currentTime);
+            log.info("LocationobjectServiceImpl::createLocationobject::persisted locationobject in postgres");
+            ObjectNode jsonNode = buildDocument(locationobjectEntity, Constants.PENDING, currentTime, currentTime);
             Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
-            esUtilService.addDocument(Constants.LOCATION_OBJECT_INDEX_NAME, Constants.INDEX_TYPE,
-                    String.valueOf(primaryID), map, vergProperties.getElasticLocationObjectJsonPath());
+            esUtilService.addDocument(Constants.LOCATIONOBJECT_INDEX_NAME, Constants.INDEX_TYPE,
+                    String.valueOf(primaryID), map, vergProperties.getElasticLocationobjectJsonPath());
             cacheService.putCache(primaryID, jsonNode);
             response.setMessage(Constants.SUCCESSFULLY_CREATED);
-            map.put(Constants.LOCATION_OBJECT_ID_RQST, primaryID);
+            map.put(Constants.LOCATIONOBJECT_ID_RQST, primaryID);
             response.setResult(map);
             response.setResponseCode(HttpStatus.OK);
-            log.info("LocationObjectServiceImpl::createLocationObject::persisted locationObject in OAS");
+            log.info("LocationobjectServiceImpl::createLocationobject::persisted locationobject in OAS");
             return response;
 
         } catch (Exception e) {
@@ -122,13 +126,13 @@ public class LocationObjectServiceImpl implements LocationObjectService {
     }
 
     @Override
-    public CustomResponse searchLocationObject(SearchCriteria searchCriteria) {
-        log.info("LocationObjectServiceImpl::searchLocationObject");
+    public CustomResponse searchLocationobject(SearchCriteria searchCriteria) {
+        log.info("LocationobjectServiceImpl::searchLocationobject");
         CustomResponse response = new CustomResponse();
         SearchResult searchResult = redisTemplate.opsForValue()
                 .get(generateRedisJwtTokenKey(searchCriteria));
         if (searchResult != null) {
-            log.info("LocationObjectServiceImpl::searchLocationObject: locationObject search result fetched from redis");
+            log.info("LocationobjectServiceImpl::searchLocationobject: locationobject search result fetched from redis");
             response.getResult().put(Constants.RESULT, searchResult);
             createSuccessResponse(response);
             return response;
@@ -142,7 +146,7 @@ public class LocationObjectServiceImpl implements LocationObjectService {
         }
         try {
             searchResult =
-                    esUtilService.searchDocuments(Constants.LOCATION_OBJECT_INDEX_NAME, searchCriteria);
+                    esUtilService.searchDocuments(Constants.LOCATIONOBJECT_INDEX_NAME, searchCriteria);
             response.getResult().put(Constants.RESULT, searchResult);
             createSuccessResponse(response);
             return response;
@@ -157,13 +161,13 @@ public class LocationObjectServiceImpl implements LocationObjectService {
     }
 
     @Override
-    public CustomResponse assignLocationObject(JsonNode locationObjectEntity, String token) {
+    public CustomResponse assignLocationobject(JsonNode locationobjectEntity, String token) {
         return null;
     }
 
     @Override
     public CustomResponse read(String id) {
-        log.info("LocationObjectServiceImpl::read:inside the method");
+        log.info("LocationobjectServiceImpl::read:inside the method");
         CustomResponse response = new CustomResponse();
         if (StringUtils.isEmpty(id)) {
             response.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -173,21 +177,21 @@ public class LocationObjectServiceImpl implements LocationObjectService {
         try {
             String cachedJson = cacheService.getCache(id);
             if (StringUtils.isNotEmpty(cachedJson)) {
-                log.info("LocationObjectServiceImpl::read:Record coming from redis cache");
+                log.info("LocationobjectServiceImpl::read:Record coming from redis cache");
                 response.setMessage(Constants.SUCCESSFULLY_READING);
                 response
                         .getResult()
                         .put(Constants.RESULT, objectMapper.readValue(cachedJson, new TypeReference<Object>() {
                         }));
             } else {
-                Optional<LocationObjectEntity> entityOptional = locationObjectRepository.findById(id);
+                Optional<LocationobjectEntity> entityOptional = locationobjectRepository.findById(id);
                 if (entityOptional.isPresent()) {
-                    LocationObjectEntity locationObjectEntity = entityOptional.get();
-                    ObjectNode jsonNode = buildDocument(locationObjectEntity.getData(),
-                            locationObjectEntity.getStatus(), locationObjectEntity.getCreatedOn(),
-                            locationObjectEntity.getUpdatedOn());
+                    LocationobjectEntity locationobjectEntity = entityOptional.get();
+                    ObjectNode jsonNode = buildDocument(locationobjectEntity.getData(),
+                            locationobjectEntity.getStatus(), locationobjectEntity.getCreatedOn(),
+                            locationobjectEntity.getUpdatedOn());
                     cacheService.putCache(id, jsonNode);
-                    log.info("LocationObjectServiceImpl::read:Record coming from postgres db");
+                    log.info("LocationobjectServiceImpl::read:Record coming from postgres db");
                     response.setMessage(Constants.SUCCESSFULLY_READING);
                     response
                             .getResult()
@@ -208,37 +212,37 @@ public class LocationObjectServiceImpl implements LocationObjectService {
     }
 
     @Override
-    public CustomResponse updateLocationObject(String id, JsonNode locationObjectEntity) {
-        log.info("LocationObjectServiceImpl::updateLocationObject:entered the method with id: {}", id);
+    public CustomResponse updateLocationobject(String id, JsonNode locationobjectEntity) {
+        log.info("LocationobjectServiceImpl::updateLocationobject:entered the method with id: {}", id);
         CustomResponse response = new CustomResponse();
 
         // Validate that the ID is not null or empty
         if (StringUtils.isEmpty(id)) {
-            log.warn("LocationObjectServiceImpl::updateLocationObject:id is null or empty");
+            log.warn("LocationobjectServiceImpl::updateLocationobject:id is null or empty");
             response.setResponseCode(HttpStatus.BAD_REQUEST);
             response.setMessage(Constants.ID_NOT_FOUND);
             return response;
         }
 
         // Validate the incoming payload against the entity schema (same as create)
-        payloadValidation.validatePayload(Constants.LOCATION_OBJECT_VALIDATION_FILE_JSON, locationObjectEntity);
-        log.debug("LocationObjectServiceImpl::updateLocationObject:validated the payload");
+        payloadValidation.validatePayload(Constants.LOCATIONOBJECT_VALIDATION_FILE_JSON, locationobjectEntity);
+        log.debug("LocationobjectServiceImpl::updateLocationobject:validated the payload");
 
         try {
             // Check if the entity exists in the database
-            Optional<LocationObjectEntity> entityOptional = locationObjectRepository.findById(id);
+            Optional<LocationobjectEntity> entityOptional = locationobjectRepository.findById(id);
             if (entityOptional.isEmpty()) {
-                log.warn("LocationObjectServiceImpl::updateLocationObject:no record found for id: {}", id);
+                log.warn("LocationobjectServiceImpl::updateLocationobject:no record found for id: {}", id);
                 response.setResponseCode(HttpStatus.NOT_FOUND);
                 response.setMessage(Constants.INVALID_ID);
                 return response;
             }
 
-            LocationObjectEntity locationObjectEntity1 = entityOptional.get();
+            LocationobjectEntity locationobjectEntity1 = entityOptional.get();
 
             // Reject updates on soft-deleted (DELETED) records
-            if (Constants.DELETED.equals(locationObjectEntity1.getStatus())) {
-                log.warn("LocationObjectServiceImpl::updateLocationObject:record already deleted for id: {}", id);
+            if (Constants.DELETED.equals(locationobjectEntity1.getStatus())) {
+                log.warn("LocationobjectServiceImpl::updateLocationobject:record already deleted for id: {}", id);
                 response.setResponseCode(HttpStatus.BAD_REQUEST);
                 response.setMessage("Record is already deleted");
                 return response;
@@ -246,31 +250,31 @@ public class LocationObjectServiceImpl implements LocationObjectService {
 
             // Replace payload; preserve id / createdOn / status, bump updatedOn
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            locationObjectEntity1.setData(locationObjectEntity);
-            locationObjectEntity1.setUpdatedOn(currentTime);
-            locationObjectRepository.save(locationObjectEntity1);
-            log.info("LocationObjectServiceImpl::updateLocationObject:updated record in postgres for id: {}", id);
+            locationobjectEntity1.setData(locationobjectEntity);
+            locationobjectEntity1.setUpdatedOn(currentTime);
+            locationobjectRepository.save(locationobjectEntity1);
+            log.info("LocationobjectServiceImpl::updateLocationobject:updated record in postgres for id: {}", id);
 
             // Re-index the document in Elasticsearch (filtered to whitelisted fields)
-            ObjectNode jsonNode = buildDocument(locationObjectEntity, locationObjectEntity1.getStatus(),
-                    locationObjectEntity1.getCreatedOn(), currentTime);
+            ObjectNode jsonNode = buildDocument(locationobjectEntity, locationobjectEntity1.getStatus(),
+                    locationobjectEntity1.getCreatedOn(), currentTime);
             Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
-            esUtilService.updateDocument(Constants.LOCATION_OBJECT_INDEX_NAME, Constants.INDEX_TYPE,
-                    id, map, vergProperties.getElasticLocationObjectJsonPath());
-            log.info("LocationObjectServiceImpl::updateLocationObject:updated document in elasticsearch for id: {}", id);
+            esUtilService.updateDocument(Constants.LOCATIONOBJECT_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticLocationobjectJsonPath());
+            log.info("LocationobjectServiceImpl::updateLocationobject:updated document in elasticsearch for id: {}", id);
 
             // Refresh the Redis cache
             cacheService.putCache(id, jsonNode);
-            log.info("LocationObjectServiceImpl::updateLocationObject:refreshed cache for id: {}", id);
+            log.info("LocationobjectServiceImpl::updateLocationobject:refreshed cache for id: {}", id);
 
-            map.put(Constants.LOCATION_OBJECT_ID_RQST, id);
+            map.put(Constants.LOCATIONOBJECT_ID_RQST, id);
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
             return response;
 
         } catch (Exception e) {
-            log.error("LocationObjectServiceImpl::updateLocationObject:error while updating record for id: {}", id, e);
+            log.error("LocationobjectServiceImpl::updateLocationobject:error while updating record for id: {}", id, e);
             throw new CustomException("error while processing", e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -278,12 +282,12 @@ public class LocationObjectServiceImpl implements LocationObjectService {
 
     @Override
     public CustomResponse delete(String id) {
-        log.info("LocationObjectServiceImpl::delete:inside the method with id: {}", id);
+        log.info("LocationobjectServiceImpl::delete:inside the method with id: {}", id);
         CustomResponse response = new CustomResponse();
 
         // Validate that the ID is not null or empty
         if (StringUtils.isEmpty(id)) {
-            log.warn("LocationObjectServiceImpl::delete:id is null or empty");
+            log.warn("LocationobjectServiceImpl::delete:id is null or empty");
             response.setResponseCode(HttpStatus.BAD_REQUEST);
             response.setMessage(Constants.ID_NOT_FOUND);
             return response;
@@ -291,44 +295,44 @@ public class LocationObjectServiceImpl implements LocationObjectService {
 
         try {
             // Check if the entity exists in the database
-            Optional<LocationObjectEntity> entityOptional = locationObjectRepository.findById(id);
+            Optional<LocationobjectEntity> entityOptional = locationobjectRepository.findById(id);
             if (entityOptional.isEmpty()) {
-                log.warn("LocationObjectServiceImpl::delete:no record found for id: {}", id);
+                log.warn("LocationobjectServiceImpl::delete:no record found for id: {}", id);
                 response.setResponseCode(HttpStatus.NOT_FOUND);
                 response.setMessage(Constants.INVALID_ID);
                 return response;
             }
 
-            LocationObjectEntity locationObjectEntity = entityOptional.get();
+            LocationobjectEntity locationobjectEntity = entityOptional.get();
 
             // Check if the entity is already deleted
-            if (Constants.DELETED.equals(locationObjectEntity.getStatus())) {
-                log.warn("LocationObjectServiceImpl::delete:record already deleted for id: {}", id);
+            if (Constants.DELETED.equals(locationobjectEntity.getStatus())) {
+                log.warn("LocationobjectServiceImpl::delete:record already deleted for id: {}", id);
                 response.setResponseCode(HttpStatus.BAD_REQUEST);
                 response.setMessage("Record is already deleted");
                 return response;
             }
 
             // Soft delete: mark the status DELETED and set updatedOn timestamp
-            locationObjectEntity.setStatus(Constants.DELETED);
-            locationObjectEntity.setUpdatedOn(new Timestamp(System.currentTimeMillis()));
-            locationObjectRepository.save(locationObjectEntity);
-            log.info("LocationObjectServiceImpl::delete:soft deleted record in postgres for id: {}", id);
+            locationobjectEntity.setStatus(Constants.DELETED);
+            locationobjectEntity.setUpdatedOn(new Timestamp(System.currentTimeMillis()));
+            locationobjectRepository.save(locationobjectEntity);
+            log.info("LocationobjectServiceImpl::delete:soft deleted record in postgres for id: {}", id);
 
             // Remove document from Elasticsearch
-            esUtilService.deleteDocument(id, Constants.LOCATION_OBJECT_INDEX_NAME);
-            log.info("LocationObjectServiceImpl::delete:deleted document from elasticsearch for id: {}", id);
+            esUtilService.deleteDocument(id, Constants.LOCATIONOBJECT_INDEX_NAME);
+            log.info("LocationobjectServiceImpl::delete:deleted document from elasticsearch for id: {}", id);
 
             // Remove from Redis cache
             cacheService.deleteCache(id);
-            log.info("LocationObjectServiceImpl::delete:evicted cache for id: {}", id);
+            log.info("LocationobjectServiceImpl::delete:evicted cache for id: {}", id);
 
             response.setMessage(Constants.SUCCESSFULLY_DELETED);
             response.setResponseCode(HttpStatus.OK);
             return response;
 
         } catch (Exception e) {
-            log.error("LocationObjectServiceImpl::delete:error while deleting record for id: {}", id, e);
+            log.error("LocationobjectServiceImpl::delete:error while deleting record for id: {}", id, e);
             throw new CustomException(Constants.ERROR, "error while deleting record",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -336,40 +340,54 @@ public class LocationObjectServiceImpl implements LocationObjectService {
 
     @Override
     public CustomResponse importData(MultipartFile file) {
-        log.info("LocationObjectServiceImpl::importData::started");
+        log.info("LocationobjectServiceImpl::importData::started");
         return importService.processBulkImport(
                 file,
-                Constants.LOCATION_OBJECT_VALIDATION_FILE_JSON,
-                this::createLocationObject
+                Constants.LOCATIONOBJECT_VALIDATION_FILE_JSON,
+                this::createLocationobject
         );
     }
 
     @Override
-    public CustomResponse draftLocationObject(JsonNode locationObjectEntity) {
-        log.info("LocationObjectServiceImpl::draftLocationObject:entered the method: " + locationObjectEntity);
+    public CustomResponse loadFromPrimaryLocationobject() {
+        log.info("LocationobjectServiceImpl::loadFromPrimaryLocationobject::started");
+        return loadFromPrimaryService.loadFromPrimary(
+                Constants.LOCATIONOBJECT_INDEX_NAME,
+                vergProperties.getElasticLocationobjectJsonPath(),
+                locationobjectRepository.findAll(),
+                LocationobjectEntity::getLocationobjectId,
+                e -> objectMapper.convertValue(
+                        buildDocument(e.getData(), e.getStatus(), e.getCreatedOn(), e.getUpdatedOn()),
+                        Map.class),
+                e -> !Constants.DELETED.equals(e.getStatus()));   // skip DELETED; INACTIVE is indexed
+    }
+
+    @Override
+    public CustomResponse draftLocationobject(JsonNode locationobjectEntity) {
+        log.info("LocationobjectServiceImpl::draftLocationobject:entered the method: " + locationobjectEntity);
         CustomResponse response = new CustomResponse();
         // Relaxed validation: types/structure enforced, but required fields may be missing
-        payloadValidation.validatePayloadRelaxed(Constants.LOCATION_OBJECT_VALIDATION_FILE_JSON, locationObjectEntity);
-        log.debug("LocationObjectServiceImpl::draftLocationObject:validated the payload (relaxed)");
+        payloadValidation.validatePayloadRelaxed(Constants.LOCATIONOBJECT_VALIDATION_FILE_JSON, locationobjectEntity);
+        log.debug("LocationobjectServiceImpl::draftLocationobject:validated the payload (relaxed)");
         try {
-            LocationObjectEntity locationObjectEntity1 = new LocationObjectEntity();
-            String primaryID = primaryKeyUtil.generateKey(Constants.LOCATION_OBJECT_VALIDATION_FILE_JSON);
-            locationObjectEntity1.setLocationObjectId(primaryID);
+            LocationobjectEntity locationobjectEntity1 = new LocationobjectEntity();
+            String primaryID = primaryKeyUtil.generateKey(Constants.LOCATIONOBJECT_VALIDATION_FILE_JSON);
+            locationobjectEntity1.setLocationobjectId(primaryID);
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            locationObjectEntity1.setCreatedOn(currentTime);
-            locationObjectEntity1.setUpdatedOn(currentTime);
-            locationObjectEntity1.setStatus(Constants.DRAFT);
-            locationObjectEntity1.setData(locationObjectEntity);
+            locationobjectEntity1.setCreatedOn(currentTime);
+            locationobjectEntity1.setUpdatedOn(currentTime);
+            locationobjectEntity1.setStatus(Constants.DRAFT);
+            locationobjectEntity1.setData(locationobjectEntity);
 
-            locationObjectRepository.save(locationObjectEntity1);
-            log.info("LocationObjectServiceImpl::draftLocationObject::persisted draft in postgres");
+            locationobjectRepository.save(locationobjectEntity1);
+            log.info("LocationobjectServiceImpl::draftLocationobject::persisted draft in postgres");
 
-            ObjectNode jsonNode = buildDocument(locationObjectEntity, Constants.DRAFT, currentTime, currentTime);
+            ObjectNode jsonNode = buildDocument(locationobjectEntity, Constants.DRAFT, currentTime, currentTime);
             Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
-            esUtilService.addDocument(Constants.LOCATION_OBJECT_INDEX_NAME, Constants.INDEX_TYPE,
-                    String.valueOf(primaryID), map, vergProperties.getElasticLocationObjectJsonPath());
+            esUtilService.addDocument(Constants.LOCATIONOBJECT_INDEX_NAME, Constants.INDEX_TYPE,
+                    String.valueOf(primaryID), map, vergProperties.getElasticLocationobjectJsonPath());
             cacheService.putCache(primaryID, jsonNode);
-            map.put(Constants.LOCATION_OBJECT_ID_RQST, primaryID);
+            map.put(Constants.LOCATIONOBJECT_ID_RQST, primaryID);
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_CREATED);
             response.setResponseCode(HttpStatus.OK);
@@ -381,8 +399,8 @@ public class LocationObjectServiceImpl implements LocationObjectService {
     }
 
     @Override
-    public CustomResponse addLocationObject(String id, JsonNode locationObjectEntity) {
-        log.info("LocationObjectServiceImpl::addLocationObject:entered the method with id: {}", id);
+    public CustomResponse addLocationobject(String id, JsonNode locationobjectEntity) {
+        log.info("LocationobjectServiceImpl::addLocationobject:entered the method with id: {}", id);
         CustomResponse response = new CustomResponse();
         if (StringUtils.isEmpty(id)) {
             response.setResponseCode(HttpStatus.BAD_REQUEST);
@@ -390,38 +408,38 @@ public class LocationObjectServiceImpl implements LocationObjectService {
             return response;
         }
         // Full validation: all required fields must be present to submit for approval
-        payloadValidation.validatePayload(Constants.LOCATION_OBJECT_VALIDATION_FILE_JSON, locationObjectEntity);
-        log.debug("LocationObjectServiceImpl::addLocationObject:validated the payload");
+        payloadValidation.validatePayload(Constants.LOCATIONOBJECT_VALIDATION_FILE_JSON, locationobjectEntity);
+        log.debug("LocationobjectServiceImpl::addLocationobject:validated the payload");
         try {
-            Optional<LocationObjectEntity> entityOptional = locationObjectRepository.findById(id);
+            Optional<LocationobjectEntity> entityOptional = locationobjectRepository.findById(id);
             if (entityOptional.isEmpty()) {
                 response.setResponseCode(HttpStatus.NOT_FOUND);
                 response.setMessage(Constants.INVALID_ID);
                 return response;
             }
-            LocationObjectEntity locationObjectEntity1 = entityOptional.get();
+            LocationobjectEntity locationobjectEntity1 = entityOptional.get();
             // Only DRAFT or REWORK records can be (re-)submitted for approval
-            if (!LifecycleUtil.ADD_PROMOTABLE.contains(locationObjectEntity1.getStatus())) {
-                log.warn("LocationObjectServiceImpl::addLocationObject:record {} not in DRAFT/REWORK (status={})",
-                        id, locationObjectEntity1.getStatus());
+            if (!LifecycleUtil.ADD_PROMOTABLE.contains(locationobjectEntity1.getStatus())) {
+                log.warn("LocationobjectServiceImpl::addLocationobject:record {} not in DRAFT/REWORK (status={})",
+                        id, locationobjectEntity1.getStatus());
                 response.setResponseCode(HttpStatus.CONFLICT);
                 response.setMessage(Constants.INVALID_STATUS_TRANSITION);
                 return response;
             }
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            locationObjectEntity1.setData(locationObjectEntity);
-            locationObjectEntity1.setStatus(Constants.PENDING);
-            locationObjectEntity1.setUpdatedOn(currentTime);
-            locationObjectRepository.save(locationObjectEntity1);
-            log.info("LocationObjectServiceImpl::addLocationObject:submitted record {} for approval (PENDING)", id);
+            locationobjectEntity1.setData(locationobjectEntity);
+            locationobjectEntity1.setStatus(Constants.PENDING);
+            locationobjectEntity1.setUpdatedOn(currentTime);
+            locationobjectRepository.save(locationobjectEntity1);
+            log.info("LocationobjectServiceImpl::addLocationobject:submitted record {} for approval (PENDING)", id);
 
-            ObjectNode jsonNode = buildDocument(locationObjectEntity, Constants.PENDING,
-                    locationObjectEntity1.getCreatedOn(), currentTime);
+            ObjectNode jsonNode = buildDocument(locationobjectEntity, Constants.PENDING,
+                    locationobjectEntity1.getCreatedOn(), currentTime);
             Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
-            esUtilService.updateDocument(Constants.LOCATION_OBJECT_INDEX_NAME, Constants.INDEX_TYPE,
-                    id, map, vergProperties.getElasticLocationObjectJsonPath());
+            esUtilService.updateDocument(Constants.LOCATIONOBJECT_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticLocationobjectJsonPath());
             cacheService.putCache(id, jsonNode);
-            map.put(Constants.LOCATION_OBJECT_ID_RQST, id);
+            map.put(Constants.LOCATIONOBJECT_ID_RQST, id);
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
@@ -433,20 +451,20 @@ public class LocationObjectServiceImpl implements LocationObjectService {
     }
 
     @Override
-    public CustomResponse approveLocationObject(LifecycleRequest request) {
-        log.info("LocationObjectServiceImpl::approveLocationObject:entered the method");
+    public CustomResponse approveLocationobject(LifecycleRequest request) {
+        log.info("LocationobjectServiceImpl::approveLocationobject:entered the method");
         return transitionStatus(request, LifecycleUtil.APPROVE_FROM, LifecycleUtil.APPROVE_TARGETS);
     }
 
     @Override
-    public CustomResponse reviewLocationObject(LifecycleRequest request) {
-        log.info("LocationObjectServiceImpl::reviewLocationObject:entered the method");
+    public CustomResponse reviewLocationobject(LifecycleRequest request) {
+        log.info("LocationobjectServiceImpl::reviewLocationobject:entered the method");
         return transitionStatus(request, LifecycleUtil.REVIEW_FROM, LifecycleUtil.REVIEW_TARGETS);
     }
 
     @Override
     public CustomResponse toggleStatus(String id) {
-        log.info("LocationObjectServiceImpl::toggleStatus:entered the method with id: {}", id);
+        log.info("LocationobjectServiceImpl::toggleStatus:entered the method with id: {}", id);
         CustomResponse response = new CustomResponse();
         if (StringUtils.isEmpty(id)) {
             response.setResponseCode(HttpStatus.BAD_REQUEST);
@@ -454,14 +472,14 @@ public class LocationObjectServiceImpl implements LocationObjectService {
             return response;
         }
         try {
-            Optional<LocationObjectEntity> entityOptional = locationObjectRepository.findById(id);
+            Optional<LocationobjectEntity> entityOptional = locationobjectRepository.findById(id);
             if (entityOptional.isEmpty()) {
                 response.setResponseCode(HttpStatus.NOT_FOUND);
                 response.setMessage(Constants.INVALID_ID);
                 return response;
             }
-            LocationObjectEntity locationObjectEntity1 = entityOptional.get();
-            String currentStatus = locationObjectEntity1.getStatus();
+            LocationobjectEntity locationobjectEntity1 = entityOptional.get();
+            String currentStatus = locationobjectEntity1.getStatus();
             String newStatus;
             if (Constants.ACTIVE.equals(currentStatus)) {
                 newStatus = Constants.IN_ACTIVE;
@@ -469,25 +487,25 @@ public class LocationObjectServiceImpl implements LocationObjectService {
                 newStatus = Constants.ACTIVE;
             } else {
                 // Only a published (ACTIVE) or deactivated (INACTIVE) record can be toggled
-                log.warn("LocationObjectServiceImpl::toggleStatus:record {} is {}, can only toggle ACTIVE<->INACTIVE",
+                log.warn("LocationobjectServiceImpl::toggleStatus:record {} is {}, can only toggle ACTIVE<->INACTIVE",
                         id, currentStatus);
                 response.setResponseCode(HttpStatus.CONFLICT);
                 response.setMessage(Constants.INVALID_STATUS_TRANSITION);
                 return response;
             }
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            locationObjectEntity1.setStatus(newStatus);
-            locationObjectEntity1.setUpdatedOn(currentTime);
-            locationObjectRepository.save(locationObjectEntity1);
-            log.info("LocationObjectServiceImpl::toggleStatus:record {} toggled {} -> {}", id, currentStatus, newStatus);
+            locationobjectEntity1.setStatus(newStatus);
+            locationobjectEntity1.setUpdatedOn(currentTime);
+            locationobjectRepository.save(locationobjectEntity1);
+            log.info("LocationobjectServiceImpl::toggleStatus:record {} toggled {} -> {}", id, currentStatus, newStatus);
 
-            ObjectNode jsonNode = buildDocument(locationObjectEntity1.getData(), newStatus,
-                    locationObjectEntity1.getCreatedOn(), currentTime);
+            ObjectNode jsonNode = buildDocument(locationobjectEntity1.getData(), newStatus,
+                    locationobjectEntity1.getCreatedOn(), currentTime);
             Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
-            esUtilService.updateDocument(Constants.LOCATION_OBJECT_INDEX_NAME, Constants.INDEX_TYPE,
-                    id, map, vergProperties.getElasticLocationObjectJsonPath());
+            esUtilService.updateDocument(Constants.LOCATIONOBJECT_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticLocationobjectJsonPath());
             cacheService.putCache(id, jsonNode);
-            map.put(Constants.LOCATION_OBJECT_ID_RQST, id);
+            map.put(Constants.LOCATIONOBJECT_ID_RQST, id);
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
@@ -513,41 +531,41 @@ public class LocationObjectServiceImpl implements LocationObjectService {
         String id = request.getId();
         String targetStatus = LifecycleUtil.normalizeTarget(request.getStatus());
         if (targetStatus == null || !allowedTargets.contains(targetStatus)) {
-            log.warn("LocationObjectServiceImpl::transitionStatus:invalid target status '{}' for id {}",
+            log.warn("LocationobjectServiceImpl::transitionStatus:invalid target status '{}' for id {}",
                     request.getStatus(), id);
             response.setResponseCode(HttpStatus.BAD_REQUEST);
             response.setMessage(Constants.INVALID_STATUS);
             return response;
         }
         try {
-            Optional<LocationObjectEntity> entityOptional = locationObjectRepository.findById(id);
+            Optional<LocationobjectEntity> entityOptional = locationobjectRepository.findById(id);
             if (entityOptional.isEmpty()) {
                 response.setResponseCode(HttpStatus.NOT_FOUND);
                 response.setMessage(Constants.INVALID_ID);
                 return response;
             }
-            LocationObjectEntity locationObjectEntity1 = entityOptional.get();
-            if (!requiredCurrentStatus.equals(locationObjectEntity1.getStatus())) {
-                log.warn("LocationObjectServiceImpl::transitionStatus:record {} is {}, requires {}",
-                        id, locationObjectEntity1.getStatus(), requiredCurrentStatus);
+            LocationobjectEntity locationobjectEntity1 = entityOptional.get();
+            if (!requiredCurrentStatus.equals(locationobjectEntity1.getStatus())) {
+                log.warn("LocationobjectServiceImpl::transitionStatus:record {} is {}, requires {}",
+                        id, locationobjectEntity1.getStatus(), requiredCurrentStatus);
                 response.setResponseCode(HttpStatus.CONFLICT);
                 response.setMessage(Constants.INVALID_STATUS_TRANSITION);
                 return response;
             }
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            locationObjectEntity1.setStatus(targetStatus);
-            locationObjectEntity1.setUpdatedOn(currentTime);
-            locationObjectRepository.save(locationObjectEntity1);
-            log.info("LocationObjectServiceImpl::transitionStatus:record {} moved {} -> {}",
+            locationobjectEntity1.setStatus(targetStatus);
+            locationobjectEntity1.setUpdatedOn(currentTime);
+            locationobjectRepository.save(locationobjectEntity1);
+            log.info("LocationobjectServiceImpl::transitionStatus:record {} moved {} -> {}",
                     id, requiredCurrentStatus, targetStatus);
 
-            ObjectNode jsonNode = buildDocument(locationObjectEntity1.getData(), targetStatus,
-                    locationObjectEntity1.getCreatedOn(), currentTime);
+            ObjectNode jsonNode = buildDocument(locationobjectEntity1.getData(), targetStatus,
+                    locationobjectEntity1.getCreatedOn(), currentTime);
             Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
-            esUtilService.updateDocument(Constants.LOCATION_OBJECT_INDEX_NAME, Constants.INDEX_TYPE,
-                    id, map, vergProperties.getElasticLocationObjectJsonPath());
+            esUtilService.updateDocument(Constants.LOCATIONOBJECT_INDEX_NAME, Constants.INDEX_TYPE,
+                    id, map, vergProperties.getElasticLocationobjectJsonPath());
             cacheService.putCache(id, jsonNode);
-            map.put(Constants.LOCATION_OBJECT_ID_RQST, id);
+            map.put(Constants.LOCATIONOBJECT_ID_RQST, id);
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
@@ -561,7 +579,7 @@ public class LocationObjectServiceImpl implements LocationObjectService {
     /**
      * Builds the projection stored in Elasticsearch and Redis (and returned by read): the payload
      * plus the lifecycle status and the Postgres createdOn/updatedOn timestamps (ISO-8601). ES keeps
-     * only whitelisted keys, so status/createdOn/updatedOn must be present in esLocationObjectRequiredFields.json.
+     * only whitelisted keys, so status/createdOn/updatedOn must be present in esLocationobjectRequiredFields.json.
      */
     private ObjectNode buildDocument(JsonNode data, String status, Timestamp createdOn, Timestamp updatedOn) {
         ObjectNode node = objectMapper.createObjectNode();

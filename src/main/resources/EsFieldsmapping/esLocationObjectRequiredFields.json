@@ -6,7 +6,7 @@
         "type": "keyword"
     },
     "locationOrder": {
-        "type": "integer"
+        "type": "keyword"
     },
     "locationRefN": {
         "type": "keyword"
