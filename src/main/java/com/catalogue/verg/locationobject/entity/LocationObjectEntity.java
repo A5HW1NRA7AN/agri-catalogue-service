@@ -21,9 +21,9 @@ import org.hibernate.annotations.Type;
 @AllArgsConstructor
 @Table(name = "locationobject")
 @Entity
-public class LocationObjectEntity {
+public class LocationobjectEntity {
     @Id
-    private String locationObjectId;
+    private String locationobjectId;
 
     @Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb")

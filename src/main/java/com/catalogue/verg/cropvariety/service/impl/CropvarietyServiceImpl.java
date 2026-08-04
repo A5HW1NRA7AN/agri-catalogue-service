@@ -21,6 +21,7 @@ import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
+import com.catalogue.verg.core.service.LoadFromPrimaryService;
 import com.catalogue.verg.core.util.PrimaryKeyUtil;
 import com.catalogue.verg.cropvariety.entity.CropvarietyEntity;
 import com.catalogue.verg.cropvariety.repository.CropvarietyRepository;
@@ -74,6 +75,9 @@ public class CropvarietyServiceImpl implements CropvarietyService {
 
     @Autowired
     private ImportService importService;
+
+    @Autowired
+    private LoadFromPrimaryService loadFromPrimaryService;
 
     private Logger logger = LoggerFactory.getLogger(CropvarietyServiceImpl.class);
 
@@ -342,6 +346,20 @@ public class CropvarietyServiceImpl implements CropvarietyService {
                 Constants.CROPVARIETY_VALIDATION_FILE_JSON,
                 this::createCropvariety
         );
+    }
+
+    @Override
+    public CustomResponse loadFromPrimaryCropvariety() {
+        log.info("CropvarietyServiceImpl::loadFromPrimaryCropvariety::started");
+        return loadFromPrimaryService.loadFromPrimary(
+                Constants.CROPVARIETY_INDEX_NAME,
+                vergProperties.getElasticCropvarietyJsonPath(),
+                cropvarietyRepository.findAll(),
+                CropvarietyEntity::getCropvarietyId,
+                e -> objectMapper.convertValue(
+                        buildDocument(e.getData(), e.getStatus(), e.getCreatedOn(), e.getUpdatedOn()),
+                        Map.class),
+                e -> !Constants.DELETED.equals(e.getStatus()));   // skip DELETED; INACTIVE is indexed
     }
 
     @Override

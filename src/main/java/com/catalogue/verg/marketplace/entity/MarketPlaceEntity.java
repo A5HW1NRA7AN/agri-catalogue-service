@@ -21,9 +21,9 @@ import org.hibernate.annotations.Type;
 @AllArgsConstructor
 @Table(name = "marketplace")
 @Entity
-public class MarketPlaceEntity {
+public class MarketplaceEntity {
     @Id
-    private String marketPlaceId;
+    private String marketplaceId;
 
     @Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb")

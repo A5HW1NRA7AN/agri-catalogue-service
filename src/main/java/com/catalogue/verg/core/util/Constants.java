@@ -73,6 +73,24 @@ public class Constants{
     public static final String ERROR_MESSAGE = "errmsg";
 
     
+    // Cropcategory Specific Constants
+    public static final String CROPCATEGORY_VALIDATION_FILE_JSON = "/payloadValidation/cropcategoryPayloadValidation.json";
+    public static final String CROPCATEGORY_ID_RQST = "cropcategoryId";
+    public static final String CROPCATEGORY_INDEX_NAME = "cropcategory_index";
+
+    
+    // Audit Specific Constants
+    public static final String AUDIT_VALIDATION_FILE_JSON = "/payloadValidation/auditPayloadValidation.json";
+    public static final String AUDIT_ID_RQST = "auditId";
+    public static final String AUDIT_INDEX_NAME = "audit_index";
+
+    
+    // Placeholder actor identity for audit records until real user context is threaded through.
+    public static final String AUDIT_DEFAULT_USER_ID = "ANONYMOUS";
+    public static final String AUDIT_DEFAULT_USER_NAME = "ANONYMOUS";
+    public static final String AUDIT_DEFAULT_USER_ROLE = "SYSTEM";
+
+    
     // Seed Specific Constants
     public static final String SEED_VALIDATION_FILE_JSON = "/payloadValidation/seedPayloadValidation.json";
     public static final String SEED_ID_RQST = "seedId";
@@ -83,12 +101,6 @@ public class Constants{
     public static final String CROPTYPE_VALIDATION_FILE_JSON = "/payloadValidation/croptypePayloadValidation.json";
     public static final String CROPTYPE_ID_RQST = "croptypeId";
     public static final String CROPTYPE_INDEX_NAME = "croptype_index";
-
-    
-    // Cropcategory Specific Constants
-    public static final String CROPCATEGORY_VALIDATION_FILE_JSON = "/payloadValidation/cropcategoryPayloadValidation.json";
-    public static final String CROPCATEGORY_ID_RQST = "cropcategoryId";
-    public static final String CROPCATEGORY_INDEX_NAME = "cropcategory_index";
 
     
     // Cropvariety Specific Constants
@@ -139,28 +151,22 @@ public class Constants{
     public static final String FERTILIZER_INDEX_NAME = "fertilizer_index";
 
     
-    // MarketPlace Specific Constants
-    public static final String MARKET_PLACE_VALIDATION_FILE_JSON = "/payloadValidation/marketPlacePayloadValidation.json";
-    public static final String MARKET_PLACE_ID_RQST = "marketPlaceId";
-    public static final String MARKET_PLACE_INDEX_NAME = "marketPlace_index";
+    // Locationobject Specific Constants
+    public static final String LOCATIONOBJECT_VALIDATION_FILE_JSON = "/payloadValidation/locationobjectPayloadValidation.json";
+    public static final String LOCATIONOBJECT_ID_RQST = "locationobjectId";
+    public static final String LOCATIONOBJECT_INDEX_NAME = "locationobject_index";
 
     
-    // LocationMapper Specific Constants
-    public static final String LOCATION_MAPPER_VALIDATION_FILE_JSON = "/payloadValidation/locationMapperPayloadValidation.json";
-    public static final String LOCATION_MAPPER_ID_RQST = "locationMapperId";
-    public static final String LOCATION_MAPPER_INDEX_NAME = "locationMapper_index";
+    // Locationmapper Specific Constants
+    public static final String LOCATIONMAPPER_VALIDATION_FILE_JSON = "/payloadValidation/locationmapperPayloadValidation.json";
+    public static final String LOCATIONMAPPER_ID_RQST = "locationmapperId";
+    public static final String LOCATIONMAPPER_INDEX_NAME = "locationmapper_index";
 
     
-    // LocationObject Specific Constants
-    public static final String LOCATION_OBJECT_VALIDATION_FILE_JSON = "/payloadValidation/locationObjectPayloadValidation.json";
-    public static final String LOCATION_OBJECT_ID_RQST = "locationObjectId";
-    public static final String LOCATION_OBJECT_INDEX_NAME = "locationobject_index";
-
-    
-    // Audit Specific Constants
-    public static final String AUDIT_VALIDATION_FILE_JSON = "/payloadValidation/auditPayloadValidation.json";
-    public static final String AUDIT_ID_RQST = "auditId";
-    public static final String AUDIT_INDEX_NAME = "audit_index";
+    // Marketplace Specific Constants
+    public static final String MARKETPLACE_VALIDATION_FILE_JSON = "/payloadValidation/marketplacePayloadValidation.json";
+    public static final String MARKETPLACE_ID_RQST = "marketplaceId";
+    public static final String MARKETPLACE_INDEX_NAME = "marketplace_index";
 
         private Constants() {
     }

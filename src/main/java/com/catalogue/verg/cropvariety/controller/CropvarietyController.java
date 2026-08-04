@@ -94,4 +94,11 @@ public class CropvarietyController {
         CustomResponse response = cropvarietyService.importData(file);
         return new ResponseEntity<>(response, response.getResponseCode());
     }
+
+    // Drops the ES index and rebuilds it from the primary store (Postgres); skips DELETED records
+    @PostMapping("/v1/loadFromPrimary")
+    public ResponseEntity<CustomResponse> loadFromPrimary() {
+        CustomResponse response = cropvarietyService.loadFromPrimaryCropvariety();
+        return new ResponseEntity<>(response, response.getResponseCode());
+    }
 }

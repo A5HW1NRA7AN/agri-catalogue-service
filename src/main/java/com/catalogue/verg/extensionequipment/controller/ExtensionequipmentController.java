@@ -94,4 +94,11 @@ public class ExtensionequipmentController {
         CustomResponse response = extensionequipmentService.importData(file);
         return new ResponseEntity<>(response, response.getResponseCode());
     }
+
+    // Drops the ES index and rebuilds it from the primary store (Postgres); skips DELETED records
+    @PostMapping("/v1/loadFromPrimary")
+    public ResponseEntity<CustomResponse> loadFromPrimary() {
+        CustomResponse response = extensionequipmentService.loadFromPrimaryExtensionequipment();
+        return new ResponseEntity<>(response, response.getResponseCode());
+    }
 }

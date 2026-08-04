@@ -4,7 +4,6 @@ set -euo pipefail
 entities=(
   "seed"
   "cropType"
-  "cropCategory"
   "cropVariety"
   "livestock"
   "season"
@@ -13,10 +12,12 @@ entities=(
   "pesticide"
   "insecticide"
   "fertilizer"
-  "location"
+  "locationObject"
+  "locationMapper"
+  "marketPlace"
 )
 
 for entity in "${entities[@]}"; do
-  echo "Creating entity: $entity"
+  echo "Deleting entity: $entity"
   python3 main.py --action delete --name "$entity"
 done

@@ -21,6 +21,7 @@ import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
+import com.catalogue.verg.core.service.LoadFromPrimaryService;
 import com.catalogue.verg.core.util.PrimaryKeyUtil;
 import com.catalogue.verg.pesticide.entity.PesticideEntity;
 import com.catalogue.verg.pesticide.repository.PesticideRepository;
@@ -74,6 +75,9 @@ public class PesticideServiceImpl implements PesticideService {
 
     @Autowired
     private ImportService importService;
+
+    @Autowired
+    private LoadFromPrimaryService loadFromPrimaryService;
 
     private Logger logger = LoggerFactory.getLogger(PesticideServiceImpl.class);
 
@@ -342,6 +346,20 @@ public class PesticideServiceImpl implements PesticideService {
                 Constants.PESTICIDE_VALIDATION_FILE_JSON,
                 this::createPesticide
         );
+    }
+
+    @Override
+    public CustomResponse loadFromPrimaryPesticide() {
+        log.info("PesticideServiceImpl::loadFromPrimaryPesticide::started");
+        return loadFromPrimaryService.loadFromPrimary(
+                Constants.PESTICIDE_INDEX_NAME,
+                vergProperties.getElasticPesticideJsonPath(),
+                pesticideRepository.findAll(),
+                PesticideEntity::getPesticideId,
+                e -> objectMapper.convertValue(
+                        buildDocument(e.getData(), e.getStatus(), e.getCreatedOn(), e.getUpdatedOn()),
+                        Map.class),
+                e -> !Constants.DELETED.equals(e.getStatus()));   // skip DELETED; INACTIVE is indexed
     }
 
     @Override

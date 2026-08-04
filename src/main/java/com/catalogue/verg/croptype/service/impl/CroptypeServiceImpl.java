@@ -21,6 +21,7 @@ import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
+import com.catalogue.verg.core.service.LoadFromPrimaryService;
 import com.catalogue.verg.core.util.PrimaryKeyUtil;
 import com.catalogue.verg.croptype.entity.CroptypeEntity;
 import com.catalogue.verg.croptype.repository.CroptypeRepository;
@@ -74,6 +75,9 @@ public class CroptypeServiceImpl implements CroptypeService {
 
     @Autowired
     private ImportService importService;
+
+    @Autowired
+    private LoadFromPrimaryService loadFromPrimaryService;
 
     private Logger logger = LoggerFactory.getLogger(CroptypeServiceImpl.class);
 
@@ -342,6 +346,20 @@ public class CroptypeServiceImpl implements CroptypeService {
                 Constants.CROPTYPE_VALIDATION_FILE_JSON,
                 this::createCroptype
         );
+    }
+
+    @Override
+    public CustomResponse loadFromPrimaryCroptype() {
+        log.info("CroptypeServiceImpl::loadFromPrimaryCroptype::started");
+        return loadFromPrimaryService.loadFromPrimary(
+                Constants.CROPTYPE_INDEX_NAME,
+                vergProperties.getElasticCroptypeJsonPath(),
+                croptypeRepository.findAll(),
+                CroptypeEntity::getCroptypeId,
+                e -> objectMapper.convertValue(
+                        buildDocument(e.getData(), e.getStatus(), e.getCreatedOn(), e.getUpdatedOn()),
+                        Map.class),
+                e -> !Constants.DELETED.equals(e.getStatus()));   // skip DELETED; INACTIVE is indexed
     }
 
     @Override

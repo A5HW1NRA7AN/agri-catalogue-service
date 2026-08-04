@@ -8,6 +8,110 @@
   },
   "item": [
     {
+      "name": "audit",
+      "item": [
+        {
+          "name": "search",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filterCriteriaMap\": {\n    \"entityName\": \"cropCategory\"\n  },\n  \"pageNumber\": 0,\n  \"pageSize\": 10,\n  \"orderBy\": \"entityName\",\n  \"orderDirection\": \"asc\",\n  \"facets\": [\n    \"entityName\",\n    \"auditStatus\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/audit/v1/search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "audit",
+                "v1",
+                "search"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "read",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/audit/v1/read/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "audit",
+                "v1",
+                "read",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "audit-000000000001"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "cropcategory",
       "item": [
         {
@@ -1266,6 +1370,45 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "loadFromPrimary",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/croptype/v1/loadFromPrimary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "croptype",
+                "v1",
+                "loadFromPrimary"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -1897,6 +2040,45 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "loadFromPrimary",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cropvariety/v1/loadFromPrimary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cropvariety",
+                "v1",
+                "loadFromPrimary"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -2519,6 +2701,45 @@
                 "extensionequipment",
                 "v1",
                 "import"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "loadFromPrimary",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/extensionequipment/v1/loadFromPrimary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "extensionequipment",
+                "v1",
+                "loadFromPrimary"
               ]
             }
           },
@@ -3149,6 +3370,45 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "loadFromPrimary",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/fertilizer/v1/loadFromPrimary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "fertilizer",
+                "v1",
+                "loadFromPrimary"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -3771,6 +4031,45 @@
                 "insecticide",
                 "v1",
                 "import"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "loadFromPrimary",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/insecticide/v1/loadFromPrimary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "insecticide",
+                "v1",
+                "loadFromPrimary"
               ]
             }
           },
@@ -4406,6 +4705,45 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "loadFromPrimary",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/livestock/v1/loadFromPrimary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "livestock",
+                "v1",
+                "loadFromPrimary"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -4444,7 +4782,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location0Order\": 0,\n  \"locationIdName\": \"locationobject-523128200376\",\n  \"location1Id\": \"locationobject-474504123416\",\n  \"location1Name\": \"Tigray\",\n  \"location1Order\": 1,\n  \"location2Id\": \"locationobject-497546833165\",\n  \"location2Name\": \"North Western\",\n  \"location2Order\": 2,\n  \"location3Id\": \"locationobject-161945581327\",\n  \"location3Name\": \"Tahtay Adiyabo\",\n  \"location3Order\": 3\n}",
+              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location0Order\": 0,\n  \"location0Id\": \"locationobject-523128200376\",\n  \"location1Id\": \"locationobject-474504123416\",\n  \"location1Name\": \"Tigray\",\n  \"location1Order\": 1,\n  \"location2Id\": \"locationobject-497546833165\",\n  \"location2Name\": \"North Western\",\n  \"location2Order\": 2,\n  \"location3Id\": \"locationobject-161945581327\",\n  \"location3Name\": \"Tahtay Adiyabo\",\n  \"location3Order\": 3\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -4550,7 +4888,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location0Order\": 0,\n  \"locationIdName\": \"locationobject-523128200376\",\n  \"location1Id\": \"locationobject-474504123416\",\n  \"location1Name\": \"Tigray\",\n  \"location1Order\": 1,\n  \"location2Id\": \"locationobject-497546833165\",\n  \"location2Name\": \"North Western\",\n  \"location2Order\": 2,\n  \"location3Id\": \"locationobject-161945581327\",\n  \"location3Name\": \"Tahtay Adiyabo\",\n  \"location3Order\": 3\n}",
+              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location0Order\": 0,\n  \"location0Id\": \"locationobject-523128200376\",\n  \"location1Id\": \"locationobject-474504123416\",\n  \"location1Name\": \"Tigray\",\n  \"location1Order\": 1,\n  \"location2Id\": \"locationobject-497546833165\",\n  \"location2Name\": \"North Western\",\n  \"location2Order\": 2,\n  \"location3Id\": \"locationobject-161945581327\",\n  \"location3Name\": \"Tahtay Adiyabo\",\n  \"location3Order\": 3\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -4603,7 +4941,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location0Order\": 0,\n  \"locationIdName\": \"locationobject-523128200376\",\n  \"location1Id\": \"locationobject-474504123416\",\n  \"location1Name\": \"Tigray\",\n  \"location1Order\": 1,\n  \"location2Id\": \"locationobject-497546833165\",\n  \"location2Name\": \"North Western\",\n  \"location2Order\": 2,\n  \"location3Id\": \"locationobject-161945581327\",\n  \"location3Name\": \"Tahtay Adiyabo\",\n  \"location3Order\": 3\n}",
+              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location0Order\": 0,\n  \"location0Id\": \"locationobject-523128200376\",\n  \"location1Id\": \"locationobject-474504123416\",\n  \"location1Name\": \"Tigray\",\n  \"location1Order\": 1,\n  \"location2Id\": \"locationobject-497546833165\",\n  \"location2Name\": \"North Western\",\n  \"location2Order\": 2,\n  \"location3Id\": \"locationobject-161945581327\",\n  \"location3Name\": \"Tahtay Adiyabo\",\n  \"location3Order\": 3\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -4914,7 +5252,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location0Order\": 0,\n  \"locationIdName\": \"locationobject-523128200376\",\n  \"location1Id\": \"locationobject-474504123416\",\n  \"location1Name\": \"Tigray\",\n  \"location1Order\": 1,\n  \"location2Id\": \"locationobject-497546833165\",\n  \"location2Name\": \"North Western\",\n  \"location2Order\": 2,\n  \"location3Id\": \"locationobject-161945581327\",\n  \"location3Name\": \"Tahtay Adiyabo\",\n  \"location3Order\": 3\n}",
+              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location0Order\": 0,\n  \"location0Id\": \"locationobject-523128200376\",\n  \"location1Id\": \"locationobject-474504123416\",\n  \"location1Name\": \"Tigray\",\n  \"location1Order\": 1,\n  \"location2Id\": \"locationobject-497546833165\",\n  \"location2Name\": \"North Western\",\n  \"location2Order\": 2,\n  \"location3Id\": \"locationobject-161945581327\",\n  \"location3Name\": \"Tahtay Adiyabo\",\n  \"location3Order\": 3\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -5033,6 +5371,45 @@
                 "locationmapper",
                 "v1",
                 "import"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "loadFromPrimary",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locationmapper/v1/loadFromPrimary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationmapper",
+                "v1",
+                "loadFromPrimary"
               ]
             }
           },
@@ -5668,6 +6045,45 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "loadFromPrimary",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locationobject/v1/loadFromPrimary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locationobject",
+                "v1",
+                "loadFromPrimary"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -6299,6 +6715,45 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "loadFromPrimary",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/marketplace/v1/loadFromPrimary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "marketplace",
+                "v1",
+                "loadFromPrimary"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -6921,6 +7376,45 @@
                 "pesticide",
                 "v1",
                 "import"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "loadFromPrimary",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pesticide/v1/loadFromPrimary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pesticide",
+                "v1",
+                "loadFromPrimary"
               ]
             }
           },
@@ -7556,6 +8050,45 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "loadFromPrimary",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/season/v1/loadFromPrimary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "season",
+                "v1",
+                "loadFromPrimary"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -8182,6 +8715,45 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "loadFromPrimary",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/seed/v1/loadFromPrimary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "seed",
+                "v1",
+                "loadFromPrimary"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -8804,6 +9376,45 @@
                 "soil",
                 "v1",
                 "import"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "loadFromPrimary",
+          "request": {
+            "auth": {
+              "type": "apikey",
+              "apikey": [
+                {
+                  "key": "key",
+                  "value": "apikey",
+                  "type": "string"
+                },
+                {
+                  "key": "value",
+                  "value": "{{api_key}}",
+                  "type": "string"
+                },
+                {
+                  "key": "in",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/soil/v1/loadFromPrimary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "soil",
+                "v1",
+                "loadFromPrimary"
               ]
             }
           },
