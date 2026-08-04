@@ -21,6 +21,7 @@ import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
 import com.catalogue.verg.core.service.ImportService;
+import com.catalogue.verg.core.service.LoadFromPrimaryService;
 import com.catalogue.verg.core.util.PrimaryKeyUtil;
 import com.catalogue.verg.season.entity.SeasonEntity;
 import com.catalogue.verg.season.repository.SeasonRepository;
@@ -74,6 +75,9 @@ public class SeasonServiceImpl implements SeasonService {
 
     @Autowired
     private ImportService importService;
+
+    @Autowired
+    private LoadFromPrimaryService loadFromPrimaryService;
 
     private Logger logger = LoggerFactory.getLogger(SeasonServiceImpl.class);
 
@@ -342,6 +346,20 @@ public class SeasonServiceImpl implements SeasonService {
                 Constants.SEASON_VALIDATION_FILE_JSON,
                 this::createSeason
         );
+    }
+
+    @Override
+    public CustomResponse loadFromPrimarySeason() {
+        log.info("SeasonServiceImpl::loadFromPrimarySeason::started");
+        return loadFromPrimaryService.loadFromPrimary(
+                Constants.SEASON_INDEX_NAME,
+                vergProperties.getElasticSeasonJsonPath(),
+                seasonRepository.findAll(),
+                SeasonEntity::getSeasonId,
+                e -> objectMapper.convertValue(
+                        buildDocument(e.getData(), e.getStatus(), e.getCreatedOn(), e.getUpdatedOn()),
+                        Map.class),
+                e -> !Constants.DELETED.equals(e.getStatus()));   // skip DELETED; INACTIVE is indexed
     }
 
     @Override

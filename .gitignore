@@ -113,6 +113,7 @@ catalogue-data/
 
 
 #===== ide files ====
+.vscode/
 CLAUDE.md
 agri-catalogue-service.postman_collection-dev.json
 
