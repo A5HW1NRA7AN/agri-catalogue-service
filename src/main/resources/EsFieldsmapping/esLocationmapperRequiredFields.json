@@ -1,0 +1,58 @@
+{
+    "locationMapperId": {
+        "type": "keyword"
+    },
+
+    "location0Name": {
+        "type": "keyword"
+    },
+    "location0Order": {
+        "type": "integer"
+    },
+    "location0Id": {
+        "type": "keyword"
+    },
+
+
+    "location1Id": {
+        "type": "keyword"
+    },
+    "location1Name": {
+        "type": "keyword"
+    },
+    "location1Order": {
+        "type": "integer"
+    },
+
+
+    "location2Id": {
+        "type": "keyword"
+    },
+    "location2Name": {
+        "type": "keyword"
+    },
+    "location2Order": {
+        "type": "integer"
+    },
+
+    "location3Id": {
+        "type": "keyword"
+    },
+    "location3Name": {
+        "type": "keyword"
+    },
+    "location3Order": {
+        "type": "integer"
+    },
+
+    
+    "status": {
+        "type": "keyword"
+    },
+    "createdOn": {
+        "type": "date"
+    },
+    "updatedOn": {
+        "type": "date"
+    }
+}

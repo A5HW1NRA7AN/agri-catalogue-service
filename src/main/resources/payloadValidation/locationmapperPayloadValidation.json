@@ -1,0 +1,82 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "locationMapperId": {
+            "type": "string",
+            "prefix": "locationmapper-",
+            "key": "Primary",
+            "keyLength": 12,
+            "description": "auto-generated primary key for the location mapper record"
+        },
+
+        "location0Name": {
+            "type": "string",
+            "description": "name of the level 0 location (root of the hierarchy)"
+        },
+        "location0Order": {
+            "type": "integer",
+            "description": "ordering/rank of the level 0 location within its level"
+        },
+        "location0Id": {
+            "type": "string",
+            "description": "locationObject id of the level 0 location (root)"
+        },
+
+
+        "location1Id": {
+            "type": "string",
+            "description": "locationObject id of the level 1 location"
+        },
+        "location1Name": {
+            "type": "string",
+            "description": "name of the level 1 location"
+        },
+        "location1Order": {
+            "type": "integer",
+            "description": "ordering/rank of the level 1 location within its level"
+        },
+
+
+        "location2Id": {
+            "type": "string",
+            "description": "locationObject id of the level 2 location"
+        },
+        "location2Name": {
+            "type": "string",
+            "description": "name of the level 2 location"
+        },
+        "location2Order": {
+            "type": "integer",
+            "description": "ordering/rank of the level 2 location within its level"
+        },
+
+
+        "location3Id": {
+            "type": "string",
+            "description": "locationObject id of the level 3 location"
+        },
+        "location3Name": {
+            "type": "string",
+            "description": "name of the level 3 location"
+        },
+        "location3Order": {
+            "type": "integer",
+            "description": "ordering/rank of the level 3 location within its level"
+        }
+    },
+    "required": [
+        "location0Name",
+        "location0Order",
+        "location0Id",
+        "location1Id",
+        "location1Name",
+        "location1Order",
+        "location2Id",
+        "location2Name",
+        "location2Order",
+        "location3Id",
+        "location3Name",
+        "location3Order"
+    ]
+}

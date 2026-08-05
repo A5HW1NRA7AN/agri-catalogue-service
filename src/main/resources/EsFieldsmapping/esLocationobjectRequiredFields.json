@@ -1,0 +1,47 @@
+{
+    "locationObjectId": {
+        "type": "keyword"
+    },
+    "locationName": {
+        "type": "keyword"
+    },
+    "locationOrder": {
+        "type": "keyword"
+    },
+    "locationRefN": {
+        "type": "keyword"
+    },
+    "locationAltN": {
+        "type": "keyword"
+    },
+    "locationAl_1": {
+        "type": "keyword"
+    },
+    "locationDate": {
+        "type": "date"
+    },
+    "locationLat": {
+        "type": "double"
+    },
+    "locationLong": {
+        "type": "double"
+    },
+    "locationShapeLeng": {
+        "type": "double"
+    },
+    "locationShapeArea": {
+        "type": "double"
+    },
+    "locationGeom": {
+        "type": "geo_shape"
+    },
+    "status": {
+        "type": "keyword"
+    },
+    "createdOn": {
+        "type": "date"
+    },
+    "updatedOn": {
+        "type": "date"
+    }
+}

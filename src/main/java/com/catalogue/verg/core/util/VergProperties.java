@@ -52,4 +52,13 @@ public class VergProperties {
     
         @Value("${elastic.required.field.fertilizer.json.path}")
         private String elasticFertilizerJsonPath;
+    
+        @Value("${elastic.required.field.locationobject.json.path}")
+        private String elasticLocationobjectJsonPath;
+    
+        @Value("${elastic.required.field.locationmapper.json.path}")
+        private String elasticLocationmapperJsonPath;
+    
+        @Value("${elastic.required.field.marketplace.json.path}")
+        private String elasticMarketplaceJsonPath;
     }
