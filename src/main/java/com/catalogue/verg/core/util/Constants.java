@@ -150,24 +150,6 @@ public class Constants{
     public static final String FERTILIZER_ID_RQST = "fertilizerId";
     public static final String FERTILIZER_INDEX_NAME = "fertilizer_index";
 
-    
-    // Locationobject Specific Constants
-    public static final String LOCATIONOBJECT_VALIDATION_FILE_JSON = "/payloadValidation/locationobjectPayloadValidation.json";
-    public static final String LOCATIONOBJECT_ID_RQST = "locationobjectId";
-    public static final String LOCATIONOBJECT_INDEX_NAME = "locationobject_index";
-
-    
-    // Locationmapper Specific Constants
-    public static final String LOCATIONMAPPER_VALIDATION_FILE_JSON = "/payloadValidation/locationmapperPayloadValidation.json";
-    public static final String LOCATIONMAPPER_ID_RQST = "locationmapperId";
-    public static final String LOCATIONMAPPER_INDEX_NAME = "locationmapper_index";
-
-    
-    // Marketplace Specific Constants
-    public static final String MARKETPLACE_VALIDATION_FILE_JSON = "/payloadValidation/marketplacePayloadValidation.json";
-    public static final String MARKETPLACE_ID_RQST = "marketplaceId";
-    public static final String MARKETPLACE_INDEX_NAME = "marketplace_index";
-
         private Constants() {
     }
 }
