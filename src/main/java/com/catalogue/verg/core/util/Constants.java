@@ -73,12 +73,6 @@ public class Constants{
     public static final String ERROR_MESSAGE = "errmsg";
 
     
-    // Cropcategory Specific Constants
-    public static final String CROPCATEGORY_VALIDATION_FILE_JSON = "/payloadValidation/cropcategoryPayloadValidation.json";
-    public static final String CROPCATEGORY_ID_RQST = "cropcategoryId";
-    public static final String CROPCATEGORY_INDEX_NAME = "cropcategory_index";
-
-    
     // Audit Specific Constants
     public static final String AUDIT_VALIDATION_FILE_JSON = "/payloadValidation/auditPayloadValidation.json";
     public static final String AUDIT_ID_RQST = "auditId";
@@ -167,6 +161,12 @@ public class Constants{
     public static final String MARKETPLACE_VALIDATION_FILE_JSON = "/payloadValidation/marketplacePayloadValidation.json";
     public static final String MARKETPLACE_ID_RQST = "marketplaceId";
     public static final String MARKETPLACE_INDEX_NAME = "marketplace_index";
+
+    
+    // Cropcategory Specific Constants
+    public static final String CROPCATEGORY_VALIDATION_FILE_JSON = "/payloadValidation/cropcategoryPayloadValidation.json";
+    public static final String CROPCATEGORY_ID_RQST = "cropcategoryId";
+    public static final String CROPCATEGORY_INDEX_NAME = "cropcategory_index";
 
         private Constants() {
     }

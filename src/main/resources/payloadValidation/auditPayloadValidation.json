@@ -17,6 +17,10 @@
             "type": "string",
             "description": "Catalogue the record belongs to (e.g. cropType, cropVariety)."
         },
+        "operation": {
+            "type": "string",
+            "description": "The endpoint/operation that produced this audit row (e.g. create, draft, add, approve, review, toggle, delete, read, search)."
+        },
         "userId": {
             "type": "string",
             "description": "Id of the actor who performed the action."
@@ -44,16 +48,17 @@
         "createdOn": {
             "type": "string",
             "format": "date-time",
-            "description": "ISO-8601 event timestamp, stamped by the producer at emit time. Indexed for time filters."
+            "description": "ISO-8601 createdOn of the SOURCE entity record (supplied by the caller), not the audit row's own time. Indexed for time filters."
         },
         "updatedOn": {
             "type": "string",
             "format": "date-time",
-            "description": "ISO-8601 timestamp; equals createdOn for an immutable audit row."
+            "description": "ISO-8601 updatedOn of the SOURCE entity record (supplied by the caller), not the audit row's own time."
         }
     },
     "required": [
         "entityName",
+        "operation",
         "userId",
         "userName",
         "userRole"
