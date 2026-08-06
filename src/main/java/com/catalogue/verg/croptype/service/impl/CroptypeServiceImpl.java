@@ -20,6 +20,7 @@ import com.catalogue.verg.core.util.Constants;
 import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
+import com.catalogue.verg.core.service.AuditLogService;
 import com.catalogue.verg.core.service.ImportService;
 import com.catalogue.verg.core.service.LoadFromPrimaryService;
 import com.catalogue.verg.core.util.PrimaryKeyUtil;
@@ -79,6 +80,12 @@ public class CroptypeServiceImpl implements CroptypeService {
     @Autowired
     private LoadFromPrimaryService loadFromPrimaryService;
 
+    @Autowired
+    private AuditLogService auditLogService;
+
+    /** Catalogue name recorded on every audit row emitted by this service. */
+    private static final String AUDIT_ENTITY_NAME = "croptype";
+
     private Logger logger = LoggerFactory.getLogger(CroptypeServiceImpl.class);
 
     @Value("${spring.redis.cacheTtl}")
@@ -117,6 +124,9 @@ public class CroptypeServiceImpl implements CroptypeService {
             response.setResult(map);
             response.setResponseCode(HttpStatus.OK);
             log.info("CroptypeServiceImpl::createCroptype::persisted croptype in OAS");
+            auditLogService.logAudit(primaryID, AUDIT_ENTITY_NAME, "create", Constants.PENDING,
+                    objectMapper.createObjectNode(), croptypeEntity,
+                    croptypeEntity1.getCreatedOn(), croptypeEntity1.getUpdatedOn());
             return response;
 
         } catch (Exception e) {
@@ -135,6 +145,8 @@ public class CroptypeServiceImpl implements CroptypeService {
             log.info("CroptypeServiceImpl::searchCroptype: croptype search result fetched from redis");
             response.getResult().put(Constants.RESULT, searchResult);
             createSuccessResponse(response);
+            auditLogService.logAudit(null, AUDIT_ENTITY_NAME, "search", null, null,
+                    objectMapper.valueToTree(searchResult), null, null);
             return response;
         }
         String searchString = searchCriteria.getSearchString();
@@ -149,6 +161,8 @@ public class CroptypeServiceImpl implements CroptypeService {
                     esUtilService.searchDocuments(Constants.CROPTYPE_INDEX_NAME, searchCriteria);
             response.getResult().put(Constants.RESULT, searchResult);
             createSuccessResponse(response);
+            auditLogService.logAudit(null, AUDIT_ENTITY_NAME, "search", null, null,
+                    objectMapper.valueToTree(searchResult), null, null);
             return response;
         } catch (Exception e) {
             createErrorResponse(response, e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR,
@@ -174,6 +188,9 @@ public class CroptypeServiceImpl implements CroptypeService {
             response.setMessage(Constants.ID_NOT_FOUND);
             return response;
         }
+        JsonNode auditAfter = null;
+        Timestamp auditCreatedOn = null;
+        Timestamp auditUpdatedOn = null;
         try {
             String cachedJson = cacheService.getCache(id);
             if (StringUtils.isNotEmpty(cachedJson)) {
@@ -183,6 +200,7 @@ public class CroptypeServiceImpl implements CroptypeService {
                         .getResult()
                         .put(Constants.RESULT, objectMapper.readValue(cachedJson, new TypeReference<Object>() {
                         }));
+                auditAfter = objectMapper.readTree(cachedJson);
             } else {
                 Optional<CroptypeEntity> entityOptional = croptypeRepository.findById(id);
                 if (entityOptional.isPresent()) {
@@ -199,6 +217,9 @@ public class CroptypeServiceImpl implements CroptypeService {
                                     objectMapper.convertValue(
                                             jsonNode, new TypeReference<Object>() {
                                             }));
+                    auditAfter = jsonNode;
+                    auditCreatedOn = croptypeEntity.getCreatedOn();
+                    auditUpdatedOn = croptypeEntity.getUpdatedOn();
                 } else {
                     response.setResponseCode(HttpStatus.NOT_FOUND);
                     response.setMessage(Constants.INVALID_ID);
@@ -207,6 +228,10 @@ public class CroptypeServiceImpl implements CroptypeService {
         } catch (Exception e) {
             throw new CustomException(Constants.ERROR, "error while processing",
                     HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if (auditAfter != null) {
+            auditLogService.logAudit(null, AUDIT_ENTITY_NAME, "read", null, null, auditAfter,
+                    auditCreatedOn, auditUpdatedOn);
         }
         return response;
     }
@@ -329,6 +354,9 @@ public class CroptypeServiceImpl implements CroptypeService {
 
             response.setMessage(Constants.SUCCESSFULLY_DELETED);
             response.setResponseCode(HttpStatus.OK);
+            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, "delete", Constants.DELETED,
+                    croptypeEntity.getData(), croptypeEntity.getData(),
+                    croptypeEntity.getCreatedOn(), croptypeEntity.getUpdatedOn());
             return response;
 
         } catch (Exception e) {
@@ -391,6 +419,9 @@ public class CroptypeServiceImpl implements CroptypeService {
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_CREATED);
             response.setResponseCode(HttpStatus.OK);
+            auditLogService.logAudit(primaryID, AUDIT_ENTITY_NAME, "draft", Constants.DRAFT,
+                    objectMapper.createObjectNode(), croptypeEntity,
+                    croptypeEntity1.getCreatedOn(), croptypeEntity1.getUpdatedOn());
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),
@@ -427,6 +458,7 @@ public class CroptypeServiceImpl implements CroptypeService {
                 return response;
             }
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            JsonNode auditBefore = croptypeEntity1.getData();
             croptypeEntity1.setData(croptypeEntity);
             croptypeEntity1.setStatus(Constants.PENDING);
             croptypeEntity1.setUpdatedOn(currentTime);
@@ -443,6 +475,9 @@ public class CroptypeServiceImpl implements CroptypeService {
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
+            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, "add", Constants.PENDING,
+                    auditBefore, croptypeEntity,
+                    croptypeEntity1.getCreatedOn(), croptypeEntity1.getUpdatedOn());
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),
@@ -453,13 +488,13 @@ public class CroptypeServiceImpl implements CroptypeService {
     @Override
     public CustomResponse approveCroptype(LifecycleRequest request) {
         log.info("CroptypeServiceImpl::approveCroptype:entered the method");
-        return transitionStatus(request, LifecycleUtil.APPROVE_FROM, LifecycleUtil.APPROVE_TARGETS);
+        return transitionStatus(request, "approve", LifecycleUtil.APPROVE_FROM, LifecycleUtil.APPROVE_TARGETS);
     }
 
     @Override
     public CustomResponse reviewCroptype(LifecycleRequest request) {
         log.info("CroptypeServiceImpl::reviewCroptype:entered the method");
-        return transitionStatus(request, LifecycleUtil.REVIEW_FROM, LifecycleUtil.REVIEW_TARGETS);
+        return transitionStatus(request, "review", LifecycleUtil.REVIEW_FROM, LifecycleUtil.REVIEW_TARGETS);
     }
 
     @Override
@@ -509,6 +544,9 @@ public class CroptypeServiceImpl implements CroptypeService {
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
+            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, "toggle", newStatus,
+                    croptypeEntity1.getData(), croptypeEntity1.getData(),
+                    croptypeEntity1.getCreatedOn(), croptypeEntity1.getUpdatedOn());
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),
@@ -520,8 +558,8 @@ public class CroptypeServiceImpl implements CroptypeService {
      * Shared status-transition logic for approve/review. Validates the id and requested target status,
      * enforces the required current status, then persists the new status to Postgres, ES and Redis.
      */
-    private CustomResponse transitionStatus(LifecycleRequest request, String requiredCurrentStatus,
-                                            Set<String> allowedTargets) {
+    private CustomResponse transitionStatus(LifecycleRequest request, String operation,
+                                            String requiredCurrentStatus, Set<String> allowedTargets) {
         CustomResponse response = new CustomResponse();
         if (request == null || StringUtils.isEmpty(request.getId())) {
             response.setResponseCode(HttpStatus.BAD_REQUEST);
@@ -569,6 +607,9 @@ public class CroptypeServiceImpl implements CroptypeService {
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
+            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, operation, targetStatus,
+                    croptypeEntity1.getData(), croptypeEntity1.getData(),
+                    croptypeEntity1.getCreatedOn(), croptypeEntity1.getUpdatedOn());
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),

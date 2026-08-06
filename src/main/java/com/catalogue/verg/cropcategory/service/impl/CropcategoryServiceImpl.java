@@ -20,7 +20,9 @@ import com.catalogue.verg.core.util.Constants;
 import com.catalogue.verg.core.util.LifecycleUtil;
 import com.catalogue.verg.core.util.PayloadValidation;
 import com.catalogue.verg.core.util.VergProperties;
+import com.catalogue.verg.core.service.AuditLogService;
 import com.catalogue.verg.core.service.ImportService;
+import com.catalogue.verg.core.service.LoadFromPrimaryService;
 import com.catalogue.verg.core.util.PrimaryKeyUtil;
 import com.catalogue.verg.cropcategory.entity.CropcategoryEntity;
 import com.catalogue.verg.cropcategory.repository.CropcategoryRepository;
@@ -75,6 +77,15 @@ public class CropcategoryServiceImpl implements CropcategoryService {
     @Autowired
     private ImportService importService;
 
+    @Autowired
+    private LoadFromPrimaryService loadFromPrimaryService;
+
+    @Autowired
+    private AuditLogService auditLogService;
+
+    /** Catalogue name recorded on every audit row emitted by this service. */
+    private static final String AUDIT_ENTITY_NAME = "cropcategory";
+
     private Logger logger = LoggerFactory.getLogger(CropcategoryServiceImpl.class);
 
     @Value("${spring.redis.cacheTtl}")
@@ -113,6 +124,9 @@ public class CropcategoryServiceImpl implements CropcategoryService {
             response.setResult(map);
             response.setResponseCode(HttpStatus.OK);
             log.info("CropcategoryServiceImpl::createCropcategory::persisted cropcategory in OAS");
+            auditLogService.logAudit(primaryID, AUDIT_ENTITY_NAME, "create", Constants.PENDING,
+                    objectMapper.createObjectNode(), cropcategoryEntity,
+                    cropcategoryEntity1.getCreatedOn(), cropcategoryEntity1.getUpdatedOn());
             return response;
 
         } catch (Exception e) {
@@ -131,6 +145,8 @@ public class CropcategoryServiceImpl implements CropcategoryService {
             log.info("CropcategoryServiceImpl::searchCropcategory: cropcategory search result fetched from redis");
             response.getResult().put(Constants.RESULT, searchResult);
             createSuccessResponse(response);
+            auditLogService.logAudit(null, AUDIT_ENTITY_NAME, "search", null, null,
+                    objectMapper.valueToTree(searchResult), null, null);
             return response;
         }
         String searchString = searchCriteria.getSearchString();
@@ -145,6 +161,8 @@ public class CropcategoryServiceImpl implements CropcategoryService {
                     esUtilService.searchDocuments(Constants.CROPCATEGORY_INDEX_NAME, searchCriteria);
             response.getResult().put(Constants.RESULT, searchResult);
             createSuccessResponse(response);
+            auditLogService.logAudit(null, AUDIT_ENTITY_NAME, "search", null, null,
+                    objectMapper.valueToTree(searchResult), null, null);
             return response;
         } catch (Exception e) {
             createErrorResponse(response, e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR,
@@ -170,6 +188,9 @@ public class CropcategoryServiceImpl implements CropcategoryService {
             response.setMessage(Constants.ID_NOT_FOUND);
             return response;
         }
+        JsonNode auditAfter = null;
+        Timestamp auditCreatedOn = null;
+        Timestamp auditUpdatedOn = null;
         try {
             String cachedJson = cacheService.getCache(id);
             if (StringUtils.isNotEmpty(cachedJson)) {
@@ -179,6 +200,7 @@ public class CropcategoryServiceImpl implements CropcategoryService {
                         .getResult()
                         .put(Constants.RESULT, objectMapper.readValue(cachedJson, new TypeReference<Object>() {
                         }));
+                auditAfter = objectMapper.readTree(cachedJson);
             } else {
                 Optional<CropcategoryEntity> entityOptional = cropcategoryRepository.findById(id);
                 if (entityOptional.isPresent()) {
@@ -195,6 +217,9 @@ public class CropcategoryServiceImpl implements CropcategoryService {
                                     objectMapper.convertValue(
                                             jsonNode, new TypeReference<Object>() {
                                             }));
+                    auditAfter = jsonNode;
+                    auditCreatedOn = cropcategoryEntity.getCreatedOn();
+                    auditUpdatedOn = cropcategoryEntity.getUpdatedOn();
                 } else {
                     response.setResponseCode(HttpStatus.NOT_FOUND);
                     response.setMessage(Constants.INVALID_ID);
@@ -203,6 +228,10 @@ public class CropcategoryServiceImpl implements CropcategoryService {
         } catch (Exception e) {
             throw new CustomException(Constants.ERROR, "error while processing",
                     HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        if (auditAfter != null) {
+            auditLogService.logAudit(null, AUDIT_ENTITY_NAME, "read", null, null, auditAfter,
+                    auditCreatedOn, auditUpdatedOn);
         }
         return response;
     }
@@ -325,6 +354,9 @@ public class CropcategoryServiceImpl implements CropcategoryService {
 
             response.setMessage(Constants.SUCCESSFULLY_DELETED);
             response.setResponseCode(HttpStatus.OK);
+            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, "delete", Constants.DELETED,
+                    cropcategoryEntity.getData(), cropcategoryEntity.getData(),
+                    cropcategoryEntity.getCreatedOn(), cropcategoryEntity.getUpdatedOn());
             return response;
 
         } catch (Exception e) {
@@ -342,6 +374,20 @@ public class CropcategoryServiceImpl implements CropcategoryService {
                 Constants.CROPCATEGORY_VALIDATION_FILE_JSON,
                 this::createCropcategory
         );
+    }
+
+    @Override
+    public CustomResponse loadFromPrimaryCropcategory() {
+        log.info("CropcategoryServiceImpl::loadFromPrimaryCropcategory::started");
+        return loadFromPrimaryService.loadFromPrimary(
+                Constants.CROPCATEGORY_INDEX_NAME,
+                vergProperties.getElasticCropcategoryJsonPath(),
+                cropcategoryRepository.findAll(),
+                CropcategoryEntity::getCropcategoryId,
+                e -> objectMapper.convertValue(
+                        buildDocument(e.getData(), e.getStatus(), e.getCreatedOn(), e.getUpdatedOn()),
+                        Map.class),
+                e -> !Constants.DELETED.equals(e.getStatus()));   // skip DELETED; INACTIVE is indexed
     }
 
     @Override
@@ -373,6 +419,9 @@ public class CropcategoryServiceImpl implements CropcategoryService {
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_CREATED);
             response.setResponseCode(HttpStatus.OK);
+            auditLogService.logAudit(primaryID, AUDIT_ENTITY_NAME, "draft", Constants.DRAFT,
+                    objectMapper.createObjectNode(), cropcategoryEntity,
+                    cropcategoryEntity1.getCreatedOn(), cropcategoryEntity1.getUpdatedOn());
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),
@@ -409,6 +458,7 @@ public class CropcategoryServiceImpl implements CropcategoryService {
                 return response;
             }
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            JsonNode auditBefore = cropcategoryEntity1.getData();
             cropcategoryEntity1.setData(cropcategoryEntity);
             cropcategoryEntity1.setStatus(Constants.PENDING);
             cropcategoryEntity1.setUpdatedOn(currentTime);
@@ -425,6 +475,9 @@ public class CropcategoryServiceImpl implements CropcategoryService {
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
+            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, "add", Constants.PENDING,
+                    auditBefore, cropcategoryEntity,
+                    cropcategoryEntity1.getCreatedOn(), cropcategoryEntity1.getUpdatedOn());
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),
@@ -435,13 +488,13 @@ public class CropcategoryServiceImpl implements CropcategoryService {
     @Override
     public CustomResponse approveCropcategory(LifecycleRequest request) {
         log.info("CropcategoryServiceImpl::approveCropcategory:entered the method");
-        return transitionStatus(request, LifecycleUtil.APPROVE_FROM, LifecycleUtil.APPROVE_TARGETS);
+        return transitionStatus(request, "approve", LifecycleUtil.APPROVE_FROM, LifecycleUtil.APPROVE_TARGETS);
     }
 
     @Override
     public CustomResponse reviewCropcategory(LifecycleRequest request) {
         log.info("CropcategoryServiceImpl::reviewCropcategory:entered the method");
-        return transitionStatus(request, LifecycleUtil.REVIEW_FROM, LifecycleUtil.REVIEW_TARGETS);
+        return transitionStatus(request, "review", LifecycleUtil.REVIEW_FROM, LifecycleUtil.REVIEW_TARGETS);
     }
 
     @Override
@@ -491,6 +544,9 @@ public class CropcategoryServiceImpl implements CropcategoryService {
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
+            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, "toggle", newStatus,
+                    cropcategoryEntity1.getData(), cropcategoryEntity1.getData(),
+                    cropcategoryEntity1.getCreatedOn(), cropcategoryEntity1.getUpdatedOn());
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),
@@ -502,8 +558,8 @@ public class CropcategoryServiceImpl implements CropcategoryService {
      * Shared status-transition logic for approve/review. Validates the id and requested target status,
      * enforces the required current status, then persists the new status to Postgres, ES and Redis.
      */
-    private CustomResponse transitionStatus(LifecycleRequest request, String requiredCurrentStatus,
-                                            Set<String> allowedTargets) {
+    private CustomResponse transitionStatus(LifecycleRequest request, String operation,
+                                            String requiredCurrentStatus, Set<String> allowedTargets) {
         CustomResponse response = new CustomResponse();
         if (request == null || StringUtils.isEmpty(request.getId())) {
             response.setResponseCode(HttpStatus.BAD_REQUEST);
@@ -551,6 +607,9 @@ public class CropcategoryServiceImpl implements CropcategoryService {
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
+            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, operation, targetStatus,
+                    cropcategoryEntity1.getData(), cropcategoryEntity1.getData(),
+                    cropcategoryEntity1.getCreatedOn(), cropcategoryEntity1.getUpdatedOn());
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),

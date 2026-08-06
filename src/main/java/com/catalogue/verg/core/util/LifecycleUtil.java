@@ -26,7 +26,7 @@ public final class LifecycleUtil {
     /** {@code review} acts on an APPROVED record. */
     public static final String REVIEW_FROM = Constants.APPROVED;
     public static final Set<String> REVIEW_TARGETS =
-            Set.of(Constants.ACTIVE, Constants.REJECTED, Constants.REWORK, Constants.PENDING);
+            Set.of(Constants.ACTIVE, Constants.REJECTED, Constants.REWORK);
 
     /**
      * Normalises a requested target status: {@code PUBLISHED} is accepted as a friendly alias for
