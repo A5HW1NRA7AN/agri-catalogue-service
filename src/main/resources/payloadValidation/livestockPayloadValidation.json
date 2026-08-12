@@ -1,41 +1,107 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
-    "properties": {
-        "livestockId": {
-            "type": "string",
-            "prefix": "livestock-",
-            "key": "Primary",
-            "keyLength": 12,
-            "description": "livestock prefix"
-        },
-        "livestock": {
-            "type": "string",
-            "description": "type of the livestock"
-        },
-        "locationType": {
-            "type": "string",
-            "description": "location type of the livestock (e.g. High Land, Low Land); absent when not applicable"
-        },
-        "breed": {
-            "type": "string",
-            "description": "breed of the livestock"
-        },
-        "gender": {
-            "type": "string",
-            "description": "gender of the livestock"
-        },
-        "productionType": {
-            "type": "string",
-            "description": "production type of the livestock (e.g. Castrated, Meat, Milk); absent when not applicable"
-        },
-        "bodyCondition": {
-            "type": "string",
-            "description": "body condition of the livestock (e.g. Thin, Moderate Weight, Very Fat)"
-        }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://agristack.ethiopia.gov.et/schemas/livestock.json",
+  "title": "Livestock",
+  "description": "Livestock catalogue entry: factual/reference characteristics of a breed (by species, gender, production type), independent of any specific animal, owner, or transactional event. Field set is kept identical to esLivestockRequiredFields.json: status is documented here as a server-managed, read-only property -- set by the service layer, never submitted by the client.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "livestockId": {
+      "type": "string",
+      "prefix": "livestock-",
+      "key": "Primary",
+      "keyLength": 12,
+      "pattern": "^livestock-[a-z0-9]{12}$",
+      "readOnly": true,
+      "description": "System-generated primary identifier for this catalogue entry. Server-set; not submitted by the client."
     },
-    "required": [
-        "livestock",
-        "breed"
-    ]
+    "livestock": {
+      "type": "string",
+      "description": "Type/species of the livestock.",
+      "enum": ["Cattle", "Sheep", "Goat", "Poultry", "Camel", "Equine", "Beehive"]
+    },
+    "breed": {
+      "type": "string",
+      "description": "Breed of the livestock (e.g. Boran, Horro, Fogera, Afar, Somali Camel)."
+    },
+    "breedType": {
+      "type": "string",
+      "description": "Genetic classification of the breed.",
+      "enum": ["Indigenous", "Crossbred", "Exotic"]
+    },
+    "locationType": {
+      "type": "string",
+      "description": "Agro-ecological zone the breed is adapted to; absent when not applicable.",
+      "enum": ["High Land", "Mid Land", "Low Land"]
+    },
+    "gender": {
+      "type": "string",
+      "description": "Gender this reference entry describes; absent when not applicable (e.g. Beehive).",
+      "enum": ["Male", "Female"]
+    },
+    "productionType": {
+      "type": "string",
+      "description": "Typical production purpose for this breed/gender combination; absent when not applicable.",
+      "enum": ["Milk", "Meat", "Egg", "Draft", "Draft/Transport", "Pack Animal",
+        "Breeding", "Dual Purpose", "Castrated", "Honey", "Pollination Service"]
+    },
+    "bodyCondition": {
+      "type": "string",
+      "description": "Typical/reference body condition score for this breed classification; absent when not applicable.",
+      "enum": ["Very Thin", "Thin", "Moderate Weight", "Good", "Fat", "Very Fat"]
+    },
+    "liveWeightKg": {
+      "type": "number",
+      "description": "Typical/average mature live body weight for this breed and gender, in kilograms."
+    },
+    "heightCm": {
+      "type": "number",
+      "description": "Typical/average height at withers for this breed and gender, in centimeters."
+    },
+    "coatColor": {
+      "type": "string",
+      "description": "Predominant/standard coat, skin, or plumage color for this breed."
+    },
+    "hornStatus": {
+      "type": "string",
+      "description": "Typical horn presence/condition for this breed, where applicable.",
+      "enum": ["Horned", "Polled/Dehorned", "Not Applicable"]
+    },
+    "averageMilkYieldLitersPerDay": {
+      "type": "number",
+      "description": "Reference average daily milk yield in liters for this breed, where applicable."
+    },
+    "averageEggProductionPerWeek": {
+      "type": "integer",
+      "description": "Reference average eggs produced per week for this breed, for poultry."
+    },
+    "averageDailyWeightGainGrams": {
+      "type": "number",
+      "description": "Reference average daily weight gain in grams for this breed, for meat/fattening purposes."
+    },
+    "woolFiberYieldKg": {
+      "type": "number",
+      "description": "Reference wool/fiber yield in kilograms per shearing cycle, where applicable."
+    },
+    "honeyYieldKgPerHarvest": {
+      "type": "number",
+      "description": "Reference honey yield in kilograms per harvest cycle, for beehives."
+    },
+    "grazingSystem": {
+      "type": "string",
+      "description": "Recommended management/grazing system for this breed.",
+      "enum": ["Free Range/Extensive", "Semi-Intensive", "Zero Grazing/Intensive", "Transhumance/Pastoral"]
+    },
+
+    "status": {
+      "type": "string",
+      "readOnly": true,
+      "description": "Server-managed lifecycle status. Set by the service layer; not submitted by the client.",
+      "enum": ["DRAFT", "PENDING", "ACTIVE", "IN_ACTIVE", "REWORK", "DELETED"]
+    }
+  },
+  "required": [
+    "livestock",
+    "breed"
+  ]
 }
