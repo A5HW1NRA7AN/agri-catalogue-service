@@ -115,59 +115,6 @@
       "name": "cropcategory",
       "item": [
         {
-          "name": "create",
-          "request": {
-            "auth": {
-              "type": "apikey",
-              "apikey": [
-                {
-                  "key": "key",
-                  "value": "apikey",
-                  "type": "string"
-                },
-                {
-                  "key": "value",
-                  "value": "{{api_key}}",
-                  "type": "string"
-                },
-                {
-                  "key": "in",
-                  "value": "header",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Cereals\",\n  \"imageUrl\": \"https://example.com/images/cereals.png\",\n  \"description\": \"Cereal crops such as teff, wheat, maize and barley\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/cropcategory/v1/create",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "cropcategory",
-                "v1",
-                "create"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "draft",
           "request": {
             "auth": {
@@ -739,14 +686,9 @@
             }
           },
           "response": []
-        }
-      ]
-    },
-    {
-      "name": "croptype",
-      "item": [
+        },
         {
-          "name": "create",
+          "name": "loadFromPrimary",
           "request": {
             "auth": {
               "type": "apikey",
@@ -769,35 +711,26 @@
               ]
             },
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"cropCategoryId\": \"cropcategory-12345\",\n  \"cropCategoryName\": \"Cereals\",\n  \"name\": \"Teff\",\n  \"scientificName\": \"Eragrostis tef\",\n  \"centre\": \"Debre Zeit Agricultural Research Center\",\n  \"varietiesCount\": 42,\n  \"imageUrl\": \"https://example.com/images/teff.png\",\n  \"description\": \"Teff is a staple cereal crop grown mainly in the Ethiopian highlands\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
+            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/croptype/v1/create",
+              "raw": "{{baseUrl}}/cropcategory/v1/loadFromPrimary",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "croptype",
+                "cropcategory",
                 "v1",
-                "create"
+                "loadFromPrimary"
               ]
             }
           },
           "response": []
-        },
+        }
+      ]
+    },
+    {
+      "name": "croptype",
+      "item": [
         {
           "name": "draft",
           "request": {
@@ -1416,59 +1349,6 @@
       "name": "cropvariety",
       "item": [
         {
-          "name": "create",
-          "request": {
-            "auth": {
-              "type": "apikey",
-              "apikey": [
-                {
-                  "key": "key",
-                  "value": "apikey",
-                  "type": "string"
-                },
-                {
-                  "key": "value",
-                  "value": "{{api_key}}",
-                  "type": "string"
-                },
-                {
-                  "key": "in",
-                  "value": "header",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"cropCategoryId\": \"cropcategory-12345\",\n  \"cropTypeId\": \"croptype-123456789012\",\n  \"cropCategoryName\": \"Cereals\",\n  \"cropTypeName\": \"Teff\",\n  \"name\": \"Quncho (DZ-Cr-387 RIL355)\",\n  \"centre\": \"Debre Zeit Agricultural Research Center\",\n  \"year\": \"2006\",\n  \"imageUrl\": \"https://example.com/varieties/quncho\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/cropvariety/v1/create",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "cropvariety",
-                "v1",
-                "create"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "draft",
           "request": {
             "auth": {
@@ -2085,54 +1965,6 @@
     {
       "name": "extensionequipment",
       "item": [
-        {
-          "name": "create",
-          "request": {
-            "auth": {
-              "type": "apikey",
-              "apikey": [
-                {
-                  "key": "key",
-                  "value": "apikey",
-                  "type": "string"
-                },
-                {
-                  "key": "value",
-                  "value": "{{api_key}}",
-                  "type": "string"
-                },
-                {
-                  "key": "in",
-                  "value": "header",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"extensionequipmentId\": \"sample string\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/extensionequipment/v1/create",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "extensionequipment",
-                "v1",
-                "create"
-              ]
-            }
-          },
-          "response": []
-        },
         {
           "name": "draft",
           "request": {
@@ -2751,54 +2583,6 @@
       "name": "fertilizer",
       "item": [
         {
-          "name": "create",
-          "request": {
-            "auth": {
-              "type": "apikey",
-              "apikey": [
-                {
-                  "key": "key",
-                  "value": "apikey",
-                  "type": "string"
-                },
-                {
-                  "key": "value",
-                  "value": "{{api_key}}",
-                  "type": "string"
-                },
-                {
-                  "key": "in",
-                  "value": "header",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"fertilizerId\": \"sample string\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/fertilizer/v1/create",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "fertilizer",
-                "v1",
-                "create"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "draft",
           "request": {
             "auth": {
@@ -3415,54 +3199,6 @@
     {
       "name": "insecticide",
       "item": [
-        {
-          "name": "create",
-          "request": {
-            "auth": {
-              "type": "apikey",
-              "apikey": [
-                {
-                  "key": "key",
-                  "value": "apikey",
-                  "type": "string"
-                },
-                {
-                  "key": "value",
-                  "value": "{{api_key}}",
-                  "type": "string"
-                },
-                {
-                  "key": "in",
-                  "value": "header",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"insecticideId\": \"sample string\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/insecticide/v1/create",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "insecticide",
-                "v1",
-                "create"
-              ]
-            }
-          },
-          "response": []
-        },
         {
           "name": "draft",
           "request": {
@@ -4081,59 +3817,6 @@
       "name": "livestock",
       "item": [
         {
-          "name": "create",
-          "request": {
-            "auth": {
-              "type": "apikey",
-              "apikey": [
-                {
-                  "key": "key",
-                  "value": "apikey",
-                  "type": "string"
-                },
-                {
-                  "key": "value",
-                  "value": "{{api_key}}",
-                  "type": "string"
-                },
-                {
-                  "key": "in",
-                  "value": "header",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"livestock\": \"Cattle\",\n  \"locationType\": \"Low Land\",\n  \"breed\": \"Boran\",\n  \"gender\": \"Female\",\n  \"productionType\": \"Milk\",\n  \"bodyCondition\": \"Moderate Weight\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/livestock/v1/create",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "livestock",
-                "v1",
-                "create"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "draft",
           "request": {
             "auth": {
@@ -4750,59 +4433,6 @@
     {
       "name": "locationmapper",
       "item": [
-        {
-          "name": "create",
-          "request": {
-            "auth": {
-              "type": "apikey",
-              "apikey": [
-                {
-                  "key": "key",
-                  "value": "apikey",
-                  "type": "string"
-                },
-                {
-                  "key": "value",
-                  "value": "{{api_key}}",
-                  "type": "string"
-                },
-                {
-                  "key": "in",
-                  "value": "header",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"location0Name\": \"Ethiopia\",\n  \"location0Order\": 0,\n  \"location0Id\": \"locationobject-523128200376\",\n  \"location1Id\": \"locationobject-474504123416\",\n  \"location1Name\": \"Tigray\",\n  \"location1Order\": 1,\n  \"location2Id\": \"locationobject-497546833165\",\n  \"location2Name\": \"North Western\",\n  \"location2Order\": 2,\n  \"location3Id\": \"locationobject-161945581327\",\n  \"location3Name\": \"Tahtay Adiyabo\",\n  \"location3Order\": 3\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/locationmapper/v1/create",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "locationmapper",
-                "v1",
-                "create"
-              ]
-            }
-          },
-          "response": []
-        },
         {
           "name": "draft",
           "request": {
@@ -5421,59 +5051,6 @@
       "name": "locationobject",
       "item": [
         {
-          "name": "create",
-          "request": {
-            "auth": {
-              "type": "apikey",
-              "apikey": [
-                {
-                  "key": "key",
-                  "value": "apikey",
-                  "type": "string"
-                },
-                {
-                  "key": "value",
-                  "value": "{{api_key}}",
-                  "type": "string"
-                },
-                {
-                  "key": "in",
-                  "value": "header",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"locationName\": \"Addis Ababa\",\n  \"locationOrder\": 1,\n  \"locationRefN\": \"ET-AA\",\n  \"locationAltN\": \"Addis Abeba\",\n  \"locationAl_1\": \"Finfinne\",\n  \"locationDate\": \"2024-01-01\",\n  \"locationLat\": 9.03,\n  \"locationLong\": 38.74,\n  \"locationShapeLeng\": 1.01086910871,\n  \"locationShapeArea\": 0.0443693499924,\n  \"locationGeom\": \"MultiPolygon, 4326 (197 vertices)\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/locationobject/v1/create",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "locationobject",
-                "v1",
-                "create"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "draft",
           "request": {
             "auth": {
@@ -6090,59 +5667,6 @@
     {
       "name": "marketplace",
       "item": [
-        {
-          "name": "create",
-          "request": {
-            "auth": {
-              "type": "apikey",
-              "apikey": [
-                {
-                  "key": "key",
-                  "value": "apikey",
-                  "type": "string"
-                },
-                {
-                  "key": "value",
-                  "value": "{{api_key}}",
-                  "type": "string"
-                },
-                {
-                  "key": "in",
-                  "value": "header",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"region\": \"Oromia\",\n  \"marketPlace\": \"Adama Market\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/marketplace/v1/create",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "marketplace",
-                "v1",
-                "create"
-              ]
-            }
-          },
-          "response": []
-        },
         {
           "name": "draft",
           "request": {
@@ -6761,54 +6285,6 @@
       "name": "pesticide",
       "item": [
         {
-          "name": "create",
-          "request": {
-            "auth": {
-              "type": "apikey",
-              "apikey": [
-                {
-                  "key": "key",
-                  "value": "apikey",
-                  "type": "string"
-                },
-                {
-                  "key": "value",
-                  "value": "{{api_key}}",
-                  "type": "string"
-                },
-                {
-                  "key": "in",
-                  "value": "header",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"pesticideId\": \"sample string\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/pesticide/v1/create",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "pesticide",
-                "v1",
-                "create"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "draft",
           "request": {
             "auth": {
@@ -7425,59 +6901,6 @@
     {
       "name": "season",
       "item": [
-        {
-          "name": "create",
-          "request": {
-            "auth": {
-              "type": "apikey",
-              "apikey": [
-                {
-                  "key": "key",
-                  "value": "apikey",
-                  "type": "string"
-                },
-                {
-                  "key": "value",
-                  "value": "{{api_key}}",
-                  "type": "string"
-                },
-                {
-                  "key": "in",
-                  "value": "header",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"season\": \"Kiremt\",\n  \"startMonth\": \"June\",\n  \"startDay\": 1,\n  \"endMonth\": \"September\",\n  \"endDay\": 30\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/season/v1/create",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "season",
-                "v1",
-                "create"
-              ]
-            }
-          },
-          "response": []
-        },
         {
           "name": "draft",
           "request": {
@@ -8096,54 +7519,6 @@
       "name": "seed",
       "item": [
         {
-          "name": "create",
-          "request": {
-            "auth": {
-              "type": "apikey",
-              "apikey": [
-                {
-                  "key": "key",
-                  "value": "apikey",
-                  "type": "string"
-                },
-                {
-                  "key": "value",
-                  "value": "{{api_key}}",
-                  "type": "string"
-                },
-                {
-                  "key": "in",
-                  "value": "header",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"seedId\": \"sample string\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/seed/v1/create",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "seed",
-                "v1",
-                "create"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "draft",
           "request": {
             "auth": {
@@ -8760,54 +8135,6 @@
     {
       "name": "soil",
       "item": [
-        {
-          "name": "create",
-          "request": {
-            "auth": {
-              "type": "apikey",
-              "apikey": [
-                {
-                  "key": "key",
-                  "value": "apikey",
-                  "type": "string"
-                },
-                {
-                  "key": "value",
-                  "value": "{{api_key}}",
-                  "type": "string"
-                },
-                {
-                  "key": "in",
-                  "value": "header",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"soilId\": \"sample string\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/soil/v1/create",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "soil",
-                "v1",
-                "create"
-              ]
-            }
-          },
-          "response": []
-        },
         {
           "name": "draft",
           "request": {
@@ -9450,7 +8777,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://35.78.108.187:30080"
+      "value": "http://18.183.107.166"
     },
     {
       "key": "api_key",
