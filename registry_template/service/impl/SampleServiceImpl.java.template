@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.catalogue.verg.core.cache.CacheService;
+import com.catalogue.verg.core.config.LifecyclePolicy;
 import com.catalogue.verg.core.dto.CustomResponse;
 import com.catalogue.verg.core.dto.LifecycleRequest;
 import com.catalogue.verg.core.dto.RespParam;
@@ -83,7 +84,13 @@ public class {{service_name_pascal}}ServiceImpl implements {{service_name_pascal
     @Autowired
     private AuditLogService auditLogService;
 
-    /** Catalogue name recorded on every audit row emitted by this service. */
+    @Autowired
+    private LifecyclePolicy lifecyclePolicy;
+
+    /**
+     * Catalogue name recorded on every audit row emitted by this service. Doubles as the key
+     * this catalogue is looked up by in the lifecycle switches ({@link LifecyclePolicy}).
+     */
     private static final String AUDIT_ENTITY_NAME = "{{service_name_lower}}";
 
     private Logger logger = LoggerFactory.getLogger({{service_name_pascal}}ServiceImpl.class);
@@ -106,15 +113,17 @@ public class {{service_name_pascal}}ServiceImpl implements {{service_name_pascal
             {{service_name_camel}}Entity1.set{{service_name_pascal}}Id(primaryID);
             // Create Parameters like createdDate / updateDate / Data and Status
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            
+            String initialStatus = lifecyclePolicy.initialStatus(AUDIT_ENTITY_NAME);
             {{service_name_camel}}Entity1.setCreatedOn(currentTime);
             {{service_name_camel}}Entity1.setUpdatedOn(currentTime);
-            {{service_name_camel}}Entity1.setStatus(Constants.PENDING);
+            {{service_name_camel}}Entity1.setStatus(initialStatus);
             {{service_name_camel}}Entity1.setData({{service_name_camel}}Entity);
 
             {{service_name_camel}}Repository.save({{service_name_camel}}Entity1);
 
             log.info("{{service_name_pascal}}ServiceImpl::create{{service_name_pascal}}::persisted {{service_name_camel}} in postgres");
-            ObjectNode jsonNode = buildDocument({{service_name_camel}}Entity, Constants.PENDING, currentTime, currentTime);
+            ObjectNode jsonNode = buildDocument({{service_name_camel}}Entity, initialStatus, currentTime, currentTime);
             Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
             esUtilService.addDocument(Constants.{{service_name_upper}}_INDEX_NAME, Constants.INDEX_TYPE,
                     String.valueOf(primaryID), map, vergProperties.getElastic{{service_name_pascal}}JsonPath());
@@ -124,7 +133,7 @@ public class {{service_name_pascal}}ServiceImpl implements {{service_name_pascal
             response.setResult(map);
             response.setResponseCode(HttpStatus.OK);
             log.info("{{service_name_pascal}}ServiceImpl::create{{service_name_pascal}}::persisted {{service_name_camel}} in OAS");
-            auditLogService.logAudit(primaryID, AUDIT_ENTITY_NAME, "create", Constants.PENDING,
+            auditLogService.logAudit(primaryID, AUDIT_ENTITY_NAME, "create", initialStatus,
                     objectMapper.createObjectNode(), {{service_name_camel}}Entity,
                     {{service_name_camel}}Entity1.getCreatedOn(), {{service_name_camel}}Entity1.getUpdatedOn());
             return response;
@@ -230,7 +239,7 @@ public class {{service_name_pascal}}ServiceImpl implements {{service_name_pascal
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if (auditAfter != null) {
-            auditLogService.logAudit(null, AUDIT_ENTITY_NAME, "read", null, null, auditAfter,
+            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, "read", null, null, auditAfter,
                     auditCreatedOn, auditUpdatedOn);
         }
         return response;
@@ -393,6 +402,8 @@ public class {{service_name_pascal}}ServiceImpl implements {{service_name_pascal
     @Override
     public CustomResponse draft{{service_name_pascal}}(JsonNode {{service_name_camel}}Entity) {
         log.info("{{service_name_pascal}}ServiceImpl::draft{{service_name_pascal}}:entered the method: " + {{service_name_camel}}Entity);
+        // Guard before the try block: the 404 must not be swallowed by the catch below
+        lifecyclePolicy.requireEnabled(AUDIT_ENTITY_NAME);
         CustomResponse response = new CustomResponse();
         // Relaxed validation: types/structure enforced, but required fields may be missing
         payloadValidation.validatePayloadRelaxed(Constants.{{service_name_upper}}_VALIDATION_FILE_JSON, {{service_name_camel}}Entity);
@@ -432,6 +443,8 @@ public class {{service_name_pascal}}ServiceImpl implements {{service_name_pascal
     @Override
     public CustomResponse add{{service_name_pascal}}(String id, JsonNode {{service_name_camel}}Entity) {
         log.info("{{service_name_pascal}}ServiceImpl::add{{service_name_pascal}}:entered the method with id: {}", id);
+        // Guard before the try block: the 404 must not be swallowed by the catch below
+        lifecyclePolicy.requireEnabled(AUDIT_ENTITY_NAME);
         CustomResponse response = new CustomResponse();
         if (StringUtils.isEmpty(id)) {
             response.setResponseCode(HttpStatus.BAD_REQUEST);
@@ -475,7 +488,7 @@ public class {{service_name_pascal}}ServiceImpl implements {{service_name_pascal
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
-            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, "add", Constants.PENDING,
+            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, "add-promote", Constants.PENDING,
                     auditBefore, {{service_name_camel}}Entity,
                     {{service_name_camel}}Entity1.getCreatedOn(), {{service_name_camel}}Entity1.getUpdatedOn());
             return response;
@@ -488,12 +501,14 @@ public class {{service_name_pascal}}ServiceImpl implements {{service_name_pascal
     @Override
     public CustomResponse approve{{service_name_pascal}}(LifecycleRequest request) {
         log.info("{{service_name_pascal}}ServiceImpl::approve{{service_name_pascal}}:entered the method");
+        lifecyclePolicy.requireEnabled(AUDIT_ENTITY_NAME);
         return transitionStatus(request, "approve", LifecycleUtil.APPROVE_FROM, LifecycleUtil.APPROVE_TARGETS);
     }
 
     @Override
     public CustomResponse review{{service_name_pascal}}(LifecycleRequest request) {
         log.info("{{service_name_pascal}}ServiceImpl::review{{service_name_pascal}}:entered the method");
+        lifecyclePolicy.requireEnabled(AUDIT_ENTITY_NAME);
         return transitionStatus(request, "review", LifecycleUtil.REVIEW_FROM, LifecycleUtil.REVIEW_TARGETS);
     }
 

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.catalogue.verg.core.cache.CacheService;
+import com.catalogue.verg.core.config.LifecyclePolicy;
 import com.catalogue.verg.core.dto.CustomResponse;
 import com.catalogue.verg.core.dto.LifecycleRequest;
 import com.catalogue.verg.core.dto.RespParam;
@@ -83,7 +84,13 @@ public class CropvarietyServiceImpl implements CropvarietyService {
     @Autowired
     private AuditLogService auditLogService;
 
-    /** Catalogue name recorded on every audit row emitted by this service. */
+    @Autowired
+    private LifecyclePolicy lifecyclePolicy;
+
+    /**
+     * Catalogue name recorded on every audit row emitted by this service. Doubles as the key
+     * this catalogue is looked up by in the lifecycle switches ({@link LifecyclePolicy}).
+     */
     private static final String AUDIT_ENTITY_NAME = "cropvariety";
 
     private Logger logger = LoggerFactory.getLogger(CropvarietyServiceImpl.class);
@@ -106,15 +113,17 @@ public class CropvarietyServiceImpl implements CropvarietyService {
             cropvarietyEntity1.setCropvarietyId(primaryID);
             // Create Parameters like createdDate / updateDate / Data and Status
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+            
+            String initialStatus = lifecyclePolicy.initialStatus(AUDIT_ENTITY_NAME);
             cropvarietyEntity1.setCreatedOn(currentTime);
             cropvarietyEntity1.setUpdatedOn(currentTime);
-            cropvarietyEntity1.setStatus(Constants.PENDING);
+            cropvarietyEntity1.setStatus(initialStatus);
             cropvarietyEntity1.setData(cropvarietyEntity);
 
             cropvarietyRepository.save(cropvarietyEntity1);
 
             log.info("CropvarietyServiceImpl::createCropvariety::persisted cropvariety in postgres");
-            ObjectNode jsonNode = buildDocument(cropvarietyEntity, Constants.PENDING, currentTime, currentTime);
+            ObjectNode jsonNode = buildDocument(cropvarietyEntity, initialStatus, currentTime, currentTime);
             Map<String, Object> map = objectMapper.convertValue(jsonNode, Map.class);
             esUtilService.addDocument(Constants.CROPVARIETY_INDEX_NAME, Constants.INDEX_TYPE,
                     String.valueOf(primaryID), map, vergProperties.getElasticCropvarietyJsonPath());
@@ -124,7 +133,7 @@ public class CropvarietyServiceImpl implements CropvarietyService {
             response.setResult(map);
             response.setResponseCode(HttpStatus.OK);
             log.info("CropvarietyServiceImpl::createCropvariety::persisted cropvariety in OAS");
-            auditLogService.logAudit(primaryID, AUDIT_ENTITY_NAME, "create", Constants.PENDING,
+            auditLogService.logAudit(primaryID, AUDIT_ENTITY_NAME, "create", initialStatus,
                     objectMapper.createObjectNode(), cropvarietyEntity,
                     cropvarietyEntity1.getCreatedOn(), cropvarietyEntity1.getUpdatedOn());
             return response;
@@ -230,7 +239,7 @@ public class CropvarietyServiceImpl implements CropvarietyService {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if (auditAfter != null) {
-            auditLogService.logAudit(null, AUDIT_ENTITY_NAME, "read", null, null, auditAfter,
+            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, "read", null, null, auditAfter,
                     auditCreatedOn, auditUpdatedOn);
         }
         return response;
@@ -393,6 +402,8 @@ public class CropvarietyServiceImpl implements CropvarietyService {
     @Override
     public CustomResponse draftCropvariety(JsonNode cropvarietyEntity) {
         log.info("CropvarietyServiceImpl::draftCropvariety:entered the method: " + cropvarietyEntity);
+        // Guard before the try block: the 404 must not be swallowed by the catch below
+        lifecyclePolicy.requireEnabled(AUDIT_ENTITY_NAME);
         CustomResponse response = new CustomResponse();
         // Relaxed validation: types/structure enforced, but required fields may be missing
         payloadValidation.validatePayloadRelaxed(Constants.CROPVARIETY_VALIDATION_FILE_JSON, cropvarietyEntity);
@@ -432,6 +443,8 @@ public class CropvarietyServiceImpl implements CropvarietyService {
     @Override
     public CustomResponse addCropvariety(String id, JsonNode cropvarietyEntity) {
         log.info("CropvarietyServiceImpl::addCropvariety:entered the method with id: {}", id);
+        // Guard before the try block: the 404 must not be swallowed by the catch below
+        lifecyclePolicy.requireEnabled(AUDIT_ENTITY_NAME);
         CustomResponse response = new CustomResponse();
         if (StringUtils.isEmpty(id)) {
             response.setResponseCode(HttpStatus.BAD_REQUEST);
@@ -475,7 +488,7 @@ public class CropvarietyServiceImpl implements CropvarietyService {
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
-            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, "add", Constants.PENDING,
+            auditLogService.logAudit(id, AUDIT_ENTITY_NAME, "add-promote", Constants.PENDING,
                     auditBefore, cropvarietyEntity,
                     cropvarietyEntity1.getCreatedOn(), cropvarietyEntity1.getUpdatedOn());
             return response;
@@ -488,12 +501,14 @@ public class CropvarietyServiceImpl implements CropvarietyService {
     @Override
     public CustomResponse approveCropvariety(LifecycleRequest request) {
         log.info("CropvarietyServiceImpl::approveCropvariety:entered the method");
+        lifecyclePolicy.requireEnabled(AUDIT_ENTITY_NAME);
         return transitionStatus(request, "approve", LifecycleUtil.APPROVE_FROM, LifecycleUtil.APPROVE_TARGETS);
     }
 
     @Override
     public CustomResponse reviewCropvariety(LifecycleRequest request) {
         log.info("CropvarietyServiceImpl::reviewCropvariety:entered the method");
+        lifecyclePolicy.requireEnabled(AUDIT_ENTITY_NAME);
         return transitionStatus(request, "review", LifecycleUtil.REVIEW_FROM, LifecycleUtil.REVIEW_TARGETS);
     }
 

@@ -1,6 +1,7 @@
 package com.catalogue.verg.season.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.catalogue.verg.core.config.LifecyclePolicy;
 import com.catalogue.verg.core.dto.CustomResponse;
 import com.catalogue.verg.core.dto.LifecycleRequest;
 import com.catalogue.verg.core.elasticsearch.dto.SearchCriteria;
@@ -17,7 +18,13 @@ public class SeasonController {
     @Autowired
     private SeasonService seasonService;
 
-    @PostMapping("/v1/create")
+    @Autowired
+    private LifecyclePolicy lifecyclePolicy;
+
+    /** Key this catalogue is looked up by in the lifecycle switches. */
+    private static final String CATALOGUE_NAME = "season";
+
+    //@PostMapping("/v1/create")
     public ResponseEntity<CustomResponse> create(@RequestBody JsonNode seasonDetails) {
         CustomResponse response = seasonService.createSeason(seasonDetails);
         return new ResponseEntity<>(response, response.getResponseCode());
@@ -26,11 +33,13 @@ public class SeasonController {
     // Lifecycle: create an incomplete DRAFT (relaxed validation)
     @PostMapping("/v1/draft")
     public ResponseEntity<CustomResponse> draft(@RequestBody JsonNode seasonDetails) {
+        lifecyclePolicy.requireEnabled(CATALOGUE_NAME);
         CustomResponse response = seasonService.draftSeason(seasonDetails);
         return new ResponseEntity<>(response, response.getResponseCode());
     }
 
-    // Lifecycle: create a new record submitted for approval (PENDING, full validation)
+    // Creates a new record (full validation). With the lifecycle on it lands PENDING and has
+    // to be approved then reviewed; with the lifecycle off it lands ACTIVE straight away.
     @PostMapping("/v1/add")
     public ResponseEntity<CustomResponse> add(@RequestBody JsonNode seasonDetails) {
         CustomResponse response = seasonService.createSeason(seasonDetails);
@@ -40,6 +49,7 @@ public class SeasonController {
     // Lifecycle: (re-)submit an existing DRAFT/REWORK record for approval (PENDING, full validation)
     @PutMapping("/v1/add/{id}")
     public ResponseEntity<CustomResponse> addById(@PathVariable String id, @RequestBody JsonNode seasonDetails) {
+        lifecyclePolicy.requireEnabled(CATALOGUE_NAME);
         CustomResponse response = seasonService.addSeason(id, seasonDetails);
         return new ResponseEntity<>(response, response.getResponseCode());
     }
@@ -47,18 +57,22 @@ public class SeasonController {
     // Lifecycle: PENDING -> APPROVED | REJECTED | REWORK
     @PutMapping("/v1/approve")
     public ResponseEntity<CustomResponse> approve(@RequestBody LifecycleRequest request) {
+        lifecyclePolicy.requireEnabled(CATALOGUE_NAME);
         CustomResponse response = seasonService.approveSeason(request);
         return new ResponseEntity<>(response, response.getResponseCode());
     }
 
-    // Lifecycle: APPROVED -> ACTIVE(published) | REJECTED | REWORK | PENDING
+    // Lifecycle: APPROVED -> ACTIVE(published) | REJECTED | REWORK
     @PutMapping("/v1/review")
     public ResponseEntity<CustomResponse> review(@RequestBody LifecycleRequest request) {
+        lifecyclePolicy.requireEnabled(CATALOGUE_NAME);
         CustomResponse response = seasonService.reviewSeason(request);
         return new ResponseEntity<>(response, response.getResponseCode());
     }
 
-    // Toggle a live record between ACTIVE and INACTIVE (rejects any other status)
+    // Toggle a live record between ACTIVE and INACTIVE (rejects any other status).
+    // Deliberately NOT gated: plain activate/deactivate, not part of the approval chain, and
+    // with the lifecycle off it is the only way to take a record offline short of deleting it.
     @PutMapping("/v1/toggle/{id}")
     public ResponseEntity<CustomResponse> toggle(@PathVariable String id) {
         CustomResponse response = seasonService.toggleStatus(id);
