@@ -2,6 +2,13 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
+    "seedId": {
+      "type": "string",
+      "prefix": "seed-",
+      "key": "Primary",
+      "keyLength": 12,
+      "description": "Seed prefix"
+    },
     "manufacturerId": {
       "type": "string",
       "description": "Reference to the manufacturer/producer entity"
@@ -64,37 +71,85 @@
     "url": {
       "type": "string"
     },
-    "altitude": {
+    "altitudeMinValue": {
       "type": "number"
     },
-    "yieldResearchField": {
+    "altitudeMaxValue": {
       "type": "number"
     },
-    "seedRate": {
+    "altitudeFinalValue": {
+      "type": "number"
+    },
+    "yieldResearchFieldMinValue": {
+      "type": "number"
+    },
+    "yieldResearchFieldMaxValue": {
+      "type": "number"
+    },
+    "yieldResearchFieldFinalValue": {
+      "type": "number"
+    },
+    "seedRateMinValue": {
+      "type": "number"
+    },
+    "seedRateMaxValue": {
+      "type": "number"
+    },
+    "seedRateFinalValue": {
       "type": "number"
     },
     "adaptationArea": {
       "type": "string"
     },
-    "rainfall": {
+    "rainfallMinValue": {
+      "type": "number"
+    },
+    "rainfallMaxValue": {
+      "type": "number"
+    },
+    "rainfallFinalValue": {
       "type": "number"
     },
     "plantingDate": {
       "type": "string"
     },
-    "daysToMaturity": {
+    "daysToMaturityMinValue": {
+      "type": "integer"
+    },
+    "daysToMaturityMaxValue": {
+      "type": "integer"
+    },
+    "daysToMaturityFinalValue": {
       "type": "integer"
     },
     "cropPestReaction": {
       "type": "string"
     },
-    "fertilizerRateN": {
+    "fertilizerRateNMinValue": {
       "type": "number"
     },
-    "plantHeight": {
+    "fertilizerRateNMaxValue": {
       "type": "number"
     },
-    "yieldFarmersField": {
+    "fertilizerRateNFinalValue": {
+      "type": "number"
+    },
+    "plantHeightMinValue": {
+      "type": "number"
+    },
+    "plantHeightMaxValue": {
+      "type": "number"
+    },
+    "plantHeightFinalValue": {
+      "type": "number"
+    },
+    "yieldFarmersFieldMinValue": {
+      "type": "number"
+    },
+    "yieldFarmersFieldMaxValue": {
+      "type": "number"
+    },
+    "yieldFarmersFieldFinalValue": {
       "type": "number"
     },
     "growthHabit": {
@@ -106,25 +161,61 @@
     "spacing": {
       "type": "string"
     },
-    "fertilizerRateP2O5": {
+    "fertilizerRateP2O5MinValue": {
       "type": "number"
     },
-    "1000SeedWeight": {
+    "fertilizerRateP2O5MaxValue": {
       "type": "number"
     },
-    "fertilizerRateNPSNPSB": {
+    "fertilizerRateP2O5FinalValue": {
       "type": "number"
     },
-    "daysToFlowering": {
+    "1000SeedWeightMinValue": {
+      "type": "number"
+    },
+    "1000SeedWeightMaxValue": {
+      "type": "number"
+    },
+    "1000SeedWeightFinalValue": {
+      "type": "number"
+    },
+    "fertilizerRateNPSNPSBMinValue": {
+      "type": "number"
+    },
+    "fertilizerRateNPSNPSBMaxValue": {
+      "type": "number"
+    },
+    "fertilizerRateNPSNPSBFinalValue": {
+      "type": "number"
+    },
+    "daysToFloweringMinValue": {
+      "type": "integer"
+    },
+    "daysToFloweringMaxValue": {
+      "type": "integer"
+    },
+    "daysToFloweringFinalValue": {
       "type": "integer"
     },
     "flowerColor": {
       "type": "string"
     },
-    "daysToHeading": {
+    "daysToHeadingMinValue": {
       "type": "integer"
     },
-    "100SeedWeight": {
+    "daysToHeadingMaxValue": {
+      "type": "integer"
+    },
+    "daysToHeadingFinalValue": {
+      "type": "integer"
+    },
+    "100SeedWeightMinValue": {
+      "type": "number"
+    },
+    "100SeedWeightMaxValue": {
+      "type": "number"
+    },
+    "100SeedWeightFinalValue": {
       "type": "number"
     },
     "temperature": {
@@ -139,16 +230,34 @@
     "leafColor": {
       "type": "string"
     },
-    "oilContent": {
+    "oilContentMinValue": {
       "type": "number"
     },
-    "protein": {
+    "oilContentMaxValue": {
+      "type": "number"
+    },
+    "oilContentFinalValue": {
+      "type": "number"
+    },
+    "proteinMinValue": {
+      "type": "number"
+    },
+    "proteinMaxValue": {
+      "type": "number"
+    },
+    "proteinFinalValue": {
       "type": "number"
     },
     "outstandingValues": {
       "type": "string"
     },
-    "fruitQualityTSS": {
+    "fruitQualityTSSMinValue": {
+      "type": "number"
+    },
+    "fruitQualityTSSMaxValue": {
+      "type": "number"
+    },
+    "fruitQualityTSSFinalValue": {
       "type": "number"
     },
     "grainSize": {
@@ -157,7 +266,13 @@
     "seedCoatColor": {
       "type": "string"
     },
-    "earHeightCm": {
+    "earHeightCmMinValue": {
+      "type": "number"
+    },
+    "earHeightCmMaxValue": {
+      "type": "number"
+    },
+    "earHeightCmFinalValue": {
       "type": "number"
     },
     "fruitSize": {
@@ -169,13 +284,31 @@
     "leafCoverage": {
       "type": "string"
     },
-    "1000KernelWeight": {
+    "1000KernelWeightMinValue": {
       "type": "number"
     },
-    "testWeight": {
+    "1000KernelWeightMaxValue": {
       "type": "number"
     },
-    "fruitNumberPerCluster": {
+    "1000KernelWeightFinalValue": {
+      "type": "number"
+    },
+    "testWeightMinValue": {
+      "type": "number"
+    },
+    "testWeightMaxValue": {
+      "type": "number"
+    },
+    "testWeightFinalValue": {
+      "type": "number"
+    },
+    "fruitNumberPerClusterMinValue": {
+      "type": "integer"
+    },
+    "fruitNumberPerClusterMaxValue": {
+      "type": "integer"
+    },
+    "fruitNumberPerClusterFinalValue": {
       "type": "integer"
     },
     "colorOfRipenFruitSkin": {
@@ -193,7 +326,13 @@
     "colorOfFruitFlesh": {
       "type": "string"
     },
-    "noOfPodsPerPlant": {
+    "noOfPodsPerPlantMinValue": {
+      "type": "integer"
+    },
+    "noOfPodsPerPlantMaxValue": {
+      "type": "integer"
+    },
+    "noOfPodsPerPlantFinalValue": {
       "type": "integer"
     },
     "stemStrength": {
@@ -205,16 +344,34 @@
     "pollenColoor": {
       "type": "string"
     },
-    "panicleLength": {
+    "panicleLengthMinValue": {
+      "type": "number"
+    },
+    "panicleLengthMaxValue": {
+      "type": "number"
+    },
+    "panicleLengthFinalValue": {
       "type": "number"
     },
     "pungency": {
       "type": "string"
     },
-    "bulbYieldOnResearch": {
+    "bulbYieldOnResearchMinValue": {
       "type": "number"
     },
-    "dayToSilking": {
+    "bulbYieldOnResearchMaxValue": {
+      "type": "number"
+    },
+    "bulbYieldOnResearchFinalValue": {
+      "type": "number"
+    },
+    "dayToSilkingMinValue": {
+      "type": "integer"
+    },
+    "dayToSilkingMaxValue": {
+      "type": "integer"
+    },
+    "dayToSilkingFinalValue": {
       "type": "integer"
     },
     "shelfLife": {
@@ -223,13 +380,25 @@
     "leafArrangement": {
       "type": "string"
     },
-    "seedPerPod": {
+    "seedPerPodMinValue": {
+      "type": "integer"
+    },
+    "seedPerPodMaxValue": {
+      "type": "integer"
+    },
+    "seedPerPodFinalValue": {
       "type": "integer"
     },
     "seedShape": {
       "type": "string"
     },
-    "bulbYieldOnFarm": {
+    "bulbYieldOnFarmMinValue": {
+      "type": "number"
+    },
+    "bulbYieldOnFarmMaxValue": {
+      "type": "number"
+    },
+    "bulbYieldOnFarmFinalValue": {
       "type": "number"
     },
     "bulbSize": {
@@ -241,7 +410,13 @@
     "cotyledonColor": {
       "type": "string"
     },
-    "daysToAnthesis": {
+    "daysToAnthesisMinValue": {
+      "type": "integer"
+    },
+    "daysToAnthesisMaxValue": {
+      "type": "integer"
+    },
+    "daysToAnthesisFinalValue": {
       "type": "integer"
     },
     "lodgingTendency": {
@@ -250,7 +425,13 @@
     "plantingSeason": {
       "type": "string"
     },
-    "daysToHarvest": {
+    "daysToHarvestMinValue": {
+      "type": "integer"
+    },
+    "daysToHarvestMaxValue": {
+      "type": "integer"
+    },
+    "daysToHarvestFinalValue": {
       "type": "integer"
     },
     "leafShape": {
@@ -262,19 +443,37 @@
     "stemAndBranchingCharacter": {
       "type": "string"
     },
-    "freshFruitYield": {
+    "freshFruitYieldMinValue": {
+      "type": "number"
+    },
+    "freshFruitYieldMaxValue": {
+      "type": "number"
+    },
+    "freshFruitYieldFinalValue": {
       "type": "number"
     },
     "stemColor": {
       "type": "string"
     },
-    "averageFruitWeight": {
+    "averageFruitWeightMinValue": {
+      "type": "number"
+    },
+    "averageFruitWeightMaxValue": {
+      "type": "number"
+    },
+    "averageFruitWeightFinalValue": {
       "type": "number"
     },
     "leafSize": {
       "type": "string"
     },
-    "oilYield": {
+    "oilYieldMinValue": {
+      "type": "number"
+    },
+    "oilYieldMaxValue": {
+      "type": "number"
+    },
+    "oilYieldFinalValue": {
       "type": "number"
     },
     "podColor": {
@@ -283,13 +482,25 @@
     "tuberSkinColor": {
       "type": "string"
     },
-    "averagePodLength": {
+    "averagePodLengthMinValue": {
+      "type": "number"
+    },
+    "averagePodLengthMaxValue": {
+      "type": "number"
+    },
+    "averagePodLengthFinalValue": {
       "type": "number"
     },
     "bulbShape": {
       "type": "string"
     },
-    "daysTo50Heading": {
+    "daysTo50HeadingMinValue": {
+      "type": "integer"
+    },
+    "daysTo50HeadingMaxValue": {
+      "type": "integer"
+    },
+    "daysTo50HeadingFinalValue": {
       "type": "integer"
     },
     "eyeDepth": {
@@ -301,25 +512,55 @@
     "bulbFleshColor": {
       "type": "string"
     },
-    "canopyDiameter": {
+    "canopyDiameterMinValue": {
       "type": "number"
     },
-    "daysTo85PhysiologicalMaturity": {
+    "canopyDiameterMaxValue": {
+      "type": "number"
+    },
+    "canopyDiameterFinalValue": {
+      "type": "number"
+    },
+    "daysTo85PhysiologicalMaturityMinValue": {
       "type": "integer"
     },
-    "daysToBulbMaturity": {
+    "daysTo85PhysiologicalMaturityMaxValue": {
+      "type": "integer"
+    },
+    "daysTo85PhysiologicalMaturityFinalValue": {
+      "type": "integer"
+    },
+    "daysToBulbMaturityMinValue": {
+      "type": "integer"
+    },
+    "daysToBulbMaturityMaxValue": {
+      "type": "integer"
+    },
+    "daysToBulbMaturityFinalValue": {
       "type": "integer"
     },
     "earType": {
       "type": "string"
     },
-    "fruitDiameter": {
+    "fruitDiameterMinValue": {
+      "type": "number"
+    },
+    "fruitDiameterMaxValue": {
+      "type": "number"
+    },
+    "fruitDiameterFinalValue": {
       "type": "number"
     },
     "headShape": {
       "type": "string"
     },
-    "hectoliterWeight": {
+    "hectoliterWeightMinValue": {
+      "type": "number"
+    },
+    "hectoliterWeightMaxValue": {
+      "type": "number"
+    },
+    "hectoliterWeightFinalValue": {
       "type": "number"
     },
     "consumptionCategory": {
@@ -334,13 +575,31 @@
     "stipuleShape": {
       "type": "string"
     },
-    "averagePodDiameter": {
+    "averagePodDiameterMinValue": {
       "type": "number"
     },
-    "daysFromFloweringToHarvest": {
+    "averagePodDiameterMaxValue": {
+      "type": "number"
+    },
+    "averagePodDiameterFinalValue": {
+      "type": "number"
+    },
+    "daysFromFloweringToHarvestMinValue": {
       "type": "integer"
     },
-    "daysToMaturityForDry": {
+    "daysFromFloweringToHarvestMaxValue": {
+      "type": "integer"
+    },
+    "daysFromFloweringToHarvestFinalValue": {
+      "type": "integer"
+    },
+    "daysToMaturityForDryMinValue": {
+      "type": "integer"
+    },
+    "daysToMaturityForDryMaxValue": {
+      "type": "integer"
+    },
+    "daysToMaturityForDryFinalValue": {
       "type": "integer"
     },
     "fruitColorBeforeMaturity": {
@@ -358,13 +617,25 @@
     "seedShapeAndCharacter": {
       "type": "string"
     },
-    "wetGluten": {
+    "wetGlutenMinValue": {
+      "type": "number"
+    },
+    "wetGlutenMaxValue": {
+      "type": "number"
+    },
+    "wetGlutenFinalValue": {
       "type": "number"
     },
     "acceptability": {
       "type": "string"
     },
-    "averageGreenPodWeight": {
+    "averageGreenPodWeightMinValue": {
+      "type": "number"
+    },
+    "averageGreenPodWeightMaxValue": {
+      "type": "number"
+    },
+    "averageGreenPodWeightFinalValue": {
       "type": "number"
     },
     "chemicalCharacteristics": {
@@ -373,40 +644,94 @@
     "fingerType": {
       "type": "string"
     },
-    "fruitClusterPerPlant": {
+    "fruitClusterPerPlantMinValue": {
+      "type": "integer"
+    },
+    "fruitClusterPerPlantMaxValue": {
+      "type": "integer"
+    },
+    "fruitClusterPerPlantFinalValue": {
       "type": "integer"
     },
     "fruitMaturityForFreshUse": {
       "type": "string"
     },
-    "headDiameter": {
+    "headDiameterMinValue": {
       "type": "number"
     },
-    "headLength": {
+    "headDiameterMaxValue": {
       "type": "number"
     },
-    "leafLength": {
+    "headDiameterFinalValue": {
+      "type": "number"
+    },
+    "headLengthMinValue": {
+      "type": "number"
+    },
+    "headLengthMaxValue": {
+      "type": "number"
+    },
+    "headLengthFinalValue": {
+      "type": "number"
+    },
+    "leafLengthMinValue": {
+      "type": "number"
+    },
+    "leafLengthMaxValue": {
+      "type": "number"
+    },
+    "leafLengthFinalValue": {
       "type": "number"
     },
     "ploidy": {
       "type": "string"
     },
-    "averageFruitLength": {
+    "averageFruitLengthMinValue": {
       "type": "number"
     },
-    "bulbDiameter": {
+    "averageFruitLengthMaxValue": {
+      "type": "number"
+    },
+    "averageFruitLengthFinalValue": {
+      "type": "number"
+    },
+    "bulbDiameterMinValue": {
+      "type": "number"
+    },
+    "bulbDiameterMaxValue": {
+      "type": "number"
+    },
+    "bulbDiameterFinalValue": {
       "type": "number"
     },
     "dateOfInitialFlowering": {
       "type": "string"
     },
-    "greenPodYield": {
+    "greenPodYieldMinValue": {
       "type": "number"
     },
-    "leafWidth": {
+    "greenPodYieldMaxValue": {
       "type": "number"
     },
-    "noOfPrimaryBranchPerPlant": {
+    "greenPodYieldFinalValue": {
+      "type": "number"
+    },
+    "leafWidthMinValue": {
+      "type": "number"
+    },
+    "leafWidthMaxValue": {
+      "type": "number"
+    },
+    "leafWidthFinalValue": {
+      "type": "number"
+    },
+    "noOfPrimaryBranchPerPlantMinValue": {
+      "type": "integer"
+    },
+    "noOfPrimaryBranchPerPlantMaxValue": {
+      "type": "integer"
+    },
+    "noOfPrimaryBranchPerPlantFinalValue": {
       "type": "integer"
     },
     "plantCanopy": {
@@ -418,16 +743,34 @@
     "colorAtMaturity": {
       "type": "string"
     },
-    "dia": {
+    "diaMinValue": {
       "type": "number"
     },
-    "dryPodYield": {
+    "diaMaxValue": {
+      "type": "number"
+    },
+    "diaFinalValue": {
+      "type": "number"
+    },
+    "dryPodYieldMinValue": {
+      "type": "number"
+    },
+    "dryPodYieldMaxValue": {
+      "type": "number"
+    },
+    "dryPodYieldFinalValue": {
       "type": "number"
     },
     "fruitColor": {
       "type": "string"
     },
-    "glutein": {
+    "gluteinMinValue": {
+      "type": "number"
+    },
+    "gluteinMaxValue": {
+      "type": "number"
+    },
+    "gluteinFinalValue": {
       "type": "number"
     },
     "grainColor": {
@@ -436,16 +779,40 @@
     "headCompactness": {
       "type": "string"
     },
-    "headWeight": {
+    "headWeightMinValue": {
       "type": "number"
     },
-    "len": {
+    "headWeightMaxValue": {
       "type": "number"
     },
-    "noOfFruitPlant": {
+    "headWeightFinalValue": {
+      "type": "number"
+    },
+    "lenMinValue": {
+      "type": "number"
+    },
+    "lenMaxValue": {
+      "type": "number"
+    },
+    "lenFinalValue": {
+      "type": "number"
+    },
+    "noOfFruitPlantMinValue": {
       "type": "integer"
     },
-    "oleoresinContent": {
+    "noOfFruitPlantMaxValue": {
+      "type": "integer"
+    },
+    "noOfFruitPlantFinalValue": {
+      "type": "integer"
+    },
+    "oleoresinContentMinValue": {
+      "type": "number"
+    },
+    "oleoresinContentMaxValue": {
+      "type": "number"
+    },
+    "oleoresinContentFinalValue": {
       "type": "number"
     },
     "organoleptixcPreference": {
@@ -460,25 +827,55 @@
     "stemPigmentation": {
       "type": "string"
     },
-    "transplantingDaysInBed": {
+    "transplantingDaysInBedMinValue": {
       "type": "integer"
     },
-    "wt": {
+    "transplantingDaysInBedMaxValue": {
+      "type": "integer"
+    },
+    "transplantingDaysInBedFinalValue": {
+      "type": "integer"
+    },
+    "wtMinValue": {
+      "type": "number"
+    },
+    "wtMaxValue": {
+      "type": "number"
+    },
+    "wtFinalValue": {
       "type": "number"
     },
     "angleOfInsertionOfPrimBranches": {
       "type": "string"
     },
-    "averageHeadWeight": {
+    "averageHeadWeightMinValue": {
+      "type": "number"
+    },
+    "averageHeadWeightMaxValue": {
+      "type": "number"
+    },
+    "averageHeadWeightFinalValue": {
       "type": "number"
     },
     "bulbFirmness": {
       "type": "string"
     },
-    "bulbLength": {
+    "bulbLengthMinValue": {
       "type": "number"
     },
-    "dryFruitYield": {
+    "bulbLengthMaxValue": {
+      "type": "number"
+    },
+    "bulbLengthFinalValue": {
+      "type": "number"
+    },
+    "dryFruitYieldMinValue": {
+      "type": "number"
+    },
+    "dryFruitYieldMaxValue": {
+      "type": "number"
+    },
+    "dryFruitYieldFinalValue": {
       "type": "number"
     },
     "extract": {
@@ -487,13 +884,25 @@
     "irrigation": {
       "type": "string"
     },
-    "noGrainsPerPanicle": {
+    "noGrainsPerPanicleMinValue": {
+      "type": "integer"
+    },
+    "noGrainsPerPanicleMaxValue": {
+      "type": "integer"
+    },
+    "noGrainsPerPanicleFinalValue": {
       "type": "integer"
     },
     "pubescenceColor": {
       "type": "string"
     },
-    "fingerPerEar": {
+    "fingerPerEarMinValue": {
+      "type": "integer"
+    },
+    "fingerPerEarMaxValue": {
+      "type": "integer"
+    },
+    "fingerPerEarFinalValue": {
       "type": "integer"
     },
     "foliageColor": {
@@ -505,19 +914,37 @@
     "headColor": {
       "type": "string"
     },
-    "leafHeight": {
+    "leafHeightMinValue": {
+      "type": "number"
+    },
+    "leafHeightMaxValue": {
+      "type": "number"
+    },
+    "leafHeightFinalValue": {
       "type": "number"
     },
     "leafTexture": {
       "type": "string"
     },
-    "lintYield": {
+    "lintYieldMinValue": {
+      "type": "number"
+    },
+    "lintYieldMaxValue": {
+      "type": "number"
+    },
+    "lintYieldFinalValue": {
       "type": "number"
     },
     "matureLeafColor": {
       "type": "string"
     },
-    "noOfMainStemNodes": {
+    "noOfMainStemNodesMinValue": {
+      "type": "integer"
+    },
+    "noOfMainStemNodesMaxValue": {
+      "type": "integer"
+    },
+    "noOfMainStemNodesFinalValue": {
       "type": "integer"
     },
     "principalUse": {
@@ -526,25 +953,55 @@
     "tillering": {
       "type": "string"
     },
-    "averageBulbWeight": {
+    "averageBulbWeightMinValue": {
+      "type": "number"
+    },
+    "averageBulbWeightMaxValue": {
+      "type": "number"
+    },
+    "averageBulbWeightFinalValue": {
       "type": "number"
     },
     "calyxLimpPersistence": {
       "type": "string"
     },
-    "cookingQualityMinute": {
+    "cookingQualityMinuteMinValue": {
       "type": "number"
     },
-    "cookingQualityPercentNonSoakers": {
+    "cookingQualityMinuteMaxValue": {
       "type": "number"
     },
-    "daysTillMaturity": {
+    "cookingQualityMinuteFinalValue": {
+      "type": "number"
+    },
+    "cookingQualityPercentNonSoakersMinValue": {
+      "type": "number"
+    },
+    "cookingQualityPercentNonSoakersMaxValue": {
+      "type": "number"
+    },
+    "cookingQualityPercentNonSoakersFinalValue": {
+      "type": "number"
+    },
+    "daysTillMaturityMinValue": {
+      "type": "integer"
+    },
+    "daysTillMaturityMaxValue": {
+      "type": "integer"
+    },
+    "daysTillMaturityFinalValue": {
       "type": "integer"
     },
     "earAttitude": {
       "type": "string"
     },
-    "earSpikeLength": {
+    "earSpikeLengthMinValue": {
+      "type": "number"
+    },
+    "earSpikeLengthMaxValue": {
+      "type": "number"
+    },
+    "earSpikeLengthFinalValue": {
       "type": "number"
     },
     "eyeColor": {
@@ -562,34 +1019,70 @@
     "fruitSkinColor": {
       "type": "string"
     },
-    "girth": {
+    "girthMinValue": {
+      "type": "number"
+    },
+    "girthMaxValue": {
+      "type": "number"
+    },
+    "girthFinalValue": {
       "type": "number"
     },
     "growthPattern": {
       "type": "string"
     },
-    "leafYieldDM": {
+    "leafYieldDMMinValue": {
+      "type": "number"
+    },
+    "leafYieldDMMaxValue": {
+      "type": "number"
+    },
+    "leafYieldDMFinalValue": {
       "type": "number"
     },
     "maleFloweringTasseling": {
       "type": "string"
     },
-    "noOfClovesPerBulb": {
+    "noOfClovesPerBulbMinValue": {
       "type": "integer"
     },
-    "numberOfPodsPerPlants": {
+    "noOfClovesPerBulbMaxValue": {
+      "type": "integer"
+    },
+    "noOfClovesPerBulbFinalValue": {
+      "type": "integer"
+    },
+    "numberOfPodsPerPlantsMinValue": {
+      "type": "integer"
+    },
+    "numberOfPodsPerPlantsMaxValue": {
+      "type": "integer"
+    },
+    "numberOfPodsPerPlantsFinalValue": {
       "type": "integer"
     },
     "petalColor": {
       "type": "string"
     },
-    "plantLength": {
+    "plantLengthMinValue": {
+      "type": "number"
+    },
+    "plantLengthMaxValue": {
+      "type": "number"
+    },
+    "plantLengthFinalValue": {
       "type": "number"
     },
     "skinQuality": {
       "type": "string"
     },
-    "yearsFromNurseryToFirstCrop": {
+    "yearsFromNurseryToFirstCropMinValue": {
+      "type": "integer"
+    },
+    "yearsFromNurseryToFirstCropMaxValue": {
+      "type": "integer"
+    },
+    "yearsFromNurseryToFirstCropFinalValue": {
       "type": "integer"
     },
     "anthocyaninColorOfAwnTips": {
@@ -598,16 +1091,40 @@
     "anthocyaninColorOfFlagLeafAuricle": {
       "type": "string"
     },
-    "averageFreshLeafWeight": {
+    "averageFreshLeafWeightMinValue": {
       "type": "number"
     },
-    "averageHeadDiameter": {
+    "averageFreshLeafWeightMaxValue": {
       "type": "number"
     },
-    "averageNoOfTillers": {
+    "averageFreshLeafWeightFinalValue": {
+      "type": "number"
+    },
+    "averageHeadDiameterMinValue": {
+      "type": "number"
+    },
+    "averageHeadDiameterMaxValue": {
+      "type": "number"
+    },
+    "averageHeadDiameterFinalValue": {
+      "type": "number"
+    },
+    "averageNoOfTillersMinValue": {
       "type": "integer"
     },
-    "averagePulpTSSBrix": {
+    "averageNoOfTillersMaxValue": {
+      "type": "integer"
+    },
+    "averageNoOfTillersFinalValue": {
+      "type": "integer"
+    },
+    "averagePulpTSSBrixMinValue": {
+      "type": "number"
+    },
+    "averagePulpTSSBrixMaxValue": {
+      "type": "number"
+    },
+    "averagePulpTSSBrixFinalValue": {
       "type": "number"
     },
     "bollBearingHabit": {
@@ -619,7 +1136,13 @@
     "dateOfInitialBollOpening": {
       "type": "string"
     },
-    "daysToFirstPicking": {
+    "daysToFirstPickingMinValue": {
+      "type": "integer"
+    },
+    "daysToFirstPickingMaxValue": {
+      "type": "integer"
+    },
+    "daysToFirstPickingFinalValue": {
       "type": "integer"
     },
     "fiberQualityParameter": {
@@ -628,7 +1151,13 @@
     "fruitFleshColor": {
       "type": "string"
     },
-    "fruitLength": {
+    "fruitLengthMinValue": {
+      "type": "number"
+    },
+    "fruitLengthMaxValue": {
+      "type": "number"
+    },
+    "fruitLengthFinalValue": {
       "type": "number"
     },
     "fruitRindPattern": {
@@ -652,16 +1181,40 @@
     "leafMargins": {
       "type": "string"
     },
-    "leafNumberPerPlant": {
+    "leafNumberPerPlantMinValue": {
       "type": "integer"
     },
-    "leafToStemRatio": {
+    "leafNumberPerPlantMaxValue": {
+      "type": "integer"
+    },
+    "leafNumberPerPlantFinalValue": {
+      "type": "integer"
+    },
+    "leafToStemRatioMinValue": {
       "type": "number"
     },
-    "micronaire": {
+    "leafToStemRatioMaxValue": {
       "type": "number"
     },
-    "numberOfBeranches": {
+    "leafToStemRatioFinalValue": {
+      "type": "number"
+    },
+    "micronaireMinValue": {
+      "type": "number"
+    },
+    "micronaireMaxValue": {
+      "type": "number"
+    },
+    "micronaireFinalValue": {
+      "type": "number"
+    },
+    "numberOfBeranchesMinValue": {
+      "type": "integer"
+    },
+    "numberOfBeranchesMaxValue": {
+      "type": "integer"
+    },
+    "numberOfBeranchesFinalValue": {
       "type": "integer"
     },
     "overAllQualityCup": {
@@ -673,13 +1226,25 @@
     "petioleColor": {
       "type": "string"
     },
-    "petioleLength": {
+    "petioleLengthMinValue": {
+      "type": "number"
+    },
+    "petioleLengthMaxValue": {
+      "type": "number"
+    },
+    "petioleLengthFinalValue": {
       "type": "number"
     },
     "ridgesPerFruitSurface": {
       "type": "string"
     },
-    "seedRateCuttingHa": {
+    "seedRateCuttingHaMinValue": {
+      "type": "number"
+    },
+    "seedRateCuttingHaMaxValue": {
+      "type": "number"
+    },
+    "seedRateCuttingHaFinalValue": {
       "type": "number"
     },
     "skinThicness": {
@@ -694,10 +1259,22 @@
     "suitabilityToShelling": {
       "type": "string"
     },
-    "zylenenIndex": {
+    "zylenenIndexMinValue": {
       "type": "number"
     },
-    "averageFruitWidth": {
+    "zylenenIndexMaxValue": {
+      "type": "number"
+    },
+    "zylenenIndexFinalValue": {
+      "type": "number"
+    },
+    "averageFruitWidthMinValue": {
+      "type": "number"
+    },
+    "averageFruitWidthMaxValue": {
+      "type": "number"
+    },
+    "averageFruitWidthFinalValue": {
       "type": "number"
     },
     "colorOfTassel": {
@@ -712,7 +1289,13 @@
     "fruitColorImmature": {
       "type": "string"
     },
-    "ginningOutturn": {
+    "ginningOutturnMinValue": {
+      "type": "number"
+    },
+    "ginningOutturnMaxValue": {
+      "type": "number"
+    },
+    "ginningOutturnFinalValue": {
       "type": "number"
     },
     "headFirmness": {
@@ -724,19 +1307,37 @@
     "leafColorOuterLeaves": {
       "type": "string"
     },
-    "leafLobeNumber": {
+    "leafLobeNumberMinValue": {
+      "type": "integer"
+    },
+    "leafLobeNumberMaxValue": {
+      "type": "integer"
+    },
+    "leafLobeNumberFinalValue": {
       "type": "integer"
     },
     "panicleType": {
       "type": "string"
     },
-    "plantingMaterialNoHa": {
+    "plantingMaterialNoHaMinValue": {
+      "type": "integer"
+    },
+    "plantingMaterialNoHaMaxValue": {
+      "type": "integer"
+    },
+    "plantingMaterialNoHaFinalValue": {
       "type": "integer"
     },
     "plantingMethod": {
       "type": "string"
     },
-    "populationTrees": {
+    "populationTreesMinValue": {
+      "type": "integer"
+    },
+    "populationTreesMaxValue": {
+      "type": "integer"
+    },
+    "populationTreesFinalValue": {
       "type": "integer"
     },
     "propagation": {
@@ -745,7 +1346,13 @@
     "rowNumber": {
       "type": "string"
     },
-    "soilPH": {
+    "soilPHMinValue": {
+      "type": "number"
+    },
+    "soilPHMaxValue": {
+      "type": "number"
+    },
+    "soilPHFinalValue": {
       "type": "number"
     },
     "specialMerits": {
@@ -763,7 +1370,13 @@
     "auriclePigmentation": {
       "type": "string"
     },
-    "averageHeadLength": {
+    "averageHeadLengthMinValue": {
+      "type": "number"
+    },
+    "averageHeadLengthMaxValue": {
+      "type": "number"
+    },
+    "averageHeadLengthFinalValue": {
       "type": "number"
     },
     "bollProminenceOfTip": {
@@ -772,7 +1385,13 @@
     "branchingIndex": {
       "type": "string"
     },
-    "centralCavityDiameter": {
+    "centralCavityDiameterMinValue": {
+      "type": "number"
+    },
+    "centralCavityDiameterMaxValue": {
+      "type": "number"
+    },
+    "centralCavityDiameterFinalValue": {
       "type": "number"
     },
     "colorOfAnther": {
@@ -784,13 +1403,25 @@
     "colorOfSheath": {
       "type": "string"
     },
-    "daysToInitialHeading": {
+    "daysToInitialHeadingMinValue": {
+      "type": "integer"
+    },
+    "daysToInitialHeadingMaxValue": {
+      "type": "integer"
+    },
+    "daysToInitialHeadingFinalValue": {
       "type": "integer"
     },
     "diameterOfStem": {
       "type": "string"
     },
-    "dryCalyxYieldG": {
+    "dryCalyxYieldGMinValue": {
+      "type": "number"
+    },
+    "dryCalyxYieldGMaxValue": {
+      "type": "number"
+    },
+    "dryCalyxYieldGFinalValue": {
       "type": "number"
     },
     "earShape": {
@@ -808,15 +1439,35 @@
     "flowerPresence": {
       "type": "string"
     },
-    "freshCalyxYieldGPlant": {
+    "freshCalyxYieldGPlantMinValue": {
       "type": "number"
     },
-    "freshCalyxYieldKgHaHarvest": {
+    "freshCalyxYieldGPlantMaxValue": {
       "type": "number"
     },
-    "germination": {
+    "freshCalyxYieldGPlantFinalValue": {
+      "type": "number"
+    },
+    "freshCalyxYieldKgHaHarvestMinValue": {
+      "type": "number"
+    },
+    "freshCalyxYieldKgHaHarvestMaxValue": {
+      "type": "number"
+    },
+    "freshCalyxYieldKgHaHarvestFinalValue": {
+      "type": "number"
+    },
+    "germinationMinValue": {
       "type": "number",
-      "description": "Germination percentage"
+      "description": "Germination percentage (minimum of range)"
+    },
+    "germinationMaxValue": {
+      "type": "number",
+      "description": "Germination percentage (maximum of range)"
+    },
+    "germinationFinalValue": {
+      "type": "number",
+      "description": "Germination percentage (final/actual value)"
     },
     "grainSize22Mm": {
       "type": "string"
@@ -824,7 +1475,13 @@
     "hairinessOnSheath": {
       "type": "string"
     },
-    "leafDiameter": {
+    "leafDiameterMinValue": {
+      "type": "number"
+    },
+    "leafDiameterMaxValue": {
+      "type": "number"
+    },
+    "leafDiameterFinalValue": {
       "type": "number"
     },
     "leafMaturity": {
@@ -833,19 +1490,49 @@
     "leafSurface": {
       "type": "string"
     },
-    "noOfFruitPerPlant": {
+    "noOfFruitPerPlantMinValue": {
       "type": "integer"
     },
-    "noOfPedicleAxis": {
+    "noOfFruitPerPlantMaxValue": {
       "type": "integer"
     },
-    "noOfShoots": {
+    "noOfFruitPerPlantFinalValue": {
       "type": "integer"
     },
-    "noOfStorageRootPlant": {
+    "noOfPedicleAxisMinValue": {
       "type": "integer"
     },
-    "numberOfSeedsPerPod": {
+    "noOfPedicleAxisMaxValue": {
+      "type": "integer"
+    },
+    "noOfPedicleAxisFinalValue": {
+      "type": "integer"
+    },
+    "noOfShootsMinValue": {
+      "type": "integer"
+    },
+    "noOfShootsMaxValue": {
+      "type": "integer"
+    },
+    "noOfShootsFinalValue": {
+      "type": "integer"
+    },
+    "noOfStorageRootPlantMinValue": {
+      "type": "integer"
+    },
+    "noOfStorageRootPlantMaxValue": {
+      "type": "integer"
+    },
+    "noOfStorageRootPlantFinalValue": {
+      "type": "integer"
+    },
+    "numberOfSeedsPerPodMinValue": {
+      "type": "integer"
+    },
+    "numberOfSeedsPerPodMaxValue": {
+      "type": "integer"
+    },
+    "numberOfSeedsPerPodFinalValue": {
       "type": "integer"
     },
     "otherUses": {
@@ -854,10 +1541,22 @@
     "peakHarvestPeriod": {
       "type": "string"
     },
-    "podHeight": {
+    "podHeightMinValue": {
       "type": "number"
     },
-    "podLength": {
+    "podHeightMaxValue": {
+      "type": "number"
+    },
+    "podHeightFinalValue": {
+      "type": "number"
+    },
+    "podLengthMinValue": {
+      "type": "number"
+    },
+    "podLengthMaxValue": {
+      "type": "number"
+    },
+    "podLengthFinalValue": {
       "type": "number"
     },
     "podShape": {
@@ -887,7 +1586,13 @@
     "spinesInLeafAxil": {
       "type": "string"
     },
-    "storageRootXcsticsIndividualRootWeight": {
+    "storageRootXcsticsIndividualRootWeightMinValue": {
+      "type": "number"
+    },
+    "storageRootXcsticsIndividualRootWeightMaxValue": {
+      "type": "number"
+    },
+    "storageRootXcsticsIndividualRootWeightFinalValue": {
       "type": "number"
     },
     "storageRootXcsticsPredominantRootFleshColor": {
@@ -896,19 +1601,43 @@
     "storageRootXcsticsPredominantRootSkinColor": {
       "type": "string"
     },
-    "storageRootXcsticsRootDiameter": {
+    "storageRootXcsticsRootDiameterMinValue": {
       "type": "number"
     },
-    "storageRootXcsticsRootLength": {
+    "storageRootXcsticsRootDiameterMaxValue": {
+      "type": "number"
+    },
+    "storageRootXcsticsRootDiameterFinalValue": {
+      "type": "number"
+    },
+    "storageRootXcsticsRootLengthMinValue": {
+      "type": "number"
+    },
+    "storageRootXcsticsRootLengthMaxValue": {
+      "type": "number"
+    },
+    "storageRootXcsticsRootLengthFinalValue": {
       "type": "number"
     },
     "storageRootXcsticsRootShape": {
       "type": "string"
     },
-    "totalEnergy": {
+    "totalEnergyMinValue": {
       "type": "number"
     },
-    "totalRootYield": {
+    "totalEnergyMaxValue": {
+      "type": "number"
+    },
+    "totalEnergyFinalValue": {
+      "type": "number"
+    },
+    "totalRootYieldMinValue": {
+      "type": "number"
+    },
+    "totalRootYieldMaxValue": {
+      "type": "number"
+    },
+    "totalRootYieldFinalValue": {
       "type": "number"
     },
     "tuberMaturity": {
@@ -920,19 +1649,49 @@
     "vigor": {
       "type": "string"
     },
-    "yieldDryLeaf": {
+    "yieldDryLeafMinValue": {
       "type": "number"
     },
-    "averageGinningParcentage": {
+    "yieldDryLeafMaxValue": {
       "type": "number"
     },
-    "averageLintYield": {
+    "yieldDryLeafFinalValue": {
       "type": "number"
     },
-    "averageSeedCottonYield": {
+    "averageGinningParcentageMinValue": {
       "type": "number"
     },
-    "biomassYield": {
+    "averageGinningParcentageMaxValue": {
+      "type": "number"
+    },
+    "averageGinningParcentageFinalValue": {
+      "type": "number"
+    },
+    "averageLintYieldMinValue": {
+      "type": "number"
+    },
+    "averageLintYieldMaxValue": {
+      "type": "number"
+    },
+    "averageLintYieldFinalValue": {
+      "type": "number"
+    },
+    "averageSeedCottonYieldMinValue": {
+      "type": "number"
+    },
+    "averageSeedCottonYieldMaxValue": {
+      "type": "number"
+    },
+    "averageSeedCottonYieldFinalValue": {
+      "type": "number"
+    },
+    "biomassYieldMinValue": {
+      "type": "number"
+    },
+    "biomassYieldMaxValue": {
+      "type": "number"
+    },
+    "biomassYieldFinalValue": {
       "type": "number"
     },
     "boltingTolerance": {
@@ -941,16 +1700,40 @@
     "branchingHabit": {
       "type": "string"
     },
-    "ca": {
+    "caMinValue": {
       "type": "number"
     },
-    "canopyWidth": {
+    "caMaxValue": {
       "type": "number"
     },
-    "capsulesPerPlant": {
+    "caFinalValue": {
+      "type": "number"
+    },
+    "canopyWidthMinValue": {
+      "type": "number"
+    },
+    "canopyWidthMaxValue": {
+      "type": "number"
+    },
+    "canopyWidthFinalValue": {
+      "type": "number"
+    },
+    "capsulesPerPlantMinValue": {
       "type": "integer"
     },
-    "carbohydrateContent": {
+    "capsulesPerPlantMaxValue": {
+      "type": "integer"
+    },
+    "capsulesPerPlantFinalValue": {
+      "type": "integer"
+    },
+    "carbohydrateContentMinValue": {
+      "type": "number"
+    },
+    "carbohydrateContentMaxValue": {
+      "type": "number"
+    },
+    "carbohydrateContentFinalValue": {
       "type": "number"
     },
     "chaffColor": {
@@ -959,28 +1742,64 @@
     "colorOfSilk": {
       "type": "string"
     },
-    "crudeFat": {
+    "crudeFatMinValue": {
       "type": "number"
     },
-    "crudeProten": {
+    "crudeFatMaxValue": {
       "type": "number"
     },
-    "daysTill65BallOpending": {
+    "crudeFatFinalValue": {
+      "type": "number"
+    },
+    "crudeProtenMinValue": {
+      "type": "number"
+    },
+    "crudeProtenMaxValue": {
+      "type": "number"
+    },
+    "crudeProtenFinalValue": {
+      "type": "number"
+    },
+    "daysTill65BallOpendingMinValue": {
+      "type": "integer"
+    },
+    "daysTill65BallOpendingMaxValue": {
+      "type": "integer"
+    },
+    "daysTill65BallOpendingFinalValue": {
       "type": "integer"
     },
     "densityOfSilk": {
       "type": "string"
     },
-    "fatContent": {
+    "fatContentMinValue": {
+      "type": "number"
+    },
+    "fatContentMaxValue": {
+      "type": "number"
+    },
+    "fatContentFinalValue": {
       "type": "number"
     },
     "fertilizerApplicationMethod": {
       "type": "string"
     },
-    "fooderQualltyAsh": {
+    "fooderQualltyAshMinValue": {
       "type": "number"
     },
-    "freshToDryLeafRatio": {
+    "fooderQualltyAshMaxValue": {
+      "type": "number"
+    },
+    "fooderQualltyAshFinalValue": {
+      "type": "number"
+    },
+    "freshToDryLeafRatioMinValue": {
+      "type": "number"
+    },
+    "freshToDryLeafRatioMaxValue": {
+      "type": "number"
+    },
+    "freshToDryLeafRatioFinalValue": {
       "type": "number"
     },
     "fruitPubescence": {
@@ -989,16 +1808,34 @@
     "glumeColor": {
       "type": "string"
     },
-    "greenLeafWeightPlant": {
+    "greenLeafWeightPlantMinValue": {
+      "type": "number"
+    },
+    "greenLeafWeightPlantMaxValue": {
+      "type": "number"
+    },
+    "greenLeafWeightPlantFinalValue": {
       "type": "number"
     },
     "growingType": {
       "type": "string"
     },
-    "hydrogenCyanideContent": {
+    "hydrogenCyanideContentMinValue": {
       "type": "number"
     },
-    "k": {
+    "hydrogenCyanideContentMaxValue": {
+      "type": "number"
+    },
+    "hydrogenCyanideContentFinalValue": {
+      "type": "number"
+    },
+    "kMinValue": {
+      "type": "number"
+    },
+    "kMaxValue": {
+      "type": "number"
+    },
+    "kFinalValue": {
       "type": "number"
     },
     "lammaAwnBarbs": {
@@ -1007,7 +1844,13 @@
     "leafColorInnerLeaves": {
       "type": "string"
     },
-    "leafNoPerPlant": {
+    "leafNoPerPlantMinValue": {
+      "type": "integer"
+    },
+    "leafNoPerPlantMaxValue": {
+      "type": "integer"
+    },
+    "leafNoPerPlantFinalValue": {
       "type": "integer"
     },
     "leafOfGlumAwnCompToKernel": {
@@ -1016,10 +1859,22 @@
     "lemmaColor": {
       "type": "string"
     },
-    "marketableBulbYield": {
+    "marketableBulbYieldMinValue": {
       "type": "number"
     },
-    "marketableRootYield": {
+    "marketableBulbYieldMaxValue": {
+      "type": "number"
+    },
+    "marketableBulbYieldFinalValue": {
+      "type": "number"
+    },
+    "marketableRootYieldMinValue": {
+      "type": "number"
+    },
+    "marketableRootYieldMaxValue": {
+      "type": "number"
+    },
+    "marketableRootYieldFinalValue": {
       "type": "number"
     },
     "mulching": {
@@ -1028,16 +1883,40 @@
     "netBlotch": {
       "type": "string"
     },
-    "nicotineContent": {
+    "nicotineContentMinValue": {
       "type": "number"
     },
-    "numberOfFruitCluster": {
+    "nicotineContentMaxValue": {
+      "type": "number"
+    },
+    "nicotineContentFinalValue": {
+      "type": "number"
+    },
+    "numberOfFruitClusterMinValue": {
       "type": "integer"
     },
-    "numberOfRootPerPlant": {
+    "numberOfFruitClusterMaxValue": {
       "type": "integer"
     },
-    "numberOfSucker": {
+    "numberOfFruitClusterFinalValue": {
+      "type": "integer"
+    },
+    "numberOfRootPerPlantMinValue": {
+      "type": "integer"
+    },
+    "numberOfRootPerPlantMaxValue": {
+      "type": "integer"
+    },
+    "numberOfRootPerPlantFinalValue": {
+      "type": "integer"
+    },
+    "numberOfSuckerMinValue": {
+      "type": "integer"
+    },
+    "numberOfSuckerMaxValue": {
+      "type": "integer"
+    },
+    "numberOfSuckerFinalValue": {
       "type": "integer"
     },
     "oilQuality": {
@@ -1052,46 +1931,106 @@
     "pollinationMethod": {
       "type": "string"
     },
-    "proportionOfCrackedRoots": {
+    "proportionOfCrackedRootsMinValue": {
       "type": "number"
     },
-    "proportionOfForkedRoots": {
+    "proportionOfCrackedRootsMaxValue": {
       "type": "number"
     },
-    "proportionOfHairyRoots": {
+    "proportionOfCrackedRootsFinalValue": {
       "type": "number"
     },
-    "proportionOfSmallSizeRoots": {
+    "proportionOfForkedRootsMinValue": {
       "type": "number"
     },
-    "proportionOfTwistedRoots": {
+    "proportionOfForkedRootsMaxValue": {
       "type": "number"
     },
-    "rainFall": {
+    "proportionOfForkedRootsFinalValue": {
+      "type": "number"
+    },
+    "proportionOfHairyRootsMinValue": {
+      "type": "number"
+    },
+    "proportionOfHairyRootsMaxValue": {
+      "type": "number"
+    },
+    "proportionOfHairyRootsFinalValue": {
+      "type": "number"
+    },
+    "proportionOfSmallSizeRootsMinValue": {
+      "type": "number"
+    },
+    "proportionOfSmallSizeRootsMaxValue": {
+      "type": "number"
+    },
+    "proportionOfSmallSizeRootsFinalValue": {
+      "type": "number"
+    },
+    "proportionOfTwistedRootsMinValue": {
+      "type": "number"
+    },
+    "proportionOfTwistedRootsMaxValue": {
+      "type": "number"
+    },
+    "proportionOfTwistedRootsFinalValue": {
+      "type": "number"
+    },
+    "rainFallMinValue": {
+      "type": "number"
+    },
+    "rainFallMaxValue": {
+      "type": "number"
+    },
+    "rainFallFinalValue": {
       "type": "number"
     },
     "recommendedShadeTree": {
       "type": "string"
     },
-    "rhizomeWeight": {
+    "rhizomeWeightMinValue": {
+      "type": "number"
+    },
+    "rhizomeWeightMaxValue": {
+      "type": "number"
+    },
+    "rhizomeWeightFinalValue": {
       "type": "number"
     },
     "rootColor": {
       "type": "string"
     },
-    "rootCoreDiameter": {
+    "rootCoreDiameterMinValue": {
+      "type": "number"
+    },
+    "rootCoreDiameterMaxValue": {
+      "type": "number"
+    },
+    "rootCoreDiameterFinalValue": {
       "type": "number"
     },
     "rootFleshColor": {
       "type": "string"
     },
-    "rootLength": {
+    "rootLengthMinValue": {
+      "type": "number"
+    },
+    "rootLengthMaxValue": {
+      "type": "number"
+    },
+    "rootLengthFinalValue": {
       "type": "number"
     },
     "rootSizeAndVariablity": {
       "type": "string"
     },
-    "rootWeight": {
+    "rootWeightMinValue": {
+      "type": "number"
+    },
+    "rootWeightMaxValue": {
+      "type": "number"
+    },
+    "rootWeightFinalValue": {
       "type": "number"
     },
     "rootedCutting": {
@@ -1103,7 +2042,13 @@
     "scald": {
       "type": "string"
     },
-    "seedYield": {
+    "seedYieldMinValue": {
+      "type": "number"
+    },
+    "seedYieldMaxValue": {
+      "type": "number"
+    },
+    "seedYieldFinalValue": {
       "type": "number"
     },
     "shadeLevelRequirement": {
@@ -1112,13 +2057,25 @@
     "spacingBNPlants": {
       "type": "string"
     },
-    "starchContent": {
+    "starchContentMinValue": {
+      "type": "number"
+    },
+    "starchContentMaxValue": {
+      "type": "number"
+    },
+    "starchContentFinalValue": {
       "type": "number"
     },
     "stemSheath": {
       "type": "string"
     },
-    "sugarContent": {
+    "sugarContentMinValue": {
+      "type": "number"
+    },
+    "sugarContentMaxValue": {
+      "type": "number"
+    },
+    "sugarContentFinalValue": {
       "type": "number"
     },
     "taste": {
@@ -1130,19 +2087,43 @@
     "tuberSurfaceTexture": {
       "type": "string"
     },
-    "upperHalfMeanLength": {
+    "upperHalfMeanLengthMinValue": {
       "type": "number"
     },
-    "valinin": {
+    "upperHalfMeanLengthMaxValue": {
+      "type": "number"
+    },
+    "upperHalfMeanLengthFinalValue": {
+      "type": "number"
+    },
+    "valininMinValue": {
+      "type": "number"
+    },
+    "valininMaxValue": {
+      "type": "number"
+    },
+    "valininFinalValue": {
       "type": "number"
     },
     "vineColor": {
       "type": "string"
     },
-    "vineLength": {
+    "vineLengthMinValue": {
       "type": "number"
     },
-    "yieldGreenLeaf": {
+    "vineLengthMaxValue": {
+      "type": "number"
+    },
+    "vineLengthFinalValue": {
+      "type": "number"
+    },
+    "yieldGreenLeafMinValue": {
+      "type": "number"
+    },
+    "yieldGreenLeafMaxValue": {
+      "type": "number"
+    },
+    "yieldGreenLeafFinalValue": {
       "type": "number"
     }
   },

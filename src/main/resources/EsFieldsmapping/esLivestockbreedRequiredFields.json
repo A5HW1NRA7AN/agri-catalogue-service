@@ -1,0 +1,23 @@
+{
+  "livestockbreedId": {
+    "type": "keyword"
+  },
+  "livestockbreedName": {
+    "type": "keyword"
+  },
+  "livestockbreedType": {
+    "type": "keyword"
+  },
+  "livestockcategoryName": {
+    "type": "keyword"
+  },
+  "status": {
+    "type": "keyword"
+  },
+  "createdOn": {
+    "type": "date"
+  },
+  "updatedOn": {
+    "type": "date"
+  }
+}
