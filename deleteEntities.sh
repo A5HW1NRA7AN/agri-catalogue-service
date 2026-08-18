@@ -5,6 +5,7 @@ entities=(
   "seed"
   "cropType"
   "cropVariety"
+  "cropCategory"
   "livestock"
   "season"
   "soil"

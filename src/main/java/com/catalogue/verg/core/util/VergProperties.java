@@ -19,7 +19,6 @@ public class VergProperties {
         private int searchStringMaxRegexLength;
         @Value("${elastic.required.field.audit.json.path}")
         private String elasticAuditJsonPath;
-    
         @Value("${elastic.required.field.seed.json.path}")
         private String elasticSeedJsonPath;
     
@@ -29,11 +28,11 @@ public class VergProperties {
         @Value("${elastic.required.field.cropvariety.json.path}")
         private String elasticCropvarietyJsonPath;
     
+        @Value("${elastic.required.field.cropcategory.json.path}")
+        private String elasticCropcategoryJsonPath;
+    
         @Value("${elastic.required.field.livestock.json.path}")
         private String elasticLivestockJsonPath;
-    
-        @Value("${elastic.required.field.season.json.path}")
-        private String elasticSeasonJsonPath;
     
         @Value("${elastic.required.field.soil.json.path}")
         private String elasticSoilJsonPath;
@@ -59,6 +58,6 @@ public class VergProperties {
         @Value("${elastic.required.field.marketplace.json.path}")
         private String elasticMarketplaceJsonPath;
     
-        @Value("${elastic.required.field.cropcategory.json.path}")
-        private String elasticCropcategoryJsonPath;
+        @Value("${elastic.required.field.season.json.path}")
+        private String elasticSeasonJsonPath;
     }

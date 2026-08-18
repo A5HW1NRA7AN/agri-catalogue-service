@@ -30,6 +30,8 @@ public class Constants{
     public static final String UPDATED_ON = "updatedOn";
     public static final String INVALID_STATUS = "Invalid target status";
     public static final String INVALID_STATUS_TRANSITION = "Record is not in a state that allows this action";
+    // Error code returned when a lifecycle endpoint is hit on a catalogue whose lifecycle is switched off
+    public static final String LIFECYCLE_DISABLED = "LIFECYCLE_DISABLED";
 
     //ES Specific Constants
     public static final String INDEX_TYPE = "_doc";
@@ -103,16 +105,16 @@ public class Constants{
     public static final String CROPVARIETY_INDEX_NAME = "cropvariety_index";
 
     
+    // Cropcategory Specific Constants
+    public static final String CROPCATEGORY_VALIDATION_FILE_JSON = "/payloadValidation/cropcategoryPayloadValidation.json";
+    public static final String CROPCATEGORY_ID_RQST = "cropcategoryId";
+    public static final String CROPCATEGORY_INDEX_NAME = "cropcategory_index";
+
+    
     // Livestock Specific Constants
     public static final String LIVESTOCK_VALIDATION_FILE_JSON = "/payloadValidation/livestockPayloadValidation.json";
     public static final String LIVESTOCK_ID_RQST = "livestockId";
     public static final String LIVESTOCK_INDEX_NAME = "livestock_index";
-
-    
-    // Season Specific Constants
-    public static final String SEASON_VALIDATION_FILE_JSON = "/payloadValidation/seasonPayloadValidation.json";
-    public static final String SEASON_ID_RQST = "seasonId";
-    public static final String SEASON_INDEX_NAME = "season_index";
 
     
     // Soil Specific Constants
@@ -163,10 +165,10 @@ public class Constants{
     public static final String MARKETPLACE_INDEX_NAME = "marketplace_index";
 
     
-    // Cropcategory Specific Constants
-    public static final String CROPCATEGORY_VALIDATION_FILE_JSON = "/payloadValidation/cropcategoryPayloadValidation.json";
-    public static final String CROPCATEGORY_ID_RQST = "cropcategoryId";
-    public static final String CROPCATEGORY_INDEX_NAME = "cropcategory_index";
+    // Season Specific Constants
+    public static final String SEASON_VALIDATION_FILE_JSON = "/payloadValidation/seasonPayloadValidation.json";
+    public static final String SEASON_ID_RQST = "seasonId";
+    public static final String SEASON_INDEX_NAME = "season_index";
 
         private Constants() {
     }
