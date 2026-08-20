@@ -170,6 +170,12 @@ public class Constants{
     public static final String SEASON_ID_RQST = "seasonId";
     public static final String SEASON_INDEX_NAME = "season_index";
 
+    
+    // Livestockbreed Specific Constants
+    public static final String LIVESTOCKBREED_VALIDATION_FILE_JSON = "/payloadValidation/livestockbreedPayloadValidation.json";
+    public static final String LIVESTOCKBREED_ID_RQST = "livestockbreedId";
+    public static final String LIVESTOCKBREED_INDEX_NAME = "livestockbreed_index";
+
         private Constants() {
     }
 }

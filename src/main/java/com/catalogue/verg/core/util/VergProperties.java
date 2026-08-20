@@ -60,4 +60,7 @@ public class VergProperties {
     
         @Value("${elastic.required.field.season.json.path}")
         private String elasticSeasonJsonPath;
+    
+        @Value("${elastic.required.field.livestockbreed.json.path}")
+        private String elasticLivestockbreedJsonPath;
     }
