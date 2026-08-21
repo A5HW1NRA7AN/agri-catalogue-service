@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "livestockCategoryId": {
+      "type": "string",
+      "prefix": "livestockcategory-",
+      "key": "Primary",
+      "keyLength": 5,
+      "description": "Auto-generated primary key, framework convention (prefix/key/keyLength read by PrimaryKeyUtil). Matches the pattern and keyLength of the sibling cropcategoryPayloadValidation.json in the same repo. Generate via: python main.py --name livestock-category --action create (hyphenated, so the class/route come out as LivestockCategory / /livestockCategory, not flattened)."
+    },
+    "name": {
+      "type": "string",
+      "description": "Wireframe 'Category Name' (Add/Edit Category screens, e.g. 'Camelid'). Mandatory."
+    },
+    "categoryCode": {
+      "type": "string",
+      "description": "Wireframe 'Category Code' (Add/Edit Category screens, e.g. 'CAM'). UNLIKE Department/Catalogue codes elsewhere in this project, this is a manually-typed text field on the Add form, not shown as auto-generated -- confirm with the team whether it should be enforced unique/uppercase, since the wireframe doesn't show that validation explicitly the way Department's code field did."
+    },
+    "primaryUtility": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Wireframe 'Primary Utility' dropdown on Add/Edit Category. Modelled as an array because the View Category Details screen displays multiple comma-separated values for one category (e.g. 'Milk, Meat'). ASSUMPTION: the fixed dropdown option list itself was not visible in any wireframe screen -- likely values based on what appears elsewhere in the same wireframe set (Livestock's 'Production Type' field and yield fields): Milk, Meat, Wool, Eggs, Honey, Draught/Work. Confirm the authoritative list with the team before deploying; no enum constraint added here since the exact values aren't confirmed."
+    },
+    "description": {
+      "type": "string",
+      "description": "Wireframe 'Description' (Add/Edit Category screens). Not shown as mandatory."
+    }
+  },
+  "required": [
+    "name",
+    "categoryCode"
+  ],
+  "additionalProperties": false,
+  "notes": [
+    "Modelled after the sibling cropcategoryPayloadValidation.json in this repo (same prefix/keyLength convention), NOT after the flattened livestockcategoryId/livestockcategoryName field names already hardcoded into the existing livestockbreedPayloadValidation.json's reference fields -- those were a byproduct of livestockbreed being generated without a hyphen (the same naming bug flagged repeatedly in this project). Generating this entity correctly means livestockbreed's existing reference field values won't literally match this entity's primary key field name (livestockCategoryId vs. livestockcategoryId) -- update livestockbreed's schema to reference the correctly-cased field if you want them aligned, or keep them as independent string references (a foreign key's field name doesn't have to equal the referenced entity's own PK field name to function, just to be readable).",
+    "No 'imageUrl' field, unlike cropcategory -- no image upload control appears anywhere in the Livestock Category wireframe screens (Add/Edit/View), so it was not added despite the sibling entity having one.",
+    "'primaryUtility' being required or optional was not clearly indicated by the wireframe (no asterisk visible in the screenshots at the resolution provided) -- left out of 'required' as a conservative default; move it in if confirmed mandatory.",
+    "Status/createdOn/updatedOn are intentionally NOT included here, matching the sibling cropcategory pattern -- those are handled by the framework's generic maker-checker Entity/Service layer outside the payload validation schema, not part of the create payload itself."
+  ]
+}

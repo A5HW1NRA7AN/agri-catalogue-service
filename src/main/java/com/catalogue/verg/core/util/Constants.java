@@ -176,6 +176,12 @@ public class Constants{
     public static final String LIVESTOCKBREED_ID_RQST = "livestockbreedId";
     public static final String LIVESTOCKBREED_INDEX_NAME = "livestockbreed_index";
 
+    
+    // Livestockcategory Specific Constants
+    public static final String LIVESTOCKCATEGORY_VALIDATION_FILE_JSON = "/payloadValidation/livestockcategoryPayloadValidation.json";
+    public static final String LIVESTOCKCATEGORY_ID_RQST = "livestockcategoryId";
+    public static final String LIVESTOCKCATEGORY_INDEX_NAME = "livestockcategory_index";
+
         private Constants() {
     }
 }
