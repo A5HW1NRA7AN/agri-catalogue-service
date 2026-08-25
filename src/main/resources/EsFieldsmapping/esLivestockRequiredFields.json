@@ -1,23 +1,67 @@
 {
-  "livestockId": { "type": "keyword" },
-  "livestock": { "type": "keyword" },
-  "breed": { "type": "keyword" },
-  "breedType": { "type": "keyword" },
-  "locationType": { "type": "keyword" },
-  "gender": { "type": "keyword" },
-  "productionType": { "type": "keyword" },
-  "bodyCondition": { "type": "keyword" },
-  "liveWeightKg": { "type": "float" },
-  "heightCm": { "type": "float" },
-  "coatColor": { "type": "keyword" },
-  "hornStatus": { "type": "keyword" },
-  "averageMilkYieldLitersPerDay": { "type": "float" },
-  "averageEggProductionPerWeek": { "type": "integer" },
-  "averageDailyWeightGainGrams": { "type": "float" },
-  "woolFiberYieldKg": { "type": "float" },
-  "honeyYieldKgPerHarvest": { "type": "float" },
-  "grazingSystem": { "type": "keyword" },
-  "status": { "type": "keyword" },
+  "livestockId": {
+    "type": "keyword"
+  },
+  "livestockCategoryId": {
+    "type": "keyword"
+  },
+  "livestockbreedId": {
+    "type": "keyword"
+  },
+  "livestock": {
+    "type": "keyword"
+  },
+  "breed": {
+    "type": "keyword"
+  },
+  "breedType": {
+    "type": "keyword"
+  },
+  "locationType": {
+    "type": "keyword"
+  },
+  "gender": {
+    "type": "keyword"
+  },
+  "productionType": {
+    "type": "keyword"
+  },
+  "bodyCondition": {
+    "type": "keyword"
+  },
+  "liveWeightKg": {
+    "type": "float"
+  },
+  "heightCm": {
+    "type": "float"
+  },
+  "coatColor": {
+    "type": "keyword"
+  },
+  "hornStatus": {
+    "type": "keyword"
+  },
+  "averageMilkYieldLitersPerDay": {
+    "type": "float"
+  },
+  "averageEggProductionPerWeek": {
+    "type": "integer"
+  },
+  "averageDailyWeightGainGrams": {
+    "type": "float"
+  },
+  "woolFiberYieldKg": {
+    "type": "float"
+  },
+  "honeyYieldKgPerHarvest": {
+    "type": "float"
+  },
+  "grazingSystem": {
+    "type": "keyword"
+  },
+  "status": {
+    "type": "keyword"
+  },
   "createdOn": {
     "type": "date"
   },
