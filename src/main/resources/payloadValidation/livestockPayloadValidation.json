@@ -2,9 +2,10 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://agristack.ethiopia.gov.et/schemas/livestock.json",
   "title": "Livestock",
-  "description": "Livestock catalogue entry referencing the Livestock Category and Livestock Breed catalogues.",
+  "description": "Livestock catalogue entry (individual breed-level record, e.g. 'Gir Cattle') referencing the Livestock Category and Livestock Breed catalogues. Field set matches the 'Manage Livestock' Add/Edit wireframe screen.",
   "type": "object",
   "additionalProperties": false,
+
   "properties": {
     "livestockId": {
       "type": "string",
@@ -13,96 +14,73 @@
       "keyLength": 12,
       "pattern": "^livestock-[a-z0-9]{12}$",
       "readOnly": true,
-      "description": "System-generated primary identifier for this catalogue entry."
+      "description": "System-generated primary identifier for this livestock catalogue entry."
+    },
+
+    "livestockName": {
+      "type": "string",
+      "description": "Wireframe 'Livestock Name' free-text field (e.g. 'Gir Cattle'). This is the entry's own name, NOT a reference to another catalogue -- no separate 'Livestock' name-lookup catalogue exists in this codebase (only livestockcategory and livestockbreed do). Mandatory."
     },
 
     "livestockCategoryId": {
       "type": "string",
-      "description": "Reference to the Livestock Category catalogue entry. The UI should populate this value from the Livestock Category catalogue."
+      "description": "Wireframe 'Category Name' dropdown. References livestockcategory's primary key field (livestockCategoryId, per livestockcategoryPayloadValidation.json). NOTE: Constants.java's LIVESTOCKCATEGORY_ID_RQST is lower-cased ('livestockcategoryId') -- that constant is only used as the :id path variable name on the category's own read/update/delete endpoints, it is NOT the JSON field name; the field name here intentionally matches the case actually used in livestockcategoryPayloadValidation.json's own primary key property. Mandatory."
     },
 
-    "livestockbreedId": {
+    "categoryName": {
       "type": "string",
-      "description": "Reference to the Livestock Breed catalogue entry. The UI should populate this value from the Livestock Breed catalogue and filter available breeds using livestockCategoryId."
+      "description": "Display name of the selected category. Denormalized value that should correspond to livestockCategoryId, copied from the referenced livestockcategory record's 'name' field. Same pattern as the existing 'livestock'/'breed' denormalized display fields below."
     },
 
-    "livestock": {
+    "primaryUtility": {
       "type": "string",
-      "description": "Type/species of the livestock. This field may be retained for backward compatibility; the authoritative category reference is livestockCategoryId.",
-      "enum": [
-        "Cattle",
-        "Sheep",
-        "Goat",
-        "Poultry",
-        "Camel",
-        "Equine",
-        "Beehive"
-      ]
-    },
-
-    "breed": {
-      "type": "string",
-      "description": "Breed name. This field may be retained for backward compatibility; the authoritative breed reference is livestockbreedId."
+      "description": "Wireframe 'Primary Utility' dropdown (single select) on this screen. NOTE: livestockcategoryPayloadValidation.json models the category-level 'primaryUtility' as an array because a category's View screen can show several comma-separated utilities (e.g. 'Milk, Meat'); at the individual livestock/breed-entry level the wireframe shows a single-value select instead, so this is intentionally typed as a plain string here. Suggested options should be sourced from the selected category's primaryUtility list. Confirm the authoritative option list with the team before deploying."
     },
 
     "breedType": {
       "type": "string",
       "description": "Genetic classification of the breed.",
-      "enum": [
-        "Indigenous",
-        "Crossbred",
-        "Exotic"
-      ]
+      "enum": ["Indigenous", "Crossbred", "Exotic"]
     },
 
-    "locationType": {
+    "livestockbreedId": {
       "type": "string",
-      "description": "Agro-ecological zone the breed is adapted to; absent when not applicable.",
-      "enum": [
-        "High Land",
-        "Mid Land",
-        "Low Land"
-      ]
+      "description": "Wireframe 'Breed Name' dropdown. References livestockbreed's primary key field (livestockbreedId, per livestockbreedPayloadValidation.json). Available breeds should be filtered based on livestockCategoryId and, where selected first, breedType. Mandatory."
+    },
+
+    "breed": {
+      "type": "string",
+      "description": "Display name of the selected breed. Denormalized value that should correspond to livestockbreedId, copied from the referenced livestockbreed record's 'livestockbreedName' field."
+    },
+
+    "scientificSpeciesName": {
+      "type": "string",
+      "description": "Wireframe 'Scientific / Species Name' free-text field (e.g. 'Bos indicus')."
+    },
+
+    "averageProductiveAgeMonths": {
+      "type": "number",
+      "description": "Wireframe 'Average Productive Age (months)' field (e.g. 15)."
+    },
+
+    "nativeRegion": {
+      "type": "string",
+      "description": "Wireframe 'Native Region' dropdown. Renamed from this schema's previous 'locationType' field to match the wireframe label; represents the agro-ecological zone/region the livestock or breed is native/adapted to."
     },
 
     "gender": {
       "type": "string",
-      "description": "Gender this reference entry describes; absent when not applicable.",
-      "enum": [
-        "Male",
-        "Female"
-      ]
+      "description": "Gender this reference entry describes. Fixed dropdown on the wireframe; exact option list (e.g. Male/Female/Both) not confirmed from the screenshot alone, so left unconstrained by enum -- confirm with the team."
     },
 
     "productionType": {
       "type": "string",
-      "description": "Typical production purpose for this breed/gender combination.",
-      "enum": [
-        "Milk",
-        "Meat",
-        "Egg",
-        "Draft",
-        "Draft/Transport",
-        "Pack Animal",
-        "Breeding",
-        "Dual Purpose",
-        "Castrated",
-        "Honey",
-        "Pollination Service"
-      ]
+      "description": "Typical production purpose for this livestock/breed combination."
     },
 
     "bodyCondition": {
       "type": "string",
-      "description": "Typical/reference body condition score.",
-      "enum": [
-        "Very Thin",
-        "Thin",
-        "Moderate Weight",
-        "Good",
-        "Fat",
-        "Very Fat"
-      ]
+      "description": "Typical/reference body condition."
     },
 
     "liveWeightKg": {
@@ -122,12 +100,7 @@
 
     "hornStatus": {
       "type": "string",
-      "description": "Typical horn presence/condition.",
-      "enum": [
-        "Horned",
-        "Polled/Dehorned",
-        "Not Applicable"
-      ]
+      "description": "Typical horn presence or condition."
     },
 
     "averageMilkYieldLitersPerDay": {
@@ -157,32 +130,45 @@
 
     "grazingSystem": {
       "type": "string",
-      "description": "Recommended management/grazing system.",
-      "enum": [
-        "Free Range/Extensive",
-        "Semi-Intensive",
-        "Zero Grazing/Intensive",
-        "Transhumance/Pastoral"
-      ]
+      "description": "Recommended management/grazing system (e.g. Rotational)."
+    },
+
+    "typicalCharacteristics": {
+      "type": "string",
+      "description": "Wireframe 'Typical Characteristics' free-text field."
     },
 
     "status": {
       "type": "string",
       "readOnly": true,
-      "description": "Server-managed lifecycle status.",
+      "description": "Server-managed lifecycle status. Values match Constants.java exactly (previous 'IN_ACTIVE' enum value has been corrected to 'INACTIVE', and the missing APPROVED/REJECTED transitional states have been added).",
       "enum": [
         "DRAFT",
         "PENDING",
-        "ACTIVE",
-        "IN_ACTIVE",
+        "APPROVED",
         "REWORK",
+        "REJECTED",
+        "ACTIVE",
+        "INACTIVE",
         "DELETED"
       ]
     }
   },
 
   "required": [
+    "livestockName",
     "livestockCategoryId",
+    "breedType",
     "livestockbreedId"
+  ],
+
+  "notes": [
+    "Fixed a bug in the previous version of this file: the top-level 'required' array referenced 'livestockNameId', a property that did not exist anywhere in 'properties' (the actual property is 'livestockName'). This meant full validation (create/add) could never pass required-field checking correctly. Corrected to 'livestockName'.",
+    "Removed 'livestockBreedTypeId' as a separate catalogue reference: no 'Livestock Breed Type' catalogue/entity/table exists anywhere in this codebase (only livestockcategory and livestockbreed do). The wireframe's 'Breed Type' dropdown corresponds to livestockbreed's own 'livestockbreedType' field; modelled here as 'breedType', a free-form string with no hard-coded enum (consistent with livestockbreedPayloadValidation.json, updated the same way) so new breed types can be added without a schema change, instead of a phantom foreign key.",
+    "Added fields present on the wireframe but missing from the previous schema: categoryName (denormalized, matching the existing livestock/breed denorm pattern), primaryUtility, scientificSpeciesName, averageProductiveAgeMonths, and typicalCharacteristics.",
+    "Renamed 'locationType' to 'nativeRegion' to match the wireframe's 'Native Region' label. This is a breaking rename -- update esLivestockRequiredFields.json (done in the companion file) and any UI/API consumers still using 'locationType'.",
+    "'livestockCategoryId' intentionally keeps capital-C casing to match livestockcategoryPayloadValidation.json's own primary key property name. Constants.LIVESTOCKCATEGORY_ID_RQST uses lower-case 'livestockcategoryId', but that constant is only the :id path-variable key on the category catalogue's own endpoints (read/update/delete), not a payload field name, so there is no actual naming collision -- flagging only so the two are not confused.",
+    "'required' kept conservative (identity/reference fields only), matching the conservative pattern already used in livestockcategoryPayloadValidation.json and livestockbreedPayloadValidation.json, since the wireframe screenshot shows no asterisks indicating which fields are mandatory. Confirm with the team and expand 'required' if more fields (e.g. gender, productionType) should be enforced on the full-validation (create/add) path -- the relaxed draft-validation path (PayloadValidation.validatePayloadRelaxed) strips 'required' entirely regardless.",
+    "Status enum corrected to match Constants.java's actual stored values exactly: 'IN_ACTIVE' -> 'INACTIVE', and 'APPROVED'/'REJECTED' (used mid-workflow by approve()/review()) added since they were missing from the previous enum. 'PUBLISHED' was deliberately excluded -- Constants.java documents it as an accepted request alias for ACTIVE on the review endpoint, not a value ever persisted to the status column."
   ]
 }
