@@ -11,6 +11,9 @@
   "livestockcategoryName": {
     "type": "keyword"
   },
+  "livestockCategoryId": {
+    "type": "keyword"
+  },
   "status": {
     "type": "keyword"
   },

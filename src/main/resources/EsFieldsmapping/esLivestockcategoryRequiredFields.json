@@ -2,13 +2,7 @@
   "livestockCategoryId": {
     "type": "keyword"
   },
-  "name": {
-    "type": "keyword"
-  },
-  "categoryCode": {
-    "type": "keyword"
-  },
-  "primaryUtility": {
+  "livestockcategoryName": {
     "type": "keyword"
   },
   "description": {
