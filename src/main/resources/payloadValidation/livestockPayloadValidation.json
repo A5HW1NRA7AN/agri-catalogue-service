@@ -23,19 +23,19 @@
       "type": "string",
       "description": "References the primary key of the Livestock Category catalogue."
     },
-    "livestockcategoryName": {
+    "livestockCategoryName": {
       "type": "string",
       "inputType": "dropdown",
       "autoFetch": true,
       "dataSource": "livestockcategory",
-      "description": "Auto-fetched dropdown value from the Livestock Category catalogue."
+      "description": "Auto-fetched value from the Livestock Category catalogue."
     },
-    "livestockbreedName": {
+    "livestockBreedName": {
       "type": "string",
       "inputType": "dropdown",
       "autoFetch": true,
       "dataSource": "livestockbreed",
-      "description": "Auto-fetched dropdown value from the Livestock Breed catalogue."
+      "description": "Auto-fetched value from the Livestock Breed catalogue."
     },
     "scientificSpeciesName": {
       "type": "string",
@@ -155,8 +155,8 @@
   },
   "required": [
     "livestockName",
-    "livestockbreedName",
-    "livestockcategoryName",
+    "livestockBreedName",
+    "livestockCategoryName",
     "productionType"
   ]
 }

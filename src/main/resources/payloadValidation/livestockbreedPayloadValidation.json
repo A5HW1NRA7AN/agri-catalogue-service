@@ -2,30 +2,30 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "livestockbreedId": {
+    "livestockBreedId": {
       "type": "string",
       "prefix": "breed-",
       "key": "Primary",
       "keyLength": 12,
       "readOnly": true,
-      "description": "Auto-generated primary key (breed-<random digits>), consistent with the framework's generateKey() convention (see org-/other catalogue examples)."
+      "description": "Auto-generated primary key for the livestock breed."
     },
-    "livestockbreedName": {
+    "livestockBreedName": {
       "type": "string",
-      "description": "Breed name. Free text, as requested. Mandatory."
+      "description": "Breed name. Mandatory."
     },
-    "livestockcategoryId": {
+    "livestockCategoryId": {
       "type": "string",
-      "description": "categoryId"
+      "description": "Reference to the primary key of the Livestock Category catalogue."
     },
-    "livestockcategoryName": {
+    "livestockCategoryName": {
       "type": "string",
-      "description": "Fixed dropdown, same list as the Livestock Category/species reference — sourced from the 'Name' column of livestock_catalog.xlsx > Livestock Catalog sheet (5 species on the LIS population dashboard / ET-LITS registry). Mandatory."
+      "description": "Livestock category name. Mandatory."
     }
   },
   "required": [
-    "livestockbreedName",
-    "livestockcategoryName",
+    "livestockBreedName",
+    "livestockCategoryName",
     "livestockCategoryId"
   ]
 }

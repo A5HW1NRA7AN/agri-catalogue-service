@@ -7,18 +7,18 @@
       "prefix": "livestockcategory-",
       "key": "Primary",
       "keyLength": 5,
-      "description": "Auto-generated primary key, framework convention (prefix/key/keyLength read by PrimaryKeyUtil). Matches the pattern and keyLength of the sibling cropcategoryPayloadValidation.json in the same repo. Generate via: python main.py --name livestock-category --action create (hyphenated, so the class/route come out as LivestockCategory / /livestockCategory, not flattened)."
+      "description": "Auto-generated primary key for the Livestock Category catalogue."
     },
-    "livestockcategoryName": {
+    "livestockCategoryName": {
       "type": "string",
-      "description": "Wireframe 'Category Name' (Add/Edit Category screens, e.g. 'Camelid'). Mandatory."
+      "description": "Livestock category name. Mandatory."
     },
     "description": {
       "type": "string",
-      "description": "Wireframe 'Description' (Add/Edit Category screens). Not shown as mandatory."
+      "description": "Description of the livestock category."
     }
   },
   "required": [
-    "livestockcategoryName"
+    "livestockCategoryName"
   ]
 }

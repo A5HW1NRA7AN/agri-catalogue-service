@@ -8,10 +8,10 @@
   "livestockCategoryId": {
     "type": "keyword"
   },
-  "livestockcategoryName": {
+  "livestockCategoryName": {
     "type": "keyword"
   },
-  "livestockbreedName": {
+  "livestockBreedName": {
     "type": "keyword"
   },
   "scientificSpeciesName": {
@@ -65,15 +65,12 @@
   "typicalCharacteristics": {
     "type": "text"
   },
-
   "status": {
     "type": "keyword"
   },
-
   "createdOn": {
     "type": "date"
   },
-
   "updatedOn": {
     "type": "date"
   }
