@@ -1,19 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://agristack.ethiopia.gov.et/schemas/livestock.json",
-  "title": "Livestock",
-  "description": "Livestock catalogue entry referencing the Livestock Category and Livestock Breed catalogues.",
   "type": "object",
-  "additionalProperties": false,
   "properties": {
     "livestockId": {
       "type": "string",
       "prefix": "livestock-",
       "key": "Primary",
       "keyLength": 12,
-      "pattern": "^livestock-[a-z0-9]{12}$",
-      "readOnly": true,
-      "description": "System-generated primary identifier for this livestock catalogue entry."
+      "description": "Auto-generated primary key, framework convention (prefix/key/keyLength read by PrimaryKeyUtil). Generate via: python main.py --name livestock --action create."
     },
     "livestockName": {
       "type": "string",
@@ -25,16 +19,14 @@
     },
     "livestockCategoryName": {
       "type": "string",
-      "inputType": "dropdown",
-      "autoFetch": true,
-      "dataSource": "livestockcategory",
       "description": "Auto-fetched value from the Livestock Category catalogue."
+    },
+    "livestockBreedId": {
+      "type": "string",
+      "description": "References the primary key of the Livestock Breed catalogue."
     },
     "livestockBreedName": {
       "type": "string",
-      "inputType": "dropdown",
-      "autoFetch": true,
-      "dataSource": "livestockbreed",
       "description": "Auto-fetched value from the Livestock Breed catalogue."
     },
     "scientificSpeciesName": {
@@ -155,7 +147,9 @@
   },
   "required": [
     "livestockName",
+    "livestockBreedId",
     "livestockBreedName",
+    "livestockCategoryId",
     "livestockCategoryName",
     "productionType"
   ]
