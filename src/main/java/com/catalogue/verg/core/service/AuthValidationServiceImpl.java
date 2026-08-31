@@ -26,6 +26,10 @@ public class AuthValidationServiceImpl implements AuthValidationService {
 
         private static final String API_KEY_HEADER = "apikey";
 
+        /** Identity recorded for an untokened caller on an endpoint where the jwt is optional. */
+        private static final String ANONYMOUS_USER = "Anonymous";
+        private static final String ANONYMOUS_ROLE = "PUBLIC";
+
         private final RestTemplate restTemplate;
         private final ObjectMapper objectMapper;
 
@@ -43,9 +47,15 @@ public class AuthValidationServiceImpl implements AuthValidationService {
         }
 
         @Override
-        public JsonNode validateToken(String authorizationHeader) {
+        public JsonNode validateToken(String authorizationHeader, boolean jwtRequired) {
 
                 if (authorizationHeader == null || authorizationHeader.isBlank()) {
+                        // Open endpoint: no token supplied, so the caller is the anonymous public user
+                        if (!jwtRequired) {
+                                log.debug("AuthValidationService::validateToken::no token supplied on an "
+                                                + "optional-jwt endpoint, continuing as {}", ANONYMOUS_USER);
+                                return anonymousContext();
+                        }
                         throw new IllegalArgumentException(
                                         "Authorization header is required");
                 }
@@ -142,6 +152,19 @@ public class AuthValidationServiceImpl implements AuthValidationService {
                                         "Unable to communicate with OAS Auth Service",
                                         HttpStatus.SERVICE_UNAVAILABLE);
                 }
+        }
+
+        /**
+         * Stand-in caller identity for an untokened request on an endpoint that does not require a
+         * jwt. Uses the same three keys as {@link #extractUserContext}, so audit rows populate the
+         * userName / userId / userRole columns exactly as they do for an authenticated caller.
+         */
+        private JsonNode anonymousContext() {
+                ObjectNode userContext = objectMapper.createObjectNode();
+                userContext.put("userName", ANONYMOUS_USER);
+                userContext.put("userId", ANONYMOUS_USER);
+                userContext.put("functionalRole", ANONYMOUS_ROLE);
+                return userContext;
         }
 
         /**

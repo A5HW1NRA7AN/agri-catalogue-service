@@ -162,7 +162,7 @@ public class FertilizerServiceImpl implements FertilizerService {
         log.info("FertilizerServiceImpl::searchFertilizer");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("FertilizerServiceImpl::searchFertilizer:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();
@@ -219,7 +219,7 @@ public class FertilizerServiceImpl implements FertilizerService {
         log.info("FertilizerServiceImpl::read:inside the method");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("FertilizerServiceImpl::read:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();

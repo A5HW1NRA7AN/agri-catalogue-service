@@ -177,16 +177,16 @@ public class Constants{
     public static final String LOCATIONMAPPER_INDEX_NAME = "locationmapper_index";
 
     
-    // Marketplace Specific Constants
-    public static final String MARKETPLACE_VALIDATION_FILE_JSON = "/payloadValidation/marketplacePayloadValidation.json";
-    public static final String MARKETPLACE_ID_RQST = "marketplaceId";
-    public static final String MARKETPLACE_INDEX_NAME = "marketplace_index";
-
-    
     // Locationconfig Specific Constants
     public static final String LOCATIONCONFIG_VALIDATION_FILE_JSON = "/payloadValidation/locationconfigPayloadValidation.json";
     public static final String LOCATIONCONFIG_ID_RQST = "locationconfigId";
     public static final String LOCATIONCONFIG_INDEX_NAME = "locationconfig_index";
+
+    
+    // Marketplace Specific Constants
+    public static final String MARKETPLACE_VALIDATION_FILE_JSON = "/payloadValidation/marketplacePayloadValidation.json";
+    public static final String MARKETPLACE_ID_RQST = "marketplaceId";
+    public static final String MARKETPLACE_INDEX_NAME = "marketplace_index";
 
         private Constants() {
     }
