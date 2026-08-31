@@ -1,14 +1,17 @@
 {
-  "livestockbreedId": {
+  "livestockBreedId": {
     "type": "keyword"
   },
-  "livestockbreedName": {
+  "livestockBreedName": {
     "type": "keyword"
   },
-  "livestockbreedType": {
+  "livestockBreedType": {
     "type": "keyword"
   },
-  "livestockcategoryName": {
+  "livestockCategoryName": {
+    "type": "keyword"
+  },
+  "livestockCategoryId": {
     "type": "keyword"
   },
   "status": {
@@ -21,3 +24,4 @@
     "type": "date"
   }
 }
+
