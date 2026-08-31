@@ -162,7 +162,7 @@ public class MarketplaceServiceImpl implements MarketplaceService {
         log.info("MarketplaceServiceImpl::searchMarketplace");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("MarketplaceServiceImpl::searchMarketplace:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();
@@ -219,7 +219,7 @@ public class MarketplaceServiceImpl implements MarketplaceService {
         log.info("MarketplaceServiceImpl::read:inside the method");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("MarketplaceServiceImpl::read:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();

@@ -162,7 +162,7 @@ public class ExtensionequipmentServiceImpl implements ExtensionequipmentService 
         log.info("ExtensionequipmentServiceImpl::searchExtensionequipment");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("ExtensionequipmentServiceImpl::searchExtensionequipment:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();
@@ -219,7 +219,7 @@ public class ExtensionequipmentServiceImpl implements ExtensionequipmentService 
         log.info("ExtensionequipmentServiceImpl::read:inside the method");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("ExtensionequipmentServiceImpl::read:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();

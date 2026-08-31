@@ -162,7 +162,7 @@ public class LocationobjectServiceImpl implements LocationobjectService {
         log.info("LocationobjectServiceImpl::searchLocationobject");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("LocationobjectServiceImpl::searchLocationobject:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();
@@ -219,7 +219,7 @@ public class LocationobjectServiceImpl implements LocationobjectService {
         log.info("LocationobjectServiceImpl::read:inside the method");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("LocationobjectServiceImpl::read:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();

@@ -162,7 +162,7 @@ public class CroptypeServiceImpl implements CroptypeService {
         log.info("CroptypeServiceImpl::searchCroptype");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("CroptypeServiceImpl::searchCroptype:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();
@@ -219,7 +219,7 @@ public class CroptypeServiceImpl implements CroptypeService {
         log.info("CroptypeServiceImpl::read:inside the method");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("CroptypeServiceImpl::read:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();

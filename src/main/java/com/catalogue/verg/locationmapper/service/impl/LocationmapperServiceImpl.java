@@ -162,7 +162,7 @@ public class LocationmapperServiceImpl implements LocationmapperService {
         log.info("LocationmapperServiceImpl::searchLocationmapper");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("LocationmapperServiceImpl::searchLocationmapper:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();
@@ -219,7 +219,7 @@ public class LocationmapperServiceImpl implements LocationmapperService {
         log.info("LocationmapperServiceImpl::read:inside the method");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("LocationmapperServiceImpl::read:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();

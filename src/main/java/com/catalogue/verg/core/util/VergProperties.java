@@ -65,9 +65,9 @@ public class VergProperties {
         @Value("${elastic.required.field.locationmapper.json.path}")
         private String elasticLocationmapperJsonPath;
     
-        @Value("${elastic.required.field.marketplace.json.path}")
-        private String elasticMarketplaceJsonPath;
-    
         @Value("${elastic.required.field.locationconfig.json.path}")
         private String elasticLocationconfigJsonPath;
+    
+        @Value("${elastic.required.field.marketplace.json.path}")
+        private String elasticMarketplaceJsonPath;
     }

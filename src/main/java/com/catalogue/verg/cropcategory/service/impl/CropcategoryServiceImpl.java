@@ -162,7 +162,7 @@ public class CropcategoryServiceImpl implements CropcategoryService {
         log.info("CropcategoryServiceImpl::searchCropcategory");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("CropcategoryServiceImpl::searchCropcategory:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();
@@ -219,7 +219,7 @@ public class CropcategoryServiceImpl implements CropcategoryService {
         log.info("CropcategoryServiceImpl::read:inside the method");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("CropcategoryServiceImpl::read:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();

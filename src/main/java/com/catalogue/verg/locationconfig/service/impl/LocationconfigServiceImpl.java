@@ -162,7 +162,7 @@ public class LocationconfigServiceImpl implements LocationconfigService {
         log.info("LocationconfigServiceImpl::searchLocationconfig");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("LocationconfigServiceImpl::searchLocationconfig:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();
@@ -219,7 +219,7 @@ public class LocationconfigServiceImpl implements LocationconfigService {
         log.info("LocationconfigServiceImpl::read:inside the method");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("LocationconfigServiceImpl::read:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();

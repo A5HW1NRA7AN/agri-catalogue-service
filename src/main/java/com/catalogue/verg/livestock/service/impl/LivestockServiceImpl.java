@@ -162,7 +162,7 @@ public class LivestockServiceImpl implements LivestockService {
         log.info("LivestockServiceImpl::searchLivestock");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("LivestockServiceImpl::searchLivestock:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();
@@ -219,7 +219,7 @@ public class LivestockServiceImpl implements LivestockService {
         log.info("LivestockServiceImpl::read:inside the method");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("LivestockServiceImpl::read:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();

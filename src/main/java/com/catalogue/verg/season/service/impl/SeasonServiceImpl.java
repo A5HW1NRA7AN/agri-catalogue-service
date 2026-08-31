@@ -162,7 +162,7 @@ public class SeasonServiceImpl implements SeasonService {
         log.info("SeasonServiceImpl::searchSeason");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("SeasonServiceImpl::searchSeason:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();
@@ -219,7 +219,7 @@ public class SeasonServiceImpl implements SeasonService {
         log.info("SeasonServiceImpl::read:inside the method");
 
         // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
+        JsonNode userContext = authValidationService.validateToken(token, false);
         log.debug("SeasonServiceImpl::read:token validated, user context: {}", userContext);
 
         CustomResponse response = new CustomResponse();
