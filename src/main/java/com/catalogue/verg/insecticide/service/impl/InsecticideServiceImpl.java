@@ -38,6 +38,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import com.catalogue.verg.core.constants.NotificationTemplate;
+import com.catalogue.verg.core.constants.NotificationTemplateConstants;
+import com.catalogue.verg.core.service.NotificationUtil;
+import com.catalogue.verg.core.util.NotificationTemplateResolver;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -91,11 +95,16 @@ public class InsecticideServiceImpl implements InsecticideService {
     @Autowired
     private AuthValidationService authValidationService;
 
+    @Autowired
+    private NotificationUtil notificationUtil;
+
     /**
      * Catalogue name recorded on every audit row emitted by this service. Doubles as the key
      * this catalogue is looked up by in the lifecycle switches ({@link LifecyclePolicy}).
      */
     private static final String CATALOGUE_NAME = "insecticide";
+    private static final String TEMPLATE_NAME = "Insecticide";
+    private static final String TEMPLATE_CONSTANT = "INSECTICIDE";
 
     private Logger logger = LoggerFactory.getLogger(InsecticideServiceImpl.class);
 
@@ -149,6 +158,19 @@ public class InsecticideServiceImpl implements InsecticideService {
                     "create", initialStatus,
                     objectMapper.createObjectNode(), insecticideEntity,
                     insecticideEntity1.getCreatedOn(), insecticideEntity1.getUpdatedOn());
+
+            notificationUtil.sendNotification(
+                     TEMPLATE_NAME,
+                     TEMPLATE_CONSTANT,
+                     NotificationTemplateConstants.NEW_RECORD_SUBMITTED_FOR_REVIEW,
+                     Map.of(
+                      "makerName", userContext.path("userName").asText(null),
+                      "submissionId", primaryID,
+                      "submissionDate", currentTime.toString()
+                        ),
+                      userContext.path("orgId").asText(null)
+            );
+
             return response;
 
         } catch (Exception e) {
@@ -553,6 +575,18 @@ public class InsecticideServiceImpl implements InsecticideService {
                     "add-promote", Constants.PENDING,
                     auditBefore, insecticideEntity,
                     insecticideEntity1.getCreatedOn(), insecticideEntity1.getUpdatedOn());
+
+            notificationUtil.sendNotification(
+                 TEMPLATE_NAME,
+                 TEMPLATE_CONSTANT,
+                 NotificationTemplateConstants.NEW_RECORD_SUBMITTED_FOR_REVIEW,
+                 Map.of(
+                         "makerName", userContext.path("userName").asText(null),
+                         "submissionId", id,
+                         "submissionDate", currentTime.toString()
+                 ),
+                 userContext.path("orgId").asText(null)
+            );
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),
@@ -712,6 +746,22 @@ public class InsecticideServiceImpl implements InsecticideService {
                     operation, targetStatus,
                     insecticideEntity1.getData(), insecticideEntity1.getData(),
                     insecticideEntity1.getCreatedOn(), insecticideEntity1.getUpdatedOn());
+
+             NotificationTemplate template = NotificationTemplateResolver.resolveDecisionTemplate(
+                      operation,
+                      targetStatus
+              );
+              notificationUtil.sendNotification(
+                TEMPLATE_NAME,
+                TEMPLATE_CONSTANT,
+                template,
+                Map.of(
+                        "makerName", userContext.path("userName").asText(null),
+                        "submissionId", id,
+                        "actionDate", currentTime.toString()
+                ),
+                userContext.path("orgId").asText(null)
+             );
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),
