@@ -361,32 +361,6 @@ public class LivestockServiceImpl implements LivestockService {
 
             String currentStatus = livestockEntity1.getStatus();
 
-            NotificationTemplate template =
-                    resolvePlainUpdateTemplate(currentStatus);
-
-            if (template != null) {
-
-                notificationUtil.sendNotification(
-                        TEMPLATE_NAME,
-                        TEMPLATE_CONSTANT,
-                        template,
-                        Map.of(
-                                "makerName", userContext.path("userName").asText(""),
-                                "submissionId", id,
-                                "updateDate", currentTime.toString()
-                        ),
-                        userContext.path("orgId").asText(null)
-                );
-
-                log.info(
-                        "LivestockServiceImpl::updateLivestock:notification {} sent for id: {} by: {}",
-                        template.templateCode() + "_"
-                                + TEMPLATE_CONSTANT,
-                        id,
-                        userContext.path("userName").asText("")
-                );
-            }
-
             map.put(Constants.LIVESTOCK_ID_RQST, id);
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
@@ -603,6 +577,19 @@ public class LivestockServiceImpl implements LivestockService {
                     "add-promote", Constants.PENDING,
                     auditBefore, livestockEntity,
                     livestockEntity1.getCreatedOn(), livestockEntity1.getUpdatedOn());
+
+            notificationUtil.sendNotification(
+                    TEMPLATE_NAME,
+                    TEMPLATE_CONSTANT,
+                    NotificationTemplateConstants.NEW_RECORD_SUBMITTED_FOR_REVIEW,
+                    Map.of(
+                            "makerName", userContext.path("userName").asText(null),
+                            "submissionId", id,
+                            "submissionDate", currentTime.toString()
+                    ),
+                    userContext.path("orgId").asText(null)
+            );
+
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),
@@ -706,6 +693,7 @@ public class LivestockServiceImpl implements LivestockService {
             String operation,
             String targetStatus
     ) {
+        // review means it is pending with L2
         boolean isL2 = "review".equals(operation);
 
         if (Constants.REJECTED.equals(targetStatus)) {
@@ -729,25 +717,6 @@ public class LivestockServiceImpl implements LivestockService {
         return isL2
                 ? NotificationTemplateConstants.RECORD_APPROVED_BY_ADMIN_L2
                 : NotificationTemplateConstants.RECORD_APPROVED_BY_SUPERVISOR;
-    }
-
-    private NotificationTemplate resolvePlainUpdateTemplate(String currentStatus) {
-        if (Constants.PENDING.equals(currentStatus)) {
-            return NotificationTemplateConstants.RECORD_RESUBMITTED_FOR_REVIEW;
-        }
-        if (Constants.APPROVED.equals(currentStatus)) {
-            return NotificationTemplateConstants.RECORD_REVIEWED_BY_ADMIN_L2;
-        }
-        if (Constants.REWORK.equals(currentStatus)) {
-            return NotificationTemplateConstants.RECORD_SENT_BACK_FOR_CORRECTION;
-        }
-        if (Constants.REJECTED.equals(currentStatus)) {
-            return NotificationTemplateConstants.RECORD_REJECTED_BY_SUPERVISOR;
-        }
-        if (Constants.ACTIVE.equals(currentStatus)) {
-            return NotificationTemplateConstants.RECORD_APPROVED_BY_ADMIN_L2;
-        }
-        return null;
     }
 
     /**
