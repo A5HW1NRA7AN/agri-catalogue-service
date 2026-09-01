@@ -2,11 +2,8 @@ package com.catalogue.verg.livestock.service.impl;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.catalogue.verg.core.constants.CatalogueConstants;
-import com.catalogue.verg.core.constants.NotificationCatalogueConstants;
 import com.catalogue.verg.core.constants.NotificationTemplate;
 import com.catalogue.verg.core.constants.NotificationTemplateConstants;
-import com.datastax.oss.driver.api.core.uuid.Uuids;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -50,7 +47,6 @@ import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
@@ -104,6 +100,8 @@ public class LivestockServiceImpl implements LivestockService {
      * this catalogue is looked up by in the lifecycle switches ({@link LifecyclePolicy}).
      */
     private static final String CATALOGUE_NAME = "livestock";
+    private static final String TEMPLATE_NAME = "Livestock";
+    private static final String TEMPLATE_CONSTANT = "LIVESTOCK";
 
     private Logger logger = LoggerFactory.getLogger(LivestockServiceImpl.class);
 
@@ -159,8 +157,8 @@ public class LivestockServiceImpl implements LivestockService {
                     livestockEntity1.getCreatedOn(), livestockEntity1.getUpdatedOn());
 
             notificationUtil.sendNotification(
-                    CatalogueConstants.LIVESTOCK,
-                    NotificationCatalogueConstants.LIVESTOCK,
+                    TEMPLATE_NAME,
+                    TEMPLATE_CONSTANT,
                     NotificationTemplateConstants.NEW_RECORD_SUBMITTED_FOR_REVIEW,
                     Map.of(
                             "makerName", userContext.path("userName").asText(null),
@@ -369,8 +367,8 @@ public class LivestockServiceImpl implements LivestockService {
             if (template != null) {
 
                 notificationUtil.sendNotification(
-                        CatalogueConstants.LIVESTOCK,
-                        NotificationCatalogueConstants.LIVESTOCK,
+                        TEMPLATE_NAME,
+                        TEMPLATE_CONSTANT,
                         template,
                         Map.of(
                                 "makerName", userContext.path("userName").asText(""),
@@ -383,7 +381,7 @@ public class LivestockServiceImpl implements LivestockService {
                 log.info(
                         "LivestockServiceImpl::updateLivestock:notification {} sent for id: {} by: {}",
                         template.templateCode() + "_"
-                                + NotificationCatalogueConstants.LIVESTOCK,
+                                + TEMPLATE_CONSTANT,
                         id,
                         userContext.path("userName").asText("")
                 );
@@ -816,8 +814,8 @@ public class LivestockServiceImpl implements LivestockService {
             NotificationTemplate template = resolveDecisionTemplate(operation, targetStatus);
 
             notificationUtil.sendNotification(
-                    CatalogueConstants.LIVESTOCK,
-                    NotificationCatalogueConstants.LIVESTOCK,
+                    TEMPLATE_NAME,
+                    TEMPLATE_CONSTANT,
                     template,
                     Map.of(
                             "makerName", userContext.path("userName").asText(null),
