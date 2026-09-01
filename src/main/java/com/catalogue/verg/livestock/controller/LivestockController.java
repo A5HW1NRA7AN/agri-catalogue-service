@@ -109,7 +109,7 @@ public class LivestockController {
 
     @PutMapping("/v1/update/{id}")
     public ResponseEntity<CustomResponse> update(@PathVariable String id, @RequestBody JsonNode livestockDetails) {
-        CustomResponse response = livestockService.updateLivestock(id, livestockDetails);
+        CustomResponse response = livestockService.updateLivestock(id, livestockDetails, null);
         return new ResponseEntity<>(response, response.getResponseCode());
     }
 

@@ -2,6 +2,10 @@ package com.catalogue.verg.livestock.service.impl;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.catalogue.verg.core.constants.CatalogueConstants;
+import com.catalogue.verg.core.constants.NotificationCatalogueConstants;
+import com.catalogue.verg.core.constants.NotificationTemplate;
+import com.catalogue.verg.core.constants.NotificationTemplateConstants;
 import com.datastax.oss.driver.api.core.uuid.Uuids;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -38,6 +42,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import com.catalogue.verg.core.service.NotificationUtil;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -91,6 +96,9 @@ public class LivestockServiceImpl implements LivestockService {
     @Autowired
     private AuthValidationService authValidationService;
 
+    @Autowired
+    private NotificationUtil notificationUtil;
+
     /**
      * Catalogue name recorded on every audit row emitted by this service. Doubles as the key
      * this catalogue is looked up by in the lifecycle switches ({@link LifecyclePolicy}).
@@ -122,7 +130,7 @@ public class LivestockServiceImpl implements LivestockService {
             livestockEntity1.setLivestockId(primaryID);
             // Create Parameters like createdDate / updateDate / Data and Status
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            
+
             String initialStatus = lifecyclePolicy.initialStatus(CATALOGUE_NAME);
             livestockEntity1.setCreatedOn(currentTime);
             livestockEntity1.setUpdatedOn(currentTime);
@@ -149,6 +157,19 @@ public class LivestockServiceImpl implements LivestockService {
                     "create", initialStatus,
                     objectMapper.createObjectNode(), livestockEntity,
                     livestockEntity1.getCreatedOn(), livestockEntity1.getUpdatedOn());
+
+            notificationUtil.sendNotification(
+                    CatalogueConstants.LIVESTOCK,
+                    NotificationCatalogueConstants.LIVESTOCK,
+                    NotificationTemplateConstants.NEW_RECORD_SUBMITTED_FOR_REVIEW,
+                    Map.of(
+                            "makerName", userContext.path("userName").asText(null),
+                            "submissionId", primaryID,
+                            "submissionDate", currentTime.toString()
+                    ),
+                    userContext.path("orgId").asText(null)
+            );
+
             return response;
 
         } catch (Exception e) {
@@ -281,9 +302,13 @@ public class LivestockServiceImpl implements LivestockService {
     }
 
     @Override
-    public CustomResponse updateLivestock(String id, JsonNode livestockEntity) {
+    public CustomResponse updateLivestock(String id, JsonNode livestockEntity, String token) {
         log.info("LivestockServiceImpl::updateLivestock:entered the method with id: {}", id);
         CustomResponse response = new CustomResponse();
+
+        // Validate the caller's api token against the OAS auth service
+        JsonNode userContext = authValidationService.validateToken(token);
+        log.debug("LivestockServiceImpl::createLivestock:token validated, user context: {}", userContext);
 
         // Validate that the ID is not null or empty
         if (StringUtils.isEmpty(id)) {
@@ -336,12 +361,39 @@ public class LivestockServiceImpl implements LivestockService {
             cacheService.putCache(id, jsonNode);
             log.info("LivestockServiceImpl::updateLivestock:refreshed cache for id: {}", id);
 
+            String currentStatus = livestockEntity1.getStatus();
+
+            NotificationTemplate template =
+                    resolvePlainUpdateTemplate(currentStatus);
+
+            if (template != null) {
+
+                notificationUtil.sendNotification(
+                        CatalogueConstants.LIVESTOCK,
+                        NotificationCatalogueConstants.LIVESTOCK,
+                        template,
+                        Map.of(
+                                "makerName", userContext.path("userName").asText(""),
+                                "submissionId", id,
+                                "updateDate", currentTime.toString()
+                        ),
+                        userContext.path("orgId").asText(null)
+                );
+
+                log.info(
+                        "LivestockServiceImpl::updateLivestock:notification {} sent for id: {} by: {}",
+                        template.templateCode() + "_"
+                                + NotificationCatalogueConstants.LIVESTOCK,
+                        id,
+                        userContext.path("userName").asText("")
+                );
+            }
+
             map.put(Constants.LIVESTOCK_ID_RQST, id);
             response.setResult(map);
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
             return response;
-
         } catch (Exception e) {
             log.error("LivestockServiceImpl::updateLivestock:error while updating record for id: {}", id, e);
             throw new CustomException("error while processing", e.getMessage(),
@@ -652,6 +704,54 @@ public class LivestockServiceImpl implements LivestockService {
         }
     }
 
+    private NotificationTemplate resolveDecisionTemplate(
+            String operation,
+            String targetStatus
+    ) {
+        boolean isL2 = "review".equals(operation);
+
+        if (Constants.REJECTED.equals(targetStatus)) {
+            log.info(
+                    "Resolving notification template: RECORD_REJECTED_BY_ADMIN_L2 / RECORD_REJECTED_BY_SUPERVISOR"
+            );
+
+            return isL2
+                    ? NotificationTemplateConstants.RECORD_REJECTED_BY_ADMIN_L2
+                    : NotificationTemplateConstants.RECORD_REJECTED_BY_SUPERVISOR;
+        }
+
+        if (Constants.REWORK.equals(targetStatus)) {
+            log.info("Resolving notification template: RECORD_SENT_BACK_FOR_CORRECTION");
+
+            return NotificationTemplateConstants.RECORD_SENT_BACK_FOR_CORRECTION;
+        }
+
+        // approve: PENDING -> APPROVED
+        // review: APPROVED -> ACTIVE
+        return isL2
+                ? NotificationTemplateConstants.RECORD_APPROVED_BY_ADMIN_L2
+                : NotificationTemplateConstants.RECORD_APPROVED_BY_SUPERVISOR;
+    }
+
+    private NotificationTemplate resolvePlainUpdateTemplate(String currentStatus) {
+        if (Constants.PENDING.equals(currentStatus)) {
+            return NotificationTemplateConstants.RECORD_RESUBMITTED_FOR_REVIEW;
+        }
+        if (Constants.APPROVED.equals(currentStatus)) {
+            return NotificationTemplateConstants.RECORD_REVIEWED_BY_ADMIN_L2;
+        }
+        if (Constants.REWORK.equals(currentStatus)) {
+            return NotificationTemplateConstants.RECORD_SENT_BACK_FOR_CORRECTION;
+        }
+        if (Constants.REJECTED.equals(currentStatus)) {
+            return NotificationTemplateConstants.RECORD_REJECTED_BY_SUPERVISOR;
+        }
+        if (Constants.ACTIVE.equals(currentStatus)) {
+            return NotificationTemplateConstants.RECORD_APPROVED_BY_ADMIN_L2;
+        }
+        return null;
+    }
+
     /**
      * Shared status-transition logic for approve/review. Validates the id and requested target status,
      * enforces the required current status, then persists the new status to Postgres, ES and Redis.
@@ -712,6 +812,22 @@ public class LivestockServiceImpl implements LivestockService {
                     operation, targetStatus,
                     livestockEntity1.getData(), livestockEntity1.getData(),
                     livestockEntity1.getCreatedOn(), livestockEntity1.getUpdatedOn());
+
+            NotificationTemplate template = resolveDecisionTemplate(operation, targetStatus);
+
+            notificationUtil.sendNotification(
+                    CatalogueConstants.LIVESTOCK,
+                    NotificationCatalogueConstants.LIVESTOCK,
+                    template,
+                    Map.of(
+                            "makerName", userContext.path("userName").asText(null),
+                            "submissionId", id,
+                            "actionDate", currentTime.toString()
+                    ),
+                    userContext.path("orgId").asText(null)
+            );
+
+
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),
