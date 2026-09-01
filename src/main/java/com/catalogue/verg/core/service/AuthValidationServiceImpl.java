@@ -223,11 +223,20 @@ public class AuthValidationServiceImpl implements AuthValidationService {
                         throw new CustomException(Constants.ERROR, "Token validation failed",
                                         HttpStatus.UNAUTHORIZED);
                 }
+                // 5. Orgganization Id is what any downstream permission check keys off
+                String orgId = result.path("orgId").asText(null);
+                if (orgId == null || orgId.isBlank()) {
+                        log.error("AuthValidationService::extractUserContext::auth_service returned no "
+                                        + "orgId for user_id: {}", orgId);
+                        throw new CustomException(Constants.ERROR, "Token validation failed",
+                                        HttpStatus.UNAUTHORIZED);
+                }
 
                 ObjectNode userContext = objectMapper.createObjectNode();
                 userContext.put("userName", displayName);
                 userContext.put("userId", userId);
                 userContext.put("functionalRole", functionalRole);
+                userContext.put("orgId", orgId);
 
                 return userContext;
         }

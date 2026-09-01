@@ -2,7 +2,8 @@ package com.catalogue.verg.livestock.service.impl;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.datastax.oss.driver.api.core.uuid.Uuids;
+import com.catalogue.verg.core.constants.NotificationTemplate;
+import com.catalogue.verg.core.constants.NotificationTemplateConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,14 +39,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import com.catalogue.verg.core.service.NotificationUtil;
 
 import org.springframework.web.multipart.MultipartFile;
+import com.catalogue.verg.core.util.NotificationTemplateResolver;
 
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
@@ -91,11 +93,16 @@ public class LivestockServiceImpl implements LivestockService {
     @Autowired
     private AuthValidationService authValidationService;
 
+    @Autowired
+    private NotificationUtil notificationUtil;
+
     /**
      * Catalogue name recorded on every audit row emitted by this service. Doubles as the key
      * this catalogue is looked up by in the lifecycle switches ({@link LifecyclePolicy}).
      */
     private static final String CATALOGUE_NAME = "livestock";
+    private static final String TEMPLATE_NAME = "Livestock";
+    private static final String TEMPLATE_CONSTANT = "LIVESTOCK";
 
     private Logger logger = LoggerFactory.getLogger(LivestockServiceImpl.class);
 
@@ -122,7 +129,7 @@ public class LivestockServiceImpl implements LivestockService {
             livestockEntity1.setLivestockId(primaryID);
             // Create Parameters like createdDate / updateDate / Data and Status
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
-            
+
             String initialStatus = lifecyclePolicy.initialStatus(CATALOGUE_NAME);
             livestockEntity1.setCreatedOn(currentTime);
             livestockEntity1.setUpdatedOn(currentTime);
@@ -149,6 +156,19 @@ public class LivestockServiceImpl implements LivestockService {
                     "create", initialStatus,
                     objectMapper.createObjectNode(), livestockEntity,
                     livestockEntity1.getCreatedOn(), livestockEntity1.getUpdatedOn());
+
+            notificationUtil.sendNotification(
+                    TEMPLATE_NAME,
+                    TEMPLATE_CONSTANT,
+                    NotificationTemplateConstants.NEW_RECORD_SUBMITTED_FOR_REVIEW,
+                    Map.of(
+                            "makerName", userContext.path("userName").asText(null),
+                            "submissionId", primaryID,
+                            "submissionDate", currentTime.toString()
+                    ),
+                    userContext.path("orgId").asText(null)
+            );
+
             return response;
 
         } catch (Exception e) {
@@ -341,7 +361,6 @@ public class LivestockServiceImpl implements LivestockService {
             response.setMessage(Constants.SUCCESSFULLY_UPDATED);
             response.setResponseCode(HttpStatus.OK);
             return response;
-
         } catch (Exception e) {
             log.error("LivestockServiceImpl::updateLivestock:error while updating record for id: {}", id, e);
             throw new CustomException("error while processing", e.getMessage(),
@@ -553,6 +572,19 @@ public class LivestockServiceImpl implements LivestockService {
                     "add-promote", Constants.PENDING,
                     auditBefore, livestockEntity,
                     livestockEntity1.getCreatedOn(), livestockEntity1.getUpdatedOn());
+
+            notificationUtil.sendNotification(
+                    TEMPLATE_NAME,
+                    TEMPLATE_CONSTANT,
+                    NotificationTemplateConstants.NEW_RECORD_SUBMITTED_FOR_REVIEW,
+                    Map.of(
+                            "makerName", userContext.path("userName").asText(null),
+                            "submissionId", id,
+                            "submissionDate", currentTime.toString()
+                    ),
+                    userContext.path("orgId").asText(null)
+            );
+
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),
@@ -712,6 +744,25 @@ public class LivestockServiceImpl implements LivestockService {
                     operation, targetStatus,
                     livestockEntity1.getData(), livestockEntity1.getData(),
                     livestockEntity1.getCreatedOn(), livestockEntity1.getUpdatedOn());
+
+            NotificationTemplate template =
+                    NotificationTemplateResolver.resolveDecisionTemplate(
+                            operation,
+                            targetStatus
+                    );
+            notificationUtil.sendNotification(
+                    TEMPLATE_NAME,
+                    TEMPLATE_CONSTANT,
+                    template,
+                    Map.of(
+                            "makerName", userContext.path("userName").asText(null),
+                            "submissionId", id,
+                            "actionDate", currentTime.toString()
+                    ),
+                    userContext.path("orgId").asText(null)
+            );
+
+
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),
