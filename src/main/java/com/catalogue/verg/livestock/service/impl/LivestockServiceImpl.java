@@ -42,6 +42,7 @@ import org.springframework.stereotype.Service;
 import com.catalogue.verg.core.service.NotificationUtil;
 
 import org.springframework.web.multipart.MultipartFile;
+import com.catalogue.verg.core.util.NotificationTemplateResolver;
 
 import java.sql.Timestamp;
 import java.util.Map;
@@ -683,36 +684,6 @@ public class LivestockServiceImpl implements LivestockService {
         }
     }
 
-    private NotificationTemplate resolveDecisionTemplate(
-            String operation,
-            String targetStatus
-    ) {
-        // review means it is pending with L2
-        boolean isL2 = "review".equals(operation);
-
-        if (Constants.REJECTED.equals(targetStatus)) {
-            log.info(
-                    "Resolving notification template: RECORD_REJECTED_BY_ADMIN_L2 / RECORD_REJECTED_BY_SUPERVISOR"
-            );
-
-            return isL2
-                    ? NotificationTemplateConstants.RECORD_REJECTED_BY_ADMIN_L2
-                    : NotificationTemplateConstants.RECORD_REJECTED_BY_SUPERVISOR;
-        }
-
-        if (Constants.REWORK.equals(targetStatus)) {
-            log.info("Resolving notification template: RECORD_SENT_BACK_FOR_CORRECTION");
-
-            return NotificationTemplateConstants.RECORD_SENT_BACK_FOR_CORRECTION;
-        }
-
-        // approve: PENDING -> APPROVED
-        // review: APPROVED -> ACTIVE
-        return isL2
-                ? NotificationTemplateConstants.RECORD_APPROVED_BY_ADMIN_L2
-                : NotificationTemplateConstants.RECORD_APPROVED_BY_SUPERVISOR;
-    }
-
     /**
      * Shared status-transition logic for approve/review. Validates the id and requested target status,
      * enforces the required current status, then persists the new status to Postgres, ES and Redis.
@@ -774,8 +745,11 @@ public class LivestockServiceImpl implements LivestockService {
                     livestockEntity1.getData(), livestockEntity1.getData(),
                     livestockEntity1.getCreatedOn(), livestockEntity1.getUpdatedOn());
 
-            NotificationTemplate template = resolveDecisionTemplate(operation, targetStatus);
-
+            NotificationTemplate template =
+                    NotificationTemplateResolver.resolveDecisionTemplate(
+                            operation,
+                            targetStatus
+                    );
             notificationUtil.sendNotification(
                     TEMPLATE_NAME,
                     TEMPLATE_CONSTANT,

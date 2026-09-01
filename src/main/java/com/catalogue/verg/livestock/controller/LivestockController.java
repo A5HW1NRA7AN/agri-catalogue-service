@@ -24,7 +24,7 @@ public class LivestockController {
     /** Key this catalogue is looked up by in the lifecycle switches. */
     private static final String CATALOGUE_NAME = "livestock";
 
-    //@PostMapping("/v1/create") -
+    //@PostMapping("/v1/create")
     public ResponseEntity<CustomResponse> create(@RequestBody JsonNode livestockDetails) {
         CustomResponse response = livestockService.createLivestock(livestockDetails, null);
         return new ResponseEntity<>(response, response.getResponseCode());
@@ -50,7 +50,7 @@ public class LivestockController {
         return new ResponseEntity<>(response, response.getResponseCode());
     }
 
-    // Lifecycle: (re-)submit an existing DRAFT/REWORK record for approval (PENDING, full validation) : Used for draft and rework
+    // Lifecycle: (re-)submit an existing DRAFT/REWORK record for approval (PENDING, full validation)
     @PutMapping("/v1/add/{id}")
     public ResponseEntity<CustomResponse> addById(
             @RequestHeader(value = "Authorization", required = false) String token,
@@ -60,7 +60,7 @@ public class LivestockController {
         return new ResponseEntity<>(response, response.getResponseCode());
     }
 
-    // Lifecycle: PENDING -> APPROVED | REJECTED | REWORK : Only L1 will have access to this
+    // Lifecycle: PENDING -> APPROVED | REJECTED | REWORK
     @PutMapping("/v1/approve")
     public ResponseEntity<CustomResponse> approve(
             @RequestHeader(value = "Authorization", required = false) String token,
@@ -70,7 +70,7 @@ public class LivestockController {
         return new ResponseEntity<>(response, response.getResponseCode());
     }
 
-    // Lifecycle: APPROVED -> ACTIVE(published) | REJECTED | REWORK : Only L2 will have access to this
+    // Lifecycle: APPROVED -> ACTIVE(published) | REJECTED | REWORK
     @PutMapping("/v1/review")
     public ResponseEntity<CustomResponse> review(
             @RequestHeader(value = "Authorization", required = false) String token,
