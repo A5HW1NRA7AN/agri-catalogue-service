@@ -300,13 +300,9 @@ public class LivestockServiceImpl implements LivestockService {
     }
 
     @Override
-    public CustomResponse updateLivestock(String id, JsonNode livestockEntity, String token) {
+    public CustomResponse updateLivestock(String id, JsonNode livestockEntity) {
         log.info("LivestockServiceImpl::updateLivestock:entered the method with id: {}", id);
         CustomResponse response = new CustomResponse();
-
-        // Validate the caller's api token against the OAS auth service
-        JsonNode userContext = authValidationService.validateToken(token);
-        log.debug("LivestockServiceImpl::createLivestock:token validated, user context: {}", userContext);
 
         // Validate that the ID is not null or empty
         if (StringUtils.isEmpty(id)) {
@@ -358,8 +354,6 @@ public class LivestockServiceImpl implements LivestockService {
             // Refresh the Redis cache
             cacheService.putCache(id, jsonNode);
             log.info("LivestockServiceImpl::updateLivestock:refreshed cache for id: {}", id);
-
-            String currentStatus = livestockEntity1.getStatus();
 
             map.put(Constants.LIVESTOCK_ID_RQST, id);
             response.setResult(map);

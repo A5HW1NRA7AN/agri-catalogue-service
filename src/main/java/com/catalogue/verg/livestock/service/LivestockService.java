@@ -12,7 +12,7 @@ public interface LivestockService {
     // token: the raw Authorization header from the caller
     CustomResponse createLivestock(JsonNode livestockEntity, String token);
 
-    CustomResponse updateLivestock(String id, JsonNode livestockEntity, String token);
+    CustomResponse updateLivestock(String id, JsonNode livestockEntity);
 
     // Lifecycle: create an incomplete DRAFT (relaxed validation)
     CustomResponse draftLivestock(JsonNode livestockEntity, String token);
