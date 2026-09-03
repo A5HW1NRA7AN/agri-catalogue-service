@@ -224,7 +224,7 @@ public class AuthValidationServiceImpl implements AuthValidationService {
                                         HttpStatus.UNAUTHORIZED);
                 }
                 // 5. Orgganization Id is what any downstream permission check keys off
-                String orgId = result.path("orgId").asText(null);
+                String orgId = result.path("org_id").asText(null);
                 if (orgId == null || orgId.isBlank()) {
                         log.error("AuthValidationService::extractUserContext::auth_service returned no "
                                         + "orgId for user_id: {}", orgId);
