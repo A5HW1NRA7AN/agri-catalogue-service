@@ -480,7 +480,7 @@ if __name__ == "__main__":
                              "not removed on --action delete). Default: False")
     args = parser.parse_args()
 
-    names = [n.strip().replace(" ", "-") for n in " ".join(args.name).split(",") if n.strip()]
+    names = [n.replace(" ", "-") for n in re.split(r"[,\s]+", " ".join(args.name)) if n]
     total = len(names)
 
     for idx, name in enumerate(names, start=1):

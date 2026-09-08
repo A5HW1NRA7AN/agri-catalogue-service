@@ -1,35 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-entities=(
-    "seed"
-    "cropType"
-    "cropVariety"
-    "cropCategory"
-    "livestock"
-    "livestockBreed"
-    "livestockCategory"
-    "season"
-    "soil"
-    "extensionequipment"
-    "pesticide"
-    "insecticide"
-    "fertilizer"
-    "locationObject"
-    "locationMapper"
-    "locationConfig"
-    "marketPlace"
-)
-
-for entity in "${entities[@]}"; do
-  echo "Creating entity: $entity"
-  python3 main.py --action create --name "$entity"
-done
-
-
-
-# seed, cropType, cropVariety, cropCategory, livestock, livestockBreed, livestockCategory, season, soil, extensionequipment, pesticide, insecticide, fertilizer, locationObject, locationMapper, locationConfig, marketPlace
+# All catalogue entities, comma-separated - main.py generates the whole list in one run.
 #
 # Note: the "audit" catalogue is also generated from these templates but is deliberately
 # NOT listed here - its service impl is hand-maintained (AuditService backs AuditLogService),
-# so it must not be swept away by deleteEntities.sh or regenerated.
+# so it must not be regenerated or swept away by deleteEntities.sh.
+entities="seed,cropType,cropVariety,cropCategory,livestock,livestockBreed,livestockCategory,season,soil,extensionequipment,pesticide,insecticide,fertilizer,locationObject,locationMapper,locationConfig,marketPlace"
+
+# Extra flags are forwarded, e.g. ./createEntities.sh --skipSchema true
+python3 main.py --name "$entities" --action create

@@ -444,11 +444,25 @@ public class CroptypeServiceImpl implements CroptypeService {
     @Override
     public CustomResponse importData(MultipartFile file, String token) {
         log.info("CroptypeServiceImpl::importData::started");
-        return importService.processBulkImport(
+
+        // Validate the caller's api token against the OAS auth service
+        JsonNode userContext = authValidationService.validateToken(token);
+        log.debug("CroptypeServiceImpl::importData:token validated, user context: {}", userContext);
+
+        CustomResponse response = importService.processBulkImport(
                 file,
                 Constants.CROPTYPE_VALIDATION_FILE_JSON,
                 payload -> createCroptype(payload, token)   // every row is created as the calling user
         );
+
+        JsonNode importStats = objectMapper.valueToTree(response.getResult());
+        auditLogService.logAudit(null, CATALOGUE_NAME,
+                userContext.path("userId").asText(null),
+                userContext.path("userName").asText(null),
+                userContext.path("functionalRole").asText(null),
+                "import", null, null, importStats, null, null);
+
+        return response;
     }
 
     @Override
