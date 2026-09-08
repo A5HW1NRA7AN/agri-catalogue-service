@@ -444,11 +444,25 @@ public class PesticideServiceImpl implements PesticideService {
     @Override
     public CustomResponse importData(MultipartFile file, String token) {
         log.info("PesticideServiceImpl::importData::started");
-        return importService.processBulkImport(
+
+        // Validate the caller's api token against the OAS auth service
+        JsonNode userContext = authValidationService.validateToken(token);
+        log.debug("PesticideServiceImpl::importData:token validated, user context: {}", userContext);
+
+        CustomResponse response = importService.processBulkImport(
                 file,
                 Constants.PESTICIDE_VALIDATION_FILE_JSON,
                 payload -> createPesticide(payload, token)   // every row is created as the calling user
         );
+
+        JsonNode importStats = objectMapper.valueToTree(response.getResult());
+        auditLogService.logAudit(null, CATALOGUE_NAME,
+                userContext.path("userId").asText(null),
+                userContext.path("userName").asText(null),
+                userContext.path("functionalRole").asText(null),
+                "import", null, null, importStats, null, null);
+
+        return response;
     }
 
     @Override

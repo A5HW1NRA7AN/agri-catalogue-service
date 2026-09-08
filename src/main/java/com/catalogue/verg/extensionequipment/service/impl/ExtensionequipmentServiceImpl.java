@@ -444,11 +444,25 @@ public class ExtensionequipmentServiceImpl implements ExtensionequipmentService 
     @Override
     public CustomResponse importData(MultipartFile file, String token) {
         log.info("ExtensionequipmentServiceImpl::importData::started");
-        return importService.processBulkImport(
+
+        // Validate the caller's api token against the OAS auth service
+        JsonNode userContext = authValidationService.validateToken(token);
+        log.debug("ExtensionequipmentServiceImpl::importData:token validated, user context: {}", userContext);
+
+        CustomResponse response = importService.processBulkImport(
                 file,
                 Constants.EXTENSIONEQUIPMENT_VALIDATION_FILE_JSON,
                 payload -> createExtensionequipment(payload, token)   // every row is created as the calling user
         );
+
+        JsonNode importStats = objectMapper.valueToTree(response.getResult());
+        auditLogService.logAudit(null, CATALOGUE_NAME,
+                userContext.path("userId").asText(null),
+                userContext.path("userName").asText(null),
+                userContext.path("functionalRole").asText(null),
+                "import", null, null, importStats, null, null);
+
+        return response;
     }
 
     @Override
