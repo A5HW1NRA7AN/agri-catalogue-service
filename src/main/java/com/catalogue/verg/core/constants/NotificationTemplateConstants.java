@@ -44,4 +44,28 @@ public final class NotificationTemplateConstants {
             new NotificationTemplate(
                     "RECORD_APPROVED_BY_ADMIN_L2"
             );
+
+    // NEW: L2 rejection -> Supervisor
+    public static final NotificationTemplate RECORD_REJECTED_BY_ADMIN_L2_TO_SUPERVISOR =
+            new NotificationTemplate(
+                    "RECORD_REJECTED_BY_ADMIN_L2_TO_SUPERVISOR"
+            );
+
+    // NEW: L2 rework -> Supervisor
+    public static final NotificationTemplate RECORD_SENT_BACK_FOR_CORRECTION_BY_ADMIN =
+            new NotificationTemplate(
+                    "RECORD_SENT_BACK_FOR_CORRECTION_BY_ADMIN"
+            );
+
+    // NEW: L2 approval -> Supervisor
+    public static final NotificationTemplate RECORD_APPROVED_BY_ADMIN_TO_SUPERVISOR =
+            new NotificationTemplate(
+                    "RECORD_APPROVED_BY_ADMIN_TO_SUPERVISOR"
+            );
+
+    // NEW: L1 Supervisor approval -> Maker
+    public static final NotificationTemplate RECORD_APPROVED_BY_SUPERVISOR_TO_MAKER =
+            new NotificationTemplate(
+                    "RECORD_APPROVED_BY_SUPERVISOR_TO_MAKER"
+            );
 }
