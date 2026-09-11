@@ -62,7 +62,20 @@
         },
         "location3Order": {
             "type": "integer",
-            "description": "ordering/rank of the level 3 location within its level"
+            "description": "ordering/rank of the level 4 location within its level"
+        },
+
+        "location4Id": {
+            "type": "string",
+            "description": "locationObject id of the level 4 location"
+        },
+        "location4Name": {
+            "type": "string",
+            "description": "name of the level 4 location"
+        },
+        "location4Order": {
+            "type": "integer",
+            "description": "ordering/rank of the level 4 location within its level"
         }
     },
     "required": [
@@ -77,6 +90,9 @@
         "location2Order",
         "location3Id",
         "location3Name",
-        "location3Order"
+        "location3Order",
+        "location4Id",
+        "location4Name",
+        "location4Order"
     ]
 }

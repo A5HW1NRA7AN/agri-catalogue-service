@@ -45,6 +45,16 @@
         "type": "integer"
     },
 
+    "location4Id": {
+        "type": "keyword"
+    },
+    "location4Name": {
+        "type": "keyword"
+    },
+    "location4Order": {
+        "type": "integer"
+    },
+
     
     "status": {
         "type": "keyword"
