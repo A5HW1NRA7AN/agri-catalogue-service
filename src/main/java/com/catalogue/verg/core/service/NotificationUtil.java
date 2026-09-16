@@ -5,10 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientException;
 
+import java.time.Duration;
 import java.util.Map;
 
 @Slf4j
@@ -16,6 +18,9 @@ import java.util.Map;
 public class NotificationUtil {
 
     private static final int MAX_RETRIES = 3;
+    private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(2);
+    private static final Duration READ_TIMEOUT = Duration.ofSeconds(5);
+    private static final long RETRY_BACKOFF_MILLIS = 250L;
 
     private final RestClient restClient;
 
@@ -26,7 +31,13 @@ public class NotificationUtil {
     private String apiKey;
 
     public NotificationUtil(RestClient.Builder restClientBuilder) {
-        this.restClient = restClientBuilder.build();
+        // Without these the client has no timeout at all, so an unresponsive notification
+        // service holds the caller's request thread and its open transaction.
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(CONNECT_TIMEOUT);
+        requestFactory.setReadTimeout(READ_TIMEOUT);
+
+        this.restClient = restClientBuilder.requestFactory(requestFactory).build();
     }
 
     public void sendNotification(
@@ -75,7 +86,23 @@ public class NotificationUtil {
 
                 return;
 
-            } catch (RestClientException e) {
+            } catch (HttpClientErrorException e) {
+
+                // 4xx is permanent: unknown template code, module mismatch, or nobody in this
+                // org holds the receiver role. Retrying cannot change it.
+                log.error(
+                        "Notification rejected: templateModule={} templateCode={} orgId={} status={} body={}",
+                        templateModule,
+                        templateCode,
+                        orgId,
+                        e.getStatusCode(),
+                        e.getResponseBodyAsString(),
+                        e
+                );
+
+                return;
+
+            } catch (Exception e) {
 
                 lastError = e;
 
@@ -88,6 +115,15 @@ public class NotificationUtil {
                         e.getMessage(),
                         e
                 );
+
+                if (attempt < MAX_RETRIES) {
+                    try {
+                        Thread.sleep(RETRY_BACKOFF_MILLIS * attempt);
+                    } catch (InterruptedException interrupted) {
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
+                }
             }
         }
 

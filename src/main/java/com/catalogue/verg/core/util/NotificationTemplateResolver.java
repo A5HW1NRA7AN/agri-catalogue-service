@@ -4,8 +4,8 @@ import com.catalogue.verg.core.constants.NotificationTemplateConstants;
 import com.catalogue.verg.core.constants.NotificationTemplate;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList; // NEW
-import java.util.List;      // NEW
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public final class NotificationTemplateResolver {
@@ -14,7 +14,7 @@ public final class NotificationTemplateResolver {
         // Utility class
     }
 
-    // NEW: Returns all templates that need to be sent for the action
+    // Returns every template to send for the action
     public static List<NotificationTemplate> resolveDecisionTemplates(
             String operation,
             String targetStatus
@@ -23,8 +23,7 @@ public final class NotificationTemplateResolver {
         // Review means the record is pending with L2
         boolean isL2 = "review".equalsIgnoreCase(operation);
 
-        List<NotificationTemplate> templates =
-                new ArrayList<>(); // NEW
+        List<NotificationTemplate> templates = new ArrayList<>();
 
         if (Constants.REJECTED.equals(targetStatus)) {
 
@@ -34,19 +33,19 @@ public final class NotificationTemplateResolver {
 
             if (isL2) {
 
-                // Existing: L2 rejection -> Maker
+                // L2 rejection -> Maker
                 templates.add(
                         NotificationTemplateConstants.RECORD_REJECTED_BY_ADMIN_L2
                 );
 
-                // NEW: L2 rejection -> Supervisor
+                // L2 rejection -> Supervisor
                 templates.add(
                         NotificationTemplateConstants.RECORD_REJECTED_BY_ADMIN_L2_TO_SUPERVISOR
                 );
 
             } else {
 
-                // Existing: Supervisor rejection -> Maker
+                // Supervisor rejection -> Maker
                 templates.add(
                         NotificationTemplateConstants.RECORD_REJECTED_BY_SUPERVISOR
                 );
@@ -61,23 +60,16 @@ public final class NotificationTemplateResolver {
                     "Resolving notification template(s) for rework"
             );
 
+            // Either level -> Maker
+            templates.add(
+                    NotificationTemplateConstants.RECORD_SENT_BACK_FOR_CORRECTION
+            );
+
             if (isL2) {
 
-                // Existing: L2 rework -> Maker
-                templates.add(
-                        NotificationTemplateConstants.RECORD_SENT_BACK_FOR_CORRECTION
-                );
-
-                // NEW: L2 rework -> Supervisor
+                // L2 rework -> Supervisor
                 templates.add(
                         NotificationTemplateConstants.RECORD_SENT_BACK_FOR_CORRECTION_BY_ADMIN
-                );
-
-            } else {
-
-                // Existing: Supervisor rework -> Maker
-                templates.add(
-                        NotificationTemplateConstants.RECORD_SENT_BACK_FOR_CORRECTION
                 );
             }
 
@@ -96,24 +88,24 @@ public final class NotificationTemplateResolver {
 
         if (isL2) {
 
-            // Existing: L2 approval -> Maker
+            // L2 approval -> Maker
             templates.add(
                     NotificationTemplateConstants.RECORD_APPROVED_BY_ADMIN_L2
             );
 
-            // NEW: L2 approval -> Supervisor
+            // L2 approval -> Supervisor
             templates.add(
                     NotificationTemplateConstants.RECORD_APPROVED_BY_ADMIN_TO_SUPERVISOR
             );
 
         } else {
 
-            // Existing: Supervisor approval -> L2 Admin
+            // Supervisor approval -> L2 Admin
             templates.add(
                     NotificationTemplateConstants.RECORD_APPROVED_BY_SUPERVISOR
             );
 
-            // NEW: Supervisor approval -> Maker
+            // Supervisor approval -> Maker
             templates.add(
                     NotificationTemplateConstants.RECORD_APPROVED_BY_SUPERVISOR_TO_MAKER
             );

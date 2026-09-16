@@ -46,6 +46,7 @@ import com.catalogue.verg.core.util.NotificationTemplateResolver;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -129,12 +130,6 @@ public class CropcategoryServiceImpl implements CropcategoryService {
             // Generate Primary Key
             String primaryID = primaryKeyUtil.generateKey(Constants.CROPCATEGORY_VALIDATION_FILE_JSON);
             cropcategoryEntity1.setCropcategoryId(primaryID);
-            // NEW: stamp createdBy/updatedBy into the payload itself, before it's persisted as `data`
-            if (cropcategoryEntity instanceof ObjectNode) {
-                String makerId = userContext.path("userId").asText(null);
-                ((ObjectNode) cropcategoryEntity).put("createdBy", makerId);
-                ((ObjectNode) cropcategoryEntity).put("updatedBy", makerId);
-            }
             // Create Parameters like createdDate / updateDate / Data and Status
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             
@@ -165,6 +160,8 @@ public class CropcategoryServiceImpl implements CropcategoryService {
                     objectMapper.createObjectNode(), cropcategoryEntity,
                     cropcategoryEntity1.getCreatedOn(), cropcategoryEntity1.getUpdatedOn());
 
+            // Lifecycle-disabled catalogues create ACTIVE records that are never reviewed
+            if (lifecyclePolicy.isEnabledFor(CATALOGUE_NAME)) {
             notificationUtil.sendNotification(
                      TEMPLATE_NAME,
                      TEMPLATE_CONSTANT,
@@ -176,6 +173,7 @@ public class CropcategoryServiceImpl implements CropcategoryService {
                         ),
                       userContext.path("orgId").asText(null)
             );
+            }
 
             return response;
 
@@ -503,12 +501,6 @@ public class CropcategoryServiceImpl implements CropcategoryService {
             CropcategoryEntity cropcategoryEntity1 = new CropcategoryEntity();
             String primaryID = primaryKeyUtil.generateKey(Constants.CROPCATEGORY_VALIDATION_FILE_JSON);
             cropcategoryEntity1.setCropcategoryId(primaryID);
-            // NEW
-            if (cropcategoryEntity instanceof ObjectNode) {
-                String makerId = userContext.path("userId").asText(null);
-                ((ObjectNode) cropcategoryEntity).put("createdBy", makerId);
-                ((ObjectNode) cropcategoryEntity).put("updatedBy", makerId);
-            }
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             cropcategoryEntity1.setCreatedOn(currentTime);
             cropcategoryEntity1.setUpdatedOn(currentTime);
@@ -578,11 +570,6 @@ public class CropcategoryServiceImpl implements CropcategoryService {
             }
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             JsonNode auditBefore = cropcategoryEntity1.getData();
-            // NEW: preserve the original creator; only updatedBy changes to whoever is submitting
-            if (cropcategoryEntity instanceof ObjectNode) {
-                //   String existingCreatedBy = (auditBefore != null) ? auditBefore.path("createdBy").asText(null) : null;
-                ((ObjectNode) cropcategoryEntity).put("updatedBy", userContext.path("userId").asText(null));
-            }
             cropcategoryEntity1.setData(cropcategoryEntity);
             cropcategoryEntity1.setStatus(Constants.PENDING);
             cropcategoryEntity1.setUpdatedOn(currentTime);
@@ -778,13 +765,11 @@ public class CropcategoryServiceImpl implements CropcategoryService {
                     cropcategoryEntity1.getData(), cropcategoryEntity1.getData(),
                     cropcategoryEntity1.getCreatedOn(), cropcategoryEntity1.getUpdatedOn());
 
-             NotificationTemplate template = NotificationTemplateResolver.resolveDecisionTemplate(
+             List<NotificationTemplate> templates = NotificationTemplateResolver.resolveDecisionTemplates(
                       operation,
                       targetStatus
               );
-            String makerId = (cropcategoryEntity1.getData() != null)
-                    ? cropcategoryEntity1.getData().path("createdBy").asText(null)
-                    : null;
+             for (NotificationTemplate template : templates) {
               notificationUtil.sendNotification(
                 TEMPLATE_NAME,
                 TEMPLATE_CONSTANT,
@@ -794,9 +779,9 @@ public class CropcategoryServiceImpl implements CropcategoryService {
                         "submissionId", id,
                         "actionDate", currentTime.toString()
                 ),
-                      makerId
-                //userContext.path("orgId").asText(null)
+                userContext.path("orgId").asText(null)
              );
+             }
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),

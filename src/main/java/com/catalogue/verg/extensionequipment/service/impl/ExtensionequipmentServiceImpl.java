@@ -46,6 +46,7 @@ import com.catalogue.verg.core.util.NotificationTemplateResolver;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -159,6 +160,8 @@ public class ExtensionequipmentServiceImpl implements ExtensionequipmentService 
                     objectMapper.createObjectNode(), extensionequipmentEntity,
                     extensionequipmentEntity1.getCreatedOn(), extensionequipmentEntity1.getUpdatedOn());
 
+            // Lifecycle-disabled catalogues create ACTIVE records that are never reviewed
+            if (lifecyclePolicy.isEnabledFor(CATALOGUE_NAME)) {
             notificationUtil.sendNotification(
                      TEMPLATE_NAME,
                      TEMPLATE_CONSTANT,
@@ -170,6 +173,7 @@ public class ExtensionequipmentServiceImpl implements ExtensionequipmentService 
                         ),
                       userContext.path("orgId").asText(null)
             );
+            }
 
             return response;
 
@@ -761,10 +765,11 @@ public class ExtensionequipmentServiceImpl implements ExtensionequipmentService 
                     extensionequipmentEntity1.getData(), extensionequipmentEntity1.getData(),
                     extensionequipmentEntity1.getCreatedOn(), extensionequipmentEntity1.getUpdatedOn());
 
-             NotificationTemplate template = NotificationTemplateResolver.resolveDecisionTemplate(
+             List<NotificationTemplate> templates = NotificationTemplateResolver.resolveDecisionTemplates(
                       operation,
                       targetStatus
               );
+             for (NotificationTemplate template : templates) {
               notificationUtil.sendNotification(
                 TEMPLATE_NAME,
                 TEMPLATE_CONSTANT,
@@ -776,6 +781,7 @@ public class ExtensionequipmentServiceImpl implements ExtensionequipmentService 
                 ),
                 userContext.path("orgId").asText(null)
              );
+             }
             return response;
         } catch (Exception e) {
             throw new CustomException("error while processing", e.getMessage(),
