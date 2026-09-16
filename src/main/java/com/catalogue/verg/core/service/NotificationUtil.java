@@ -7,9 +7,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientException;
 
+import java.time.Duration;
 import java.util.Map;
 
 @Slf4j
@@ -80,7 +81,23 @@ public class NotificationUtil {
 
                 return;
 
-            } catch (RestClientException e) {
+            } catch (HttpClientErrorException e) {
+
+                // 4xx is permanent: unknown template code, module mismatch, or nobody in this
+                // org holds the receiver role. Retrying cannot change it.
+                log.error(
+                        "Notification rejected: templateModule={} templateCode={} orgId={} status={} body={}",
+                        templateModule,
+                        templateCode,
+                        orgId,
+                        e.getStatusCode(),
+                        e.getResponseBodyAsString(),
+                        e
+                );
+
+                return;
+
+            } catch (Exception e) {
 
                 lastError = e;
 
