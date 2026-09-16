@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class NotificationUtil {
 
     private static final int MAX_RETRIES = 3;
+    private static final int TIMEOUT_MS = 5000;
 
     private final RestClient restClient;
 
@@ -26,7 +28,10 @@ public class NotificationUtil {
     private String apiKey;
 
     public NotificationUtil(RestClient.Builder restClientBuilder) {
-        this.restClient = restClientBuilder.build();
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(TIMEOUT_MS);
+        requestFactory.setReadTimeout(TIMEOUT_MS);
+        this.restClient = restClientBuilder.requestFactory(requestFactory).build();
     }
 
     public void sendNotification(
@@ -81,6 +86,20 @@ public class NotificationUtil {
 
                 log.error(
                         "Notification failed: templateModule={} templateCode={} attempt={}/{} error={}",
+                        templateModule,
+                        templateCode,
+                        attempt,
+                        MAX_RETRIES,
+                        e.getMessage(),
+                        e
+                );
+
+            } catch (Exception e) {
+
+                lastError = e;
+
+                log.error(
+                        "Unexpected error sending notification: templateModule={} templateCode={} attempt={}/{} error={}",
                         templateModule,
                         templateCode,
                         attempt,

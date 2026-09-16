@@ -778,10 +778,14 @@ public class CropcategoryServiceImpl implements CropcategoryService {
                     cropcategoryEntity1.getData(), cropcategoryEntity1.getData(),
                     cropcategoryEntity1.getCreatedOn(), cropcategoryEntity1.getUpdatedOn());
 
-             NotificationTemplate template = NotificationTemplateResolver.resolveDecisionTemplate(
-                      operation,
-                      targetStatus
-              );
+            NotificationTemplate template = NotificationTemplateResolver.resolveDecisionTemplates(
+                            operation,
+                            targetStatus
+                    ).stream()
+                    .filter(t -> !t.templateCode().endsWith("_TO_SUPERVISOR"))
+                    .findFirst()
+                    .orElseThrow();
+
             String makerId = (cropcategoryEntity1.getData() != null)
                     ? cropcategoryEntity1.getData().path("createdBy").asText(null)
                     : null;
