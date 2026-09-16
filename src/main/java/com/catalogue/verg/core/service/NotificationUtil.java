@@ -18,9 +18,7 @@ import java.util.Map;
 public class NotificationUtil {
 
     private static final int MAX_RETRIES = 3;
-    private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(2);
-    private static final Duration READ_TIMEOUT = Duration.ofSeconds(5);
-    private static final long RETRY_BACKOFF_MILLIS = 250L;
+    private static final int TIMEOUT_MS = 5000;
 
     private final RestClient restClient;
 
@@ -31,12 +29,9 @@ public class NotificationUtil {
     private String apiKey;
 
     public NotificationUtil(RestClient.Builder restClientBuilder) {
-        // Without these the client has no timeout at all, so an unresponsive notification
-        // service holds the caller's request thread and its open transaction.
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(CONNECT_TIMEOUT);
-        requestFactory.setReadTimeout(READ_TIMEOUT);
-
+        requestFactory.setConnectTimeout(TIMEOUT_MS);
+        requestFactory.setReadTimeout(TIMEOUT_MS);
         this.restClient = restClientBuilder.requestFactory(requestFactory).build();
     }
 
@@ -116,14 +111,19 @@ public class NotificationUtil {
                         e
                 );
 
-                if (attempt < MAX_RETRIES) {
-                    try {
-                        Thread.sleep(RETRY_BACKOFF_MILLIS * attempt);
-                    } catch (InterruptedException interrupted) {
-                        Thread.currentThread().interrupt();
-                        return;
-                    }
-                }
+            } catch (Exception e) {
+
+                lastError = e;
+
+                log.error(
+                        "Unexpected error sending notification: templateModule={} templateCode={} attempt={}/{} error={}",
+                        templateModule,
+                        templateCode,
+                        attempt,
+                        MAX_RETRIES,
+                        e.getMessage(),
+                        e
+                );
             }
         }
 
