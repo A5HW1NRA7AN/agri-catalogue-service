@@ -87,6 +87,12 @@ public class Constants{
     public static final String AUDIT_DEFAULT_USER_ROLE = "SYSTEM";
 
     
+    // Locationmapper Specific Constants
+    public static final String LOCATIONMAPPER_VALIDATION_FILE_JSON = "/payloadValidation/locationmapperPayloadValidation.json";
+    public static final String LOCATIONMAPPER_ID_RQST = "locationmapperId";
+    public static final String LOCATIONMAPPER_INDEX_NAME = "locationmapper_index";
+
+    
     // Seed Specific Constants
     public static final String SEED_VALIDATION_FILE_JSON = "/payloadValidation/seedPayloadValidation.json";
     public static final String SEED_ID_RQST = "seedId";
@@ -169,12 +175,6 @@ public class Constants{
     public static final String LOCATIONOBJECT_VALIDATION_FILE_JSON = "/payloadValidation/locationobjectPayloadValidation.json";
     public static final String LOCATIONOBJECT_ID_RQST = "locationobjectId";
     public static final String LOCATIONOBJECT_INDEX_NAME = "locationobject_index";
-
-    
-    // Locationmapper Specific Constants
-    public static final String LOCATIONMAPPER_VALIDATION_FILE_JSON = "/payloadValidation/locationmapperPayloadValidation.json";
-    public static final String LOCATIONMAPPER_ID_RQST = "locationmapperId";
-    public static final String LOCATIONMAPPER_INDEX_NAME = "locationmapper_index";
 
     
     // Locationconfig Specific Constants
